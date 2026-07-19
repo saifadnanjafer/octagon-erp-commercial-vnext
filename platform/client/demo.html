@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OX.crud — صفحة اختبار مستقلة (P0.6)</title>
+  <!-- Octagon theme (read-only reuse) -->
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="ui-crud.css">
+  <style>
+    /* demo-page chrome only */
+    body { padding: 20px; min-height: 100vh; }
+    .demo-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
+    .demo-bar h1 { font-size: 1rem; margin: 0 12px 0 0; color: var(--text-secondary, #94a3b8); font-weight: 400; }
+    .demo-tab {
+      padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: inherit;
+      background: var(--bg-glass, rgba(255,255,255,0.04));
+      border: 1px solid var(--border-glass, rgba(255,255,255,0.08));
+      color: var(--text-primary, #f1f5f9); font-size: 0.85rem;
+    }
+    .demo-tab.demo-cur { border-color: var(--accent-blue, #38bdf8); color: var(--accent-blue, #38bdf8); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="demo-bar">
+    <h1>OX.crud — عرض تجريبي (خادم وهمي داخل الصفحة)</h1>
+    <button type="button" class="demo-tab demo-cur" data-entity="crm_lead">العملاء المحتملون</button>
+    <button type="button" class="demo-tab" data-entity="helpdesk_ticket">تذاكر الدعم</button>
+    <button type="button" class="demo-tab" data-entity="product">المنتجات</button>
+  </div>
+  <div id="crudHost"></div>
+
+  <!-- ================= mock /api/x server (fetch stub) ================= -->
+  <script>
+  (function () {
+    'use strict';
+    var realFetch = window.fetch.bind(window);
+    var nextId = 1000;
+    function uid() { return 'rec_' + (nextId++); }
+    function iso(daysAgo) { return new Date(Date.now() - daysAgo * 86400000).toISOString(); }
+    function row(entity, data, daysAgo) {
+      return { entity: entity, id: uid(), data: data, created_at: iso(daysAgo || 0), updated_at: iso(daysAgo || 0), created_by: 'demo', removed: 0 };
+    }
+
+    var DB = { crm_lead: [], helpdesk_ticket: [], product: [] };
+
+    var leadNames = ['شركة الرافدين للتجارة', 'مكتب النور الهندسي', 'مطعم بيت بغداد', 'صيدلية الشفاء', 'معرض الأناقة للأثاث',
+      'شركة دجلة للمقاولات', 'مركز الحكمة التعليمي', 'محلات الوردة البيضاء', 'شركة الفرات للنقل', 'مستشفى السلام الأهلي',
+      'مكتبة المعرفة', 'مصنع الأمل للبلاستيك', 'فندق قصر الضيافة', 'شركة النخيل الزراعية', 'ورشة الإتقان للحدادة',
+      'استوديو اللمسة الفنية', 'شركة الأفق للاتصالات', 'مخبز الضحى', 'معمل ألبان الجنوب', 'مكتب سما للعقارات',
+      'قاعة الماس للمناسبات', 'شركة البرج الأمني', 'مشتل الربيع', 'مغسلة الصفاء', 'مركز اللياقة الذهبي'];
+    var sources = ['phone', 'website', 'social', 'referral', 'exhibit', 'walkin'];
+    var leadStatuses = ['new', 'new', 'new', 'contacted', 'contacted', 'qualified', 'won', 'lost'];
+    leadNames.forEach(function (n, i) {
+      DB.crm_lead.push(row('crm_lead', {
+        name: n, source: sources[i % sources.length], status: leadStatuses[i % leadStatuses.length],
+        expected_value: (i + 1) * 250000, phone: '07' + String(700000000 + i * 137137).slice(0, 9),
+        follow_up: '', notes: i % 3 === 0 ? 'عميل مهتم بالحفر الليزري' : ''
+      }, i));
+    });
+
+    var ticketSubjects = ['اللوحة وصلت بخدش', 'استفسار عن الأسعار', 'الطلب متأخر', 'طلب تعديل تصميم', 'مشكلة في التركيب',
+      'طلب صيانة دورية', 'استبدال قطعة تالفة', 'شكوى من جودة الطباعة', 'طلب عرض سعر جديد', 'متابعة طلب سابق',
+      'استفسار عن الضمان', 'طلب زيارة ميدانية'];
+    var prios = ['low', 'medium', 'medium', 'high', 'urgent'];
+    var tStatuses = ['new', 'new', 'in_progress', 'in_progress', 'waiting', 'resolved', 'closed'];
+    ticketSubjects.forEach(function (s, i) {
+      var lead = DB.crm_lead[i % DB.crm_lead.length];
+      DB.helpdesk_ticket.push(row('helpdesk_ticket', {
+        subject: s, customer: lead.id, customer_label: lead.data.name,
+        priority: prios[i % prios.length], status: tStatuses[i % tStatuses.length],
+        due_date: '', description: ''
+      }, i));
+    });
+
+    var prods = [['لوحة أكريليك مضيئة', 'ACR-001', 'acrylic', 85000, 52000, 'piece'],
+      ['حفر ليزر على خشب MDF', 'SRV-010', 'service', 15000, 6000, 'hour'],
+      ['درع تكريم خشبي', 'WD-021', 'wood', 35000, 18000, 'piece'],
+      ['قص معدن CNC', 'MT-002', 'metal', 40000, 22000, 'sqm'],
+      ['طباعة بنر فليكس', 'PR-005', 'print', 12000, 7000, 'sqm'],
+      ['ستاند عرض أكريليك', 'ACR-014', 'acrylic', 60000, 33000, 'piece'],
+      ['باب حديد مشغول', 'MT-030', 'metal', 450000, 280000, 'piece'],
+      ['رف خشب زان', 'WD-044', 'wood', 95000, 55000, 'meter'],
+      ['ختم ليزري', 'SRV-022', 'service', 10000, 3000, 'piece'],
+      ['لوحة استيل ذهبي', 'MT-051', 'metal', 220000, 140000, 'piece'],
+      ['استيكر مقصوص', 'PR-017', 'print', 8000, 3500, 'sqm'],
+      ['ميدالية أكريليك', 'ACR-033', 'acrylic', 3000, 1200, 'piece'],
+      ['صيانة ماكينة ليزر', 'SRV-090', 'service', 75000, 30000, 'hour'],
+      ['طقم أرقام منازل', 'MT-072', 'metal', 25000, 12000, 'set'],
+      ['تغليف واجهات', 'PR-060', 'print', 30000, 17000, 'sqm']];
+    prods.forEach(function (p, i) {
+      DB.product.push(row('product', { name: p[0], sku: p[1], category: p[2], price: p[3], cost: p[4], uom: p[5], description: '' }, i));
+    });
+
+    function envelope(data, meta) { return { success: true, data: data, error: null, meta: meta || null }; }
+    function fail(msg, status) {
+      return new Response(JSON.stringify({ success: false, data: null, error: msg }), {
+        status: status || 400, headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    function ok(body) {
+      return new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
+
+    function flat(r) { return Object.assign({ id: r.id, created_at: r.created_at, updated_at: r.updated_at }, r.data); }
+
+    function handleList(entity, params) {
+      var rows = DB[entity].filter(function (r) { return !r.removed; });
+      var q = (params.get('q') || '').toLowerCase();
+      if (q) {
+        rows = rows.filter(function (r) {
+          return Object.keys(r.data).some(function (k) { return String(r.data[k]).toLowerCase().indexOf(q) !== -1; });
+        });
+      }
+      var filterJson = params.get('filter');
+      if (filterJson) {
+        try {
+          var f = JSON.parse(filterJson);
+          Object.keys(f).forEach(function (k) {
+            rows = rows.filter(function (r) { return String(r.data[k]) === String(f[k]); });
+          });
+        } catch (_) {}
+      }
+      var sort = params.get('sort');
+      if (sort) {
+        var kd = sort.split(':'), key = kd[0], dir = kd[1] === 'desc' ? -1 : 1;
+        rows = rows.slice().sort(function (a, b) {
+          var av = key in a.data ? a.data[key] : a[key];
+          var bv = key in b.data ? b.data[key] : b[key];
+          if (typeof av === 'number' && typeof bv === 'number') return (av - bv) * dir;
+          return String(av == null ? '' : av).localeCompare(String(bv == null ? '' : bv), 'ar') * dir;
+        });
+      }
+      var page = Math.max(1, Number(params.get('page')) || 1);
+      var limit = Math.max(1, Number(params.get('limit')) || 20);
+      var total = rows.length;
+      var slice = rows.slice((page - 1) * limit, page * limit);
+      return ok(envelope(slice, { total: total, page: page, limit: limit }));
+    }
+
+    function handleSummary(entity) {
+      var rows = DB[entity].filter(function (r) { return !r.removed; });
+      var byStatus = {};
+      rows.forEach(function (r) { var s = r.data.status; if (s) byStatus[s] = (byStatus[s] || 0) + 1; });
+      return ok(envelope({ total: rows.length, byStatus: byStatus }));
+    }
+
+    window.fetch = function (input, init) {
+      var url = typeof input === 'string' ? input : input.url;
+      var m = url.match(/^\/api\/x\/([a-z_]+)\/(create|read|update|delete|list|summary)(?:\/([^?]+))?(\?.*)?$/);
+      if (!m) return realFetch(input, init);
+
+      var entity = m[1], verb = m[2], id = m[3] ? decodeURIComponent(m[3]) : null;
+      var params = new URLSearchParams(m[4] || '');
+      var method = (init && init.method || 'GET').toUpperCase();
+
+      return new Promise(function (resolve) {
+        setTimeout(function () { // simulate latency
+          if (!DB[entity]) { resolve(fail('كيان غير معروف: ' + entity, 404)); return; }
+          try {
+            if (verb === 'list') { resolve(handleList(entity, params)); return; }
+            if (verb === 'summary') { resolve(handleSummary(entity)); return; }
+            if (verb === 'create' && method === 'POST') {
+              var body = JSON.parse(init.body || '{}');
+              var r = row(entity, body, 0);
+              DB[entity].unshift(r);
+              resolve(ok(envelope(flat(r)))); return;
+            }
+            var rec = DB[entity].filter(function (x) { return x.id === id && !x.removed; })[0];
+            if (!rec) { resolve(fail('السجل غير موجود', 404)); return; }
+            if (verb === 'read') { resolve(ok(envelope(rec))); return; } // server-shape row on purpose
+            if (verb === 'update' && method === 'PATCH') {
+              Object.assign(rec.data, JSON.parse(init.body || '{}'));
+              rec.updated_at = new Date().toISOString();
+              resolve(ok(envelope(flat(rec)))); return;
+            }
+            if (verb === 'delete' && method === 'DELETE') {
+              rec.removed = 1;
+              resolve(ok(envelope({ id: rec.id, removed: true }))); return;
+            }
+            resolve(fail('طلب غير مدعوم: ' + method + ' ' + verb, 405));
+          } catch (e) {
+            resolve(fail('خطأ داخلي في الخادم الوهمي: ' + e.message, 500));
+          }
+        }, 120);
+      });
+    };
+  })();
+  </script>
+
+  <script src="ui-crud.js"></script>
+  <script src="entity-ui-registry.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    var host = document.getElementById('crudHost');
+    function show(entity) {
+      host.innerHTML = '';
+      OX.crud.mountEntity(host, entity);
+    }
+    document.querySelectorAll('.demo-tab').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.demo-tab').forEach(function (b) { b.classList.remove('demo-cur'); });
+        btn.classList.add('demo-cur');
+        show(btn.getAttribute('data-entity'));
+      });
+    });
+    show('crm_lead');
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+/* OCTAGON ERP — Helpdesk / Support Tickets (خدمة العملاء). Add-only. RTL. */
+#pageHelpdesk { direction: rtl; }
+.hd-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; border-bottom: 2px solid var(--border-color, #e2e8f0); padding-bottom: 4px; }
+.hd-tab-btn { background: transparent; border: none; padding: 10px 18px; font-size: 15px; font-weight: 600; color: var(--text-secondary, #64748b); cursor: pointer; border-radius: 8px 8px 0 0; transition: all .15s; }
+.hd-tab-btn:hover { background: var(--hover-bg, #f1f5f9); }
+.hd-tab-btn.active { color: #e11d48; border-bottom: 3px solid #e11d48; }
+
+.hd-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.hd-kpi { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.hd-kpi-val { font-size: 26px; font-weight: 800; color: var(--text-primary, #0f172a); line-height: 1.1; }
+.hd-kpi-label { font-size: 13px; color: var(--text-secondary, #64748b); margin-top: 6px; font-weight: 600; }
+.hd-kpi-sub { font-size: 11px; color: var(--text-muted, #94a3b8); margin-top: 2px; }
+.hd-kpi-accent { border-color: #e11d48; } .hd-kpi-accent .hd-kpi-val { color: #e11d48; }
+.hd-kpi-warn { border-color: #f59e0b; background: #fffbeb; } .hd-kpi-warn .hd-kpi-val { color: #d97706; }
+.hd-kpi-danger { border-color: #dc2626; background: #fef2f2; } .hd-kpi-danger .hd-kpi-val { color: #dc2626; }
+
+.hd-panel { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
+.hd-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.hd-panel-head h3 { margin: 0; font-size: 16px; font-weight: 700; }
+.hd-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.hd-input { padding: 8px 12px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); width: 100%; box-sizing: border-box; }
+.hd-input:focus { outline: none; border-color: #e11d48; }
+.hd-mini-select { padding: 4px 8px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 6px; font-size: 12px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); }
+
+.hd-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.hd-table th { text-align: right; padding: 10px 12px; background: var(--table-head-bg, #f8fafc); color: var(--text-secondary, #475569); font-weight: 700; font-size: 13px; border-bottom: 2px solid var(--border-color, #e2e8f0); white-space: nowrap; }
+.hd-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color, #eef2f7); vertical-align: middle; }
+.hd-table tbody tr:hover { background: var(--hover-bg, #f8fafc); }
+.hd-empty { text-align: center; color: var(--text-muted, #94a3b8); padding: 24px !important; font-style: italic; }
+.hd-muted { color: var(--text-muted, #94a3b8); font-size: 12px; }
+.hd-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.hd-row-danger { background: #fef2f2 !important; }
+
+.hd-mini-btn { background: var(--hover-bg, #f1f5f9); border: 1px solid var(--border-color, #e2e8f0); border-radius: 7px; padding: 5px 11px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-primary, #334155); transition: all .12s; }
+.hd-mini-btn:hover { background: #e11d48; color: #fff; border-color: #e11d48; }
+.hd-mini-btn.hd-danger:hover { background: #b91c1c; border-color: #b91c1c; }
+
+.hd-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.hd-p-low { background: #e0f2fe; color: #0369a1; } .hd-p-medium { background: #fef3c7; color: #b45309; }
+.hd-p-high { background: #ffedd5; color: #c2410c; } .hd-p-urgent { background: #fee2e2; color: #b91c1c; }
+.hd-s-new { background: #e0e7ff; color: #4338ca; } .hd-s-progress { background: #dbeafe; color: #1d4ed8; }
+.hd-s-waiting { background: #fef3c7; color: #b45309; } .hd-s-resolved { background: #dcfce7; color: #15803d; } .hd-s-closed { background: #e5e7eb; color: #4b5563; }
+
+.hd-prio-bars { display: flex; gap: 18px; flex-wrap: wrap; }
+.hd-prio-bar { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.hd-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.hd-form-grid label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary, #475569); margin-bottom: 5px; }
+.hd-form-full { grid-column: 1 / -1; }
+.hd-form-actions { display: flex; gap: 10px; margin-top: 16px; }

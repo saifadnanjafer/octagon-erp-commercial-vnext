@@ -1,0 +1,101 @@
+/* Calendar page header controls — the nav/today/operating-costs button row and
+   the batch of day/week nav classes render with ZERO matching CSS anywhere in
+   the codebase (verified: no .calendar-header-controls/.calendar-nav-btn/
+   .calendar-today-btn/.calendar-config-btn rule exists), so icon+text buttons
+   were falling back to bare browser defaults (cramped, wrapping, no gap).
+   This is a targeted, additive fix — scoped to these class names only. */
+
+.calendar-header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-bottom: 4px;
+}
+
+.calendar-header-controls h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-heading, #e2e8f0);
+  flex: 1;
+  text-align: center;
+  min-width: 140px;
+}
+
+.calendar-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary, #94a3b8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.calendar-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.calendar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.calendar-today-btn,
+.calendar-config-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendar-today-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary, #94a3b8);
+}
+
+.calendar-today-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+/* .calendar-config-btn keeps its inline blue accent colors (background/color/
+   border set in views/calendar.html) — this only fixes its layout/sizing. */
+.calendar-config-btn:hover {
+  background: rgba(56, 189, 248, 0.25) !important;
+}
+
+.calendar-today-btn i,
+.calendar-config-btn i {
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .calendar-today-btn span,
+  .calendar-config-btn span {
+    display: none;
+  }
+  .calendar-today-btn,
+  .calendar-config-btn {
+    width: 38px;
+    padding: 0;
+    justify-content: center;
+  }
+}

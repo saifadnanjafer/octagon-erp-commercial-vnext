@@ -1,0 +1,34 @@
+<section class="page" id="pageCashbox">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">🏦</span> قاصة الورشة</h1>
+        <p class="page-subtitle">حركة يومية حسب التاريخ، والرصيد العام ظاهر بالأعلى</p>
+      </div>
+      <div class="page-header-actions" style="display:flex; gap:8px">
+        <button class="btn-primary" onclick="openCashboxTransactionModal()"><i class="fa-solid fa-plus"></i> إضافة حركة نقدية</button>
+        <button class="btn-secondary finance-demo-action" onclick="addFinanceDemoData('cashbox')">إضافة بيانات تجريبية</button>
+      </div>
+    </div>
+    <div class="cashbox-hero glass-card">
+      <span>الرصيد الحالي</span>
+      <strong id="cashboxBalanceTop">0 د.ع</strong>
+    </div>
+    <div class="finance-filter-bar glass-card cashbox-date-controls">
+      <label>تاريخ الحركة</label>
+      <button class="cashbox-date-nav" onclick="shiftCashboxDate(-1)" title="اليوم السابق">›</button>
+      <button class="cashbox-today-btn" onclick="setCashboxToday()">اليوم</button>
+      <input type="date" class="form-input" id="cashboxDate" onchange="renderCashbox()">
+      <button class="cashbox-date-nav" onclick="shiftCashboxDate(1)" title="اليوم التالي">‹</button>
+    </div>
+    <div class="finance-kpi-grid compact">
+      <div class="finance-kpi glass-card"><span>داخل</span><strong class="finance-in" id="cashboxDateIn">0 د.ع</strong></div>
+      <div class="finance-kpi glass-card"><span>خارج</span><strong class="finance-out" id="cashboxDateOut">0 د.ع</strong></div>
+      <div class="finance-kpi glass-card"><span>صافي اليوم</span><strong id="cashboxDateNet">0 د.ع</strong></div>
+    </div>
+    <div class="table-container glass-card">
+      <table class="data-table finance-table">
+        <thead><tr><th>التاريخ</th><th>الاتجاه</th><th>الوصف</th><th>الطرف</th><th>المبلغ</th></tr></thead>
+        <tbody id="cashboxBody"></tbody>
+      </table>
+    </div>
+  </section>

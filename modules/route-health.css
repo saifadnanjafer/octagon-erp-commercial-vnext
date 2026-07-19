@@ -1,0 +1,31 @@
+/* OCTAGON ERP — Route Health / System Integrity Doctor. Namespaced .rh-* */
+.rh-toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+.rh-toolbar .spacer { flex:1; }
+.rh-btn { padding:9px 16px; border-radius:10px; border:1px solid rgba(148,163,184,0.3); background:rgba(148,163,184,0.12); color:inherit; cursor:pointer; font-size:13px; font-family:inherit; }
+.rh-btn:hover { background:rgba(148,163,184,0.2); }
+.rh-btn.primary { background:linear-gradient(135deg,#6366f1,#4f46e5); border:none; color:#fff; font-weight:800; }
+.rh-btn.primary:hover { filter:brightness(1.08); }
+
+.rh-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:14px; }
+.rh-stat { background:rgba(30,41,59,0.55); border:1px solid rgba(148,163,184,0.18); border-radius:12px; padding:12px 14px; }
+.rh-stat-label { font-size:11px; color:#94a3b8; margin-bottom:5px; }
+.rh-stat-value { font-size:22px; font-weight:900; }
+.rh-stat.ok .rh-stat-value { color:#34d399; }
+.rh-stat.warn .rh-stat-value { color:#fbbf24; }
+.rh-stat.bad .rh-stat-value { color:#f87171; }
+
+.rh-section { background:rgba(30,41,59,0.45); border:1px solid rgba(148,163,184,0.18); border-radius:12px; padding:14px; margin-bottom:14px; }
+.rh-section-title { font-weight:800; font-size:14px; margin-bottom:10px; color:#e2e8f0; display:flex; justify-content:space-between; align-items:center; }
+.rh-row { display:flex; align-items:center; gap:10px; padding:8px 4px; border-bottom:1px dashed rgba(148,163,184,0.12); font-size:12.5px; }
+.rh-row:last-child { border-bottom:none; }
+.rh-row .label { flex:1; }
+.rh-row .meta { color:#94a3b8; font-size:11px; }
+
+.rh-pill { display:inline-block; padding:3px 10px; border-radius:10px; font-size:10.5px; font-weight:800; white-space:nowrap; }
+.rh-pill.ok { background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.4); }
+.rh-pill.warn { background:rgba(251,191,36,0.18); color:#fde68a; border:1px solid rgba(251,191,36,0.45); }
+.rh-pill.bad { background:rgba(248,113,113,0.2); color:#fca5a5; border:1px solid rgba(248,113,113,0.45); }
+
+.rh-empty { color:#34d399; font-size:12px; padding:6px 0; }
+.rh-detail { font-size:11px; color:#94a3b8; margin-top:3px; }
+.rh-fix-hint { font-size:11px; color:#7dd3fc; margin-inline-start:6px; }

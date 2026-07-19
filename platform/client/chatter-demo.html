@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chatter demo — عرض المحادثة (P0.3)</title>
+<link rel="stylesheet" href="chatter.css">
+<style>
+  /* Demo-only shell vars mimicking octagon-erp/style.css :root */
+  :root {
+    --bg-primary: #0a0e1a; --bg-secondary: #111827;
+    --bg-card: rgba(17, 24, 39, 0.7); --bg-glass: rgba(255,255,255,0.04);
+    --bg-glass-hover: rgba(255,255,255,0.08);
+    --border-glass: rgba(255,255,255,0.08); --border-focus: rgba(56,189,248,0.5);
+    --text-primary: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b;
+    --text-heading: #e2e8f0;
+    --accent-blue: #38bdf8; --accent-purple: #818cf8; --accent-green: #34d399;
+    --accent-red: #f87171; --accent-yellow: #fbbf24; --accent-cyan: #22d3ee;
+    --gradient-primary: linear-gradient(135deg, #38bdf8, #818cf8);
+    --radius-sm: 8px; --radius-md: 12px;
+    --font-ar: 'Tajawal', 'Noto Sans Arabic', Arial, sans-serif;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-ar); margin: 0; padding: 24px; }
+  .demo-wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.1rem; color: var(--text-heading); }
+  p.hint { color: var(--text-muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<div class="demo-wrap">
+  <h1>محادثة السجل — عميل تجريبي (crm_lead / L-001)</h1>
+  <p class="hint">هذه الصفحة تعمل بدون خادم: fetch مُحاكى بذاكرة محلية لعرض الودجت فقط.</p>
+  <div id="chatter-host"></div>
+</div>
+
+<script>
+// ---------------------------------------------------------------------------
+// Fetch stub: in-memory imitation of platform/server/chatter.js responses.
+// Real integration replaces nothing — the widget calls the same URLs.
+// ---------------------------------------------------------------------------
+(function () {
+  'use strict';
+  var seq = 100;
+  var iso = function (minAgo) { return new Date(Date.now() - minAgo * 60000).toISOString(); };
+  var store = {
+    items: [
+      { id: 'ch_a', entity: 'crm_lead', record_id: 'L-001', kind: 'message', body: 'تم التواصل مع العميل وطلب عرض سعر لخط الإنتاج.', author: 'سيف', activity_type: '', due_date: '', done: 0, meta: {}, created_at: iso(180) },
+      { id: 'ch_b', entity: 'crm_lead', record_id: 'L-001', kind: 'log', body: 'تغيير الحالة: جديد ← مؤهل (بواسطة crud-engine)', author: 'system', activity_type: '', due_date: '', done: 0, meta: {}, created_at: iso(120) },
+      { id: 'ch_c', entity: 'crm_lead', record_id: 'L-001', kind: 'activity', body: 'الاتصال لتأكيد استلام عرض السعر', author: 'سيف', activity_type: 'مكالمة هاتفية', due_date: new Date(Date.now() - 86400000).toISOString().slice(0, 10), done: 0, meta: {}, created_at: iso(60) },
+    ],
+    followers: ['سيف'],
+  };
+
+  function envelope(data, meta) { return { success: true, data: data, error: null, meta: meta }; }
+  function json(obj, status) {
+    return Promise.resolve({ ok: (status || 200) < 400, status: status || 200, json: function () { return Promise.resolve(obj); } });
+  }
+
+  var realFetch = window.fetch.bind(window);
+  window.fetch = function (url, opts) {
+    var raw = String(url);
+    if (raw.indexOf('/api/x/chatter/') !== 0) return realFetch(url, opts);
+    opts = opts || {};
+    var method = (opts.method || 'GET').toUpperCase();
+    var u = new URL(raw, location.origin);
+    var parts = u.pathname.replace('/api/x/chatter/', '').split('/').map(decodeURIComponent);
+    var body = opts.body ? JSON.parse(opts.body) : {};
+
+    // PATCH /item/:id/done
+    if (parts[0] === 'item' && parts[2] === 'done' && method === 'PATCH') {
+      var it = store.items.find(function (i) { return i.id === parts[1]; });
+      if (!it) return json({ success: false, data: null, error: 'not found' }, 404);
+      it.done = body.done !== undefined ? (body.done ? 1 : 0) : 1;
+      return json(envelope(it));
+    }
+    // follow / unfollow
+    if (parts[2] === 'follow') {
+      var user = body.user || 'مستخدم';
+      if (method === 'POST' && store.followers.indexOf(user) < 0) store.followers.push(user);
+      if (method === 'DELETE') store.followers = store.followers.filter(function (f) { return f !== user; });
+      return json(envelope({ user: user, following: method === 'POST' }));
+    }
+    // POST new item
+    if (method === 'POST') {
+      var item = {
+        id: 'ch_' + (seq++), entity: parts[0], record_id: parts[1],
+        kind: body.kind || 'message', body: body.body || '', author: body.author || 'مستخدم',
+        activity_type: body.activity_type || '', due_date: body.due_date || '',
+        done: 0, meta: {}, created_at: new Date().toISOString(),
+      };
+      store.items.unshift(item);
+      return json(envelope(item), 201);
+    }
+    // GET list
+    var kind = u.searchParams.get('kind');
+    var page = parseInt(u.searchParams.get('page'), 10) || 1;
+    var limit = parseInt(u.searchParams.get('limit'), 10) || 20;
+    var asUser = u.searchParams.get('user') || '';
+    var filtered = store.items.filter(function (i) { return !kind || i.kind === kind; });
+    var counts = { message: 0, log: 0, activity: 0, open_activities: 0 };
+    store.items.forEach(function (i) {
+      counts[i.kind] += 1;
+      if (i.kind === 'activity' && !i.done) counts.open_activities += 1;
+    });
+    return json(envelope({
+      items: filtered.slice((page - 1) * limit, page * limit),
+      followers: store.followers.slice(),
+      following: store.followers.indexOf(asUser) >= 0,
+      counts: counts,
+    }, { total: filtered.length, page: page, limit: limit }));
+  };
+
+  // Demo toast so success/error feedback is visible without the app shell.
+  window.showToast = function (msg) {
+    var t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = 'position:fixed;bottom:16px;right:16px;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border-glass);padding:10px 16px;border-radius:8px;z-index:99;font-family:var(--font-ar)';
+    document.body.appendChild(t);
+    setTimeout(function () { t.remove(); }, 2200);
+  };
+})();
+</script>
+<script src="chatter.js"></script>
+<script>
+  OX.chatter.mount(document.getElementById('chatter-host'), 'crm_lead', 'L-001');
+</script>
+</body>
+</html>

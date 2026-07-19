@@ -1,0 +1,51 @@
+{
+  "id": "loyalty_tier_demo",
+  "name_ar": "تجربة درجة الولاء",
+  "version": "1.0.0",
+  "dependencies": [],
+  "entitlement": "community",
+  "migrations": [
+    {
+      "id": "loyalty_tier_demo_001_log_table",
+      "up": "CREATE TABLE IF NOT EXISTS x_loyalty_tier_demo_log (id TEXT PRIMARY KEY, note TEXT NOT NULL, at TEXT NOT NULL);",
+      "down": "DROP TABLE IF EXISTS x_loyalty_tier_demo_log;"
+    }
+  ],
+  "contributes": {
+    "fields": [
+      {
+        "entity": "crm_lead",
+        "key": "loyalty_tier",
+        "label_ar": "درجة الولاء",
+        "type": "select",
+        "options": [
+          { "value": "bronze", "label_ar": "برونزي" },
+          { "value": "silver", "label_ar": "فضي" },
+          { "value": "gold", "label_ar": "ذهبي" }
+        ],
+        "position": 100
+      }
+    ],
+    "menu": [
+      {
+        "id": "loyalty_tier_demo_menu",
+        "label_ar": "برنامج الولاء (تجريبي)",
+        "path": "/modules/loyalty-tier-demo",
+        "icon": "star",
+        "position": 100
+      }
+    ],
+    "workflows": [
+      {
+        "id": "wf_loyalty_tier_demo",
+        "name": "تصعيد درجة الولاء عند الفوز بالصفقة",
+        "active": true,
+        "nodes": []
+      }
+    ]
+  },
+  "hooks": {
+    "onInstall": "hooks.js#onInstall",
+    "onUninstall": "hooks.js#onUninstall"
+  }
+}

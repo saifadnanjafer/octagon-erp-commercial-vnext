@@ -1,0 +1,43 @@
+/* Workshop-First Platform Stabilization self-test panel (injected into deploy_ready). */
+#stabMount { margin-top: 18px; }
+.stab-wrap {
+  border: 1px solid var(--border, #2a3550);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: var(--card-bg, rgba(20, 28, 48, 0.55));
+  direction: rtl;
+}
+.stab-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.stab-title { font-size: 1.05rem; font-weight: 700; color: var(--text, #e7edf7); }
+.stab-sub { font-size: 0.72rem; font-weight: 500; opacity: 0.6; margin-inline-start: 6px; }
+.stab-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stab-summary { font-size: 0.82rem; opacity: 0.75; margin: 8px 2px 12px; }
+.stab-pill { padding: 4px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
+.stab-pill.ok   { background: rgba(34, 197, 94, 0.18);  color: #4ade80; }
+.stab-pill.warn { background: rgba(234, 179, 8, 0.18);   color: #facc15; }
+.stab-pill.bad  { background: rgba(239, 68, 68, 0.18);   color: #f87171; }
+.stab-btn {
+  padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 0.78rem;
+  border: 1px solid var(--border, #2a3550);
+  background: var(--btn-bg, rgba(255, 255, 255, 0.05));
+  color: var(--text, #e7edf7);
+}
+.stab-btn:hover { background: var(--btn-hover, rgba(255, 255, 255, 0.12)); }
+.stab-list { display: flex; flex-direction: column; gap: 8px; }
+.stab-row {
+  border: 1px solid var(--border, #2a3550);
+  border-radius: 10px; padding: 9px 12px;
+  border-inline-start-width: 4px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.stab-row.ok   { border-inline-start-color: #22c55e; }
+.stab-row.warn { border-inline-start-color: #eab308; }
+.stab-row.bad  { border-inline-start-color: #ef4444; }
+.stab-row-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.stab-label { font-size: 0.86rem; font-weight: 600; color: var(--text, #e7edf7); }
+.stab-badge { font-size: 0.74rem; font-weight: 700; white-space: nowrap; }
+.stab-badge.ok   { color: #4ade80; }
+.stab-badge.warn { color: #facc15; }
+.stab-badge.bad  { color: #f87171; }
+.stab-detail { font-size: 0.76rem; opacity: 0.68; margin-top: 4px; line-height: 1.5; }
+.stab-foot { font-size: 0.72rem; opacity: 0.55; margin-top: 12px; text-align: center; }

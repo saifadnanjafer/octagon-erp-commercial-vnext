@@ -1,0 +1,49 @@
+/* ── Octagon ERP — Real Estate Vertical styles ── */
+.re-header { margin-bottom: 14px; }
+.re-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.re-tab-btn { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border,#e2e8f0); background: var(--bg-card,#fff); color: var(--text-secondary,#64748b); cursor: pointer; font-size: 13px; transition: all .15s; }
+.re-tab-btn.active { background: #6366f1; color: #fff; border-color: #6366f1; }
+.re-tab-btn:hover:not(.active) { background: var(--bg-hover,#f1f5f9); }
+
+/* KPI */
+.re-kpi-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.re-kpi { flex: 1 1 130px; background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 10px; padding: 14px; text-align: center; }
+.re-kpi-val { font-size: 1.3rem; font-weight: 700; color: #6366f1; }
+.re-kpi-lbl { font-size: 12px; color: var(--text-secondary,#64748b); margin-top: 4px; }
+.re-kpi-warn .re-kpi-val { color: #d97706; }
+
+/* Grid & Cards */
+.re-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+.re-search { padding: 8px 12px; border: 1px solid var(--border,#e2e8f0); border-radius: 8px; font-size: 14px; flex: 1 1 200px; background: var(--bg-input,#f8fafc); }
+.re-prop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; }
+.re-prop-card { background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 10px; padding: 14px; position: relative; }
+.re-prop-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.re-prop-details { font-size: 12px; color: var(--text-secondary,#64748b); margin-bottom: 6px; }
+.re-prop-specs { font-size: 11px; background: var(--bg-hover,#f1f5f9); padding: 4px 8px; border-radius: 6px; display: inline-block; margin-bottom: 8px; }
+.re-prop-actions { display: flex; gap: 6px; }
+
+/* Status Badges */
+.re-status-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.re-status-avail { background: #dcfce7; color: #16a34a; }
+.re-status-rented { background: #e0f2fe; color: #0369a1; }
+.re-status-sold { background: #fee2e2; color: #dc2626; }
+.re-status-maint { background: #fef3c7; color: #b45309; }
+
+/* Forms */
+.re-form-card { background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 12px; padding: 20px; max-width: 760px; }
+.re-form-card h3 { margin: 0 0 16px; }
+.re-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; }
+.re-field { display: flex; flex-direction: column; gap: 4px; }
+.re-field-full { grid-column: 1 / -1; }
+.re-field label { font-size: 12px; font-weight: 600; color: var(--text-secondary,#64748b); }
+.re-field input, .re-field select, .re-field textarea { padding: 7px 10px; border: 1px solid var(--border,#e2e8f0); border-radius: 7px; font-size: 14px; background: var(--bg-input,#f8fafc); resize: vertical; font-family: inherit; }
+.re-form-actions { margin-top: 16px; display: flex; gap: 10px; }
+
+/* Tables */
+.re-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.re-table th, .re-table td { border: 1px solid var(--border,#e2e8f0); padding: 7px 10px; text-align: right; }
+.re-table th { background: var(--bg-hover,#f8fafc); font-weight: 600; }
+.re-empty { text-align: center; color: var(--text-secondary,#64748b); padding: 32px; font-size: 13px; }
+
+/* Utility */
+.re-btn-sm { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border,#e2e8f0); background: var(--bg-hover,#f8fafc); cursor: pointer; font-size: 12px; }

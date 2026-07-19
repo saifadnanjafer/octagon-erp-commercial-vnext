@@ -1,0 +1,7 @@
+# T5.2 duplicate-function baseline.
+# Format: functionName xCOUNT
+#
+# T0.4 intentionally deferred these two duplicates because they are frozen-zone
+# adjacent and require owner/business approval before mechanical deduping.
+addEmployee x2
+renderAttendanceCalendar x2

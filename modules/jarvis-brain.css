@@ -1,0 +1,144 @@
+/* Jarvis Brain — chips shown when Jarvis executes real ERP actions. */
+
+.jarvis-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 10px;
+}
+
+.jarvis-action-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.jarvis-action-chip i { font-size: 11px; }
+.jarvis-action-chip .jarvis-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* a safe action that actually ran */
+.jarvis-action-chip.is-done {
+  background: rgba(34, 197, 94, .16);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, .35);
+}
+/* a sensitive action routed to the approval queue */
+.jarvis-action-chip.is-queued {
+  background: rgba(251, 191, 36, .15);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, .38);
+}
+/* an action that failed */
+.jarvis-action-chip.is-failed {
+  background: rgba(239, 68, 68, .15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, .38);
+}
+/* clarifying question / local fallback notice */
+.jarvis-action-chip.is-note {
+  background: rgba(59, 130, 246, .15);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, .35);
+}
+
+/* small "thinking" shimmer reused on the bot bubble while planning */
+.ptxai-bubble.ptxai-bot.jarvis-planning {
+  position: relative;
+}
+.ptxai-bubble.ptxai-bot.jarvis-planning::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: -2px;
+  height: 2px;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(96, 165, 250, .9), transparent);
+  animation: jarvisPlanScan 1.1s linear infinite;
+}
+@keyframes jarvisPlanScan {
+  0% { transform: translateX(-40%); }
+  100% { transform: translateX(250%); }
+}
+
+/* ==========================================================================
+   Jarvis Audit layer (modules/jarvis-audit.js) — read-only badges, approval
+   badges, and evidence cards inside the assistant stream. Scoped selectors only.
+   ========================================================================== */
+.jarvis-action-chip.is-audit {
+  background: rgba(16, 185, 129, .14);
+  color: #6ee7b7;
+  border-color: rgba(16, 185, 129, .38);
+}
+.jarvis-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  margin-inline-start: 4px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  vertical-align: middle;
+}
+.jarvis-mode-badge.is-readonly {
+  background: rgba(16, 185, 129, .18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, .4);
+}
+.jarvis-mode-badge.is-approval {
+  background: rgba(245, 158, 11, .16);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, .4);
+}
+.jarvis-evidence {
+  margin: 6px 2px 2px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(30, 41, 59, .55);
+  border: 1px solid rgba(148, 163, 184, .22);
+  font-size: 11.5px;
+  line-height: 1.7;
+}
+.jarvis-evidence .jarvis-ev-title {
+  font-weight: 700;
+  font-size: 11px;
+  color: #93c5fd;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.jarvis-evidence .jarvis-ev-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px dashed rgba(148, 163, 184, .14);
+  padding: 1px 0;
+}
+.jarvis-evidence .jarvis-ev-row:last-of-type { border-bottom: none; }
+.jarvis-evidence .jarvis-ev-k { color: #94a3b8; white-space: nowrap; }
+.jarvis-evidence .jarvis-ev-v { color: #e2e8f0; font-weight: 600; text-align: end; }
+.jarvis-evidence .jarvis-ev-warn {
+  margin-top: 6px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, .12);
+  border: 1px solid rgba(245, 158, 11, .32);
+  color: #fcd34d;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

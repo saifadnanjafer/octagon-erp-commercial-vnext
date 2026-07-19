@@ -1,0 +1,45 @@
+/* OCTAGON ERP — Marketing / Campaigns (التسويق والحملات). Add-only. RTL. */
+#pageMarketing { direction: rtl; }
+.mk-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; border-bottom: 2px solid var(--border-color, #e2e8f0); padding-bottom: 4px; }
+.mk-tab-btn { background: transparent; border: none; padding: 10px 18px; font-size: 15px; font-weight: 600; color: var(--text-secondary, #64748b); cursor: pointer; border-radius: 8px 8px 0 0; transition: all .15s; }
+.mk-tab-btn:hover { background: var(--hover-bg, #f1f5f9); }
+.mk-tab-btn.active { color: #db2777; border-bottom: 3px solid #db2777; }
+
+.mk-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.mk-kpi { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.mk-kpi-val { font-size: 24px; font-weight: 800; color: var(--text-primary, #0f172a); line-height: 1.15; }
+.mk-kpi-label { font-size: 13px; color: var(--text-secondary, #64748b); margin-top: 6px; font-weight: 600; }
+.mk-kpi-sub { font-size: 11px; color: var(--text-muted, #94a3b8); margin-top: 2px; }
+.mk-kpi-accent { border-color: #db2777; } .mk-kpi-accent .mk-kpi-val { color: #db2777; }
+.mk-kpi-pos { border-color: #16a34a; } .mk-kpi-pos .mk-kpi-val { color: #16a34a; }
+.mk-kpi-neg { border-color: #dc2626; background: #fef2f2; } .mk-kpi-neg .mk-kpi-val { color: #dc2626; }
+
+.mk-panel { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
+.mk-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.mk-panel-head h3 { margin: 0; font-size: 16px; font-weight: 700; }
+.mk-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.mk-input { padding: 8px 12px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); width: 100%; box-sizing: border-box; }
+.mk-input:focus { outline: none; border-color: #db2777; }
+.mk-mini-select { padding: 4px 8px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 6px; font-size: 12px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); }
+
+.mk-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.mk-table th { text-align: right; padding: 10px 12px; background: var(--table-head-bg, #f8fafc); color: var(--text-secondary, #475569); font-weight: 700; font-size: 13px; border-bottom: 2px solid var(--border-color, #e2e8f0); white-space: nowrap; }
+.mk-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color, #eef2f7); vertical-align: middle; }
+.mk-table tbody tr:hover { background: var(--hover-bg, #f8fafc); }
+.mk-empty { text-align: center; color: var(--text-muted, #94a3b8); padding: 24px !important; font-style: italic; }
+.mk-muted { color: var(--text-muted, #94a3b8); font-size: 12px; }
+.mk-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.mk-pos { color: #16a34a; } .mk-neg { color: #dc2626; }
+
+.mk-mini-btn { background: var(--hover-bg, #f1f5f9); border: 1px solid var(--border-color, #e2e8f0); border-radius: 7px; padding: 5px 11px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-primary, #334155); transition: all .12s; }
+.mk-mini-btn:hover { background: #db2777; color: #fff; border-color: #db2777; }
+.mk-mini-btn.mk-danger:hover { background: #dc2626; border-color: #dc2626; }
+.mk-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.mk-st-planned { background: #e0e7ff; color: #4338ca; } .mk-st-active { background: #dcfce7; color: #15803d; } .mk-st-paused { background: #fef3c7; color: #b45309; } .mk-st-done { background: #e5e7eb; color: #4b5563; }
+.mk-bar { background: var(--border-color, #e2e8f0); border-radius: 999px; height: 6px; overflow: hidden; margin-top: 4px; }
+.mk-bar-fill { background: linear-gradient(90deg, #db2777, #f472b6); height: 100%; }
+
+.mk-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+.mk-form-grid label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary, #475569); margin-bottom: 5px; }
+.mk-form-full { grid-column: 1 / -1; }
+.mk-form-actions { display: flex; gap: 10px; margin-top: 16px; }

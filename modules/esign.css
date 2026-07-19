@@ -1,0 +1,96 @@
+/* OCTAGON ERP — e-Signature Center styles (RTL, dark glass) */
+#esignBody { direction: rtl; }
+
+.esn-kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.esn-kpi { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(8px); }
+.esn-kpi-icon { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex: 0 0 auto; }
+.esn-kpi-info { display: flex; flex-direction: column; line-height: 1.2; }
+.esn-kpi-value { font-size: 21px; font-weight: 800; color: #f1f5f9; }
+.esn-kpi-label { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+
+.esn-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.esn-tab { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 11px; cursor: pointer;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #cbd5e1; font-size: 14px; font-weight: 600; transition: all .15s; }
+.esn-tab:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.esn-tab.active { background: linear-gradient(135deg,#0ea5e9,#6366f1); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(14,165,233,0.32); }
+
+.esn-btn { padding: 9px 15px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); color: #e2e8f0; transition: all .15s; }
+.esn-btn:hover { background: rgba(255,255,255,0.12); }
+.esn-btn.primary { background: linear-gradient(135deg,#0ea5e9,#6366f1); border-color: transparent; color: #fff; }
+.esn-btn.accent { background: linear-gradient(135deg,#10b981,#0ea5e9); border-color: transparent; color: #fff; }
+.esn-btn.primary:hover, .esn-btn.accent:hover { filter: brightness(1.08); }
+.esn-btn.danger-ghost { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: #fca5a5; }
+.esn-btn.danger-ghost:hover { background: rgba(248,113,113,0.2); }
+.esn-mini { padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: #e2e8f0; }
+.esn-mini:hover { background: rgba(14,165,233,0.22); }
+.esn-mini.primary { background: rgba(14,165,233,0.22); border-color: rgba(14,165,233,0.4); color: #bae6fd; }
+.esn-mini.danger:hover { background: rgba(248,113,113,0.25); }
+.esn-mini-row { display: flex; gap: 5px; flex-wrap: wrap; }
+
+.esn-content { margin-top: 4px; }
+.esn-panel { background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+.esn-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.esn-panel h3 { margin: 0 0 12px; font-size: 15px; color: #f1f5f9; display: flex; align-items: center; gap: 8px; }
+.esn-panel-head h3 { margin: 0; }
+.esn-add { border: 1px dashed rgba(14,165,233,0.4); }
+.esn-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.esn-form-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #94a3b8; font-weight: 600; }
+.esn-form-grid .esn-wide { grid-column: 1 / -1; }
+.esn-form-grid input, .esn-form-grid select { padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #f1f5f9; font-size: 13px; }
+
+.esn-list-filters { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 12px; }
+.esn-list-filters label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #94a3b8; font-weight: 600; }
+.esn-list-filters select { padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #f1f5f9; }
+.esn-list-count { margin-inline-start: auto; color: #7dd3fc; font-weight: 700; align-self: center; }
+
+.esn-table { width: 100%; border-collapse: collapse; }
+.esn-table th { text-align: start; padding: 10px 12px; font-size: 12px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.08); font-weight: 700; }
+.esn-table td { padding: 11px 12px; font-size: 13px; color: #e2e8f0; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
+.esn-table tr:hover td { background: rgba(255,255,255,0.02); }
+.esn-sub { display: block; font-size: 11px; color: #64748b; margin-top: 2px; }
+.esn-empty-row { color: #64748b; text-align: center; padding: 18px 0; }
+.esn-empty { color: #94a3b8; text-align: center; padding: 24px 0; }
+
+.esn-badge { padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; display: inline-block; }
+.esn-badge.draft { background: rgba(148,163,184,0.18); color: #cbd5e1; }
+.esn-badge.sent { background: rgba(250,204,21,0.18); color: #facc15; }
+.esn-badge.viewed { background: rgba(56,189,248,0.18); color: #38bdf8; }
+.esn-badge.signed { background: rgba(52,211,153,0.18); color: #34d399; }
+.esn-badge.declined { background: rgba(248,113,113,0.18); color: #f87171; }
+.esn-badge.voided { background: rgba(100,116,139,0.2); color: #94a3b8; }
+.esn-badge.expired { background: rgba(168,85,247,0.18); color: #c084fc; }
+
+/* Sign view */
+.esn-sign-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.esn-sign-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; align-items: start; }
+@media (max-width: 900px) { .esn-sign-grid { grid-template-columns: 1fr; } }
+.esn-doc-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px; }
+.esn-doc-head { font-size: 12px; color: #7dd3fc; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+.esn-doc-title { font-size: 22px; color: #f1f5f9; margin: 8px 0 16px; }
+.esn-doc-row { font-size: 13px; color: #cbd5e1; margin-bottom: 6px; }
+.esn-doc-row b { color: #94a3b8; font-weight: 600; }
+.esn-doc-body { margin: 14px 0; padding: 12px 14px; background: rgba(255,255,255,0.03); border-radius: 10px; color: #e2e8f0; font-size: 13px; line-height: 1.7; }
+
+.esn-sign-zone { margin-top: 18px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 16px; }
+.esn-seg-row { display: inline-flex; gap: 4px; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 10px; margin-bottom: 12px; }
+.esn-seg { padding: 6px 14px; border-radius: 8px; border: none; cursor: pointer; background: transparent; color: #cbd5e1; font-size: 13px; font-weight: 600; }
+.esn-seg.active { background: linear-gradient(135deg,#0ea5e9,#6366f1); color: #fff; }
+.esn-pad-wrap { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.esn-pad { width: 100%; max-width: 520px; height: 170px; background: #0b1220; border: 2px dashed rgba(125,211,252,0.4); border-radius: 12px; touch-action: none; cursor: crosshair; }
+.esn-consent { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #cbd5e1; margin: 14px 0; cursor: pointer; }
+.esn-consent input { margin-top: 3px; }
+.esn-sign-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.esn-signed-box { margin-top: 18px; border-top: 1px dashed rgba(52,211,153,0.3); padding-top: 16px; }
+.esn-signed-head { color: #34d399; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.esn-sign-img { max-width: 320px; background: #0b1220; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); padding: 6px; }
+.esn-sign-typed { font-family: 'Brush Script MT', cursive; font-size: 30px; color: #f1f5f9; padding: 8px 16px; border-bottom: 2px solid rgba(255,255,255,0.2); display: inline-block; }
+.esn-signed-meta { margin-top: 10px; font-size: 12px; color: #94a3b8; }
+
+.esn-audit-list { list-style: none; margin: 0; padding: 0; }
+.esn-audit-list li { padding: 9px 10px; border-radius: 9px; background: rgba(255,255,255,0.03); margin-bottom: 7px; display: flex; flex-direction: column; gap: 2px; }
+.esn-audit-ev { font-size: 13px; color: #e2e8f0; font-weight: 600; }
+.esn-audit-meta { font-size: 11px; color: #64748b; }

@@ -1,0 +1,29 @@
+/* Phase 7M e-commerce & external connectors workspace (Integration Hub). */
+.ec-shell { margin: 16px 0; display: grid; gap: 14px; }
+.ec-hero { background: var(--card-bg, rgba(15, 23, 42, .04)); border: 1px solid var(--border-color, rgba(148, 163, 184, .24)); border-radius: 10px; padding: 16px; }
+.ec-kicker { font-size: 11px; font-weight: 800; letter-spacing: .04em; color: var(--text-muted, #64748b); text-transform: uppercase; }
+.ec-hero h3 { margin: 4px 0 6px; font-size: 17px; }
+.ec-hero p { margin: 0; color: var(--text-muted, #64748b); font-size: 12.5px; line-height: 1.7; direction: rtl; text-align: right; }
+.ec-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 12px; }
+.ec-stat { border: 1px solid var(--border-color, rgba(148, 163, 184, .22)); border-radius: 8px; padding: 10px 12px; background: var(--surface-bg, rgba(255, 255, 255, .04)); }
+.ec-stat strong { display: block; font-size: 18px; }
+.ec-stat span { display: block; color: var(--text-muted, #64748b); font-size: 12px; margin-top: 3px; }
+.ec-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.ec-panel { border: 1px solid var(--border-color, rgba(148, 163, 184, .24)); border-radius: 10px; padding: 14px; background: var(--card-bg, rgba(15, 23, 42, .03)); direction: rtl; text-align: right; }
+.ec-panel h3 { margin: 0 0 10px; font-size: 14.5px; }
+.ec-cards { display: grid; gap: 10px; }
+.ec-card { border: 1px solid var(--border-color, rgba(148, 163, 184, .2)); border-radius: 8px; padding: 10px 12px; }
+.ec-card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ec-card-meta { color: var(--text-muted, #64748b); font-size: 12px; margin-top: 4px; }
+.ec-card-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.ec-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.ec-table th, .ec-table td { padding: 7px 8px; border-bottom: 1px solid var(--border-color, rgba(148, 163, 184, .18)); text-align: right; }
+.ec-list { margin: 6px 18px 0 0; padding: 0; color: var(--text-muted, #475569); font-size: 12.5px; line-height: 1.8; }
+.ec-note { color: var(--text-muted, #64748b); font-size: 11.5px; margin: 8px 0 0; }
+.ec-empty { text-align: center; color: var(--text-muted, #64748b); }
+.ec-pill { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.ec-ok { background: rgba(34, 197, 94, .14); color: #16a34a; }
+.ec-info { background: rgba(56, 189, 248, .16); color: #0284c7; }
+.ec-warn { background: rgba(245, 158, 11, .15); color: #d97706; }
+.ec-bad { background: rgba(239, 68, 68, .14); color: #dc2626; }
+.ec-muted { background: rgba(148, 163, 184, .18); color: #64748b; }

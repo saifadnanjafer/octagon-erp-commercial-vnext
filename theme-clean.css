@@ -1,0 +1,198 @@
+/* OCTAGON ERP — Clean / Minimal skin (typeui.sh)
+ * Additive, opt-in. Active only under body.theme-clean (no leak).
+ * Flat white surfaces, crisp 1px borders, generous whitespace, minimal
+ * shadows, single blue accent. Tuned for dense data tables. RTL preserved.
+ */
+
+body.theme-clean {
+  --cln-border: #e5e7eb;
+  --cln-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --cln-shadow-md: 0 1px 3px rgba(0, 0, 0, 0.10), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --cln-shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+
+  --bg-primary: #f9fafb;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-solid: #ffffff;
+  --bg-glass: #ffffff;
+  --bg-glass-hover: #f3f4f6;
+  --border-glass: #e5e7eb;
+  --border-focus: rgba(59, 130, 246, 0.5);
+
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --text-heading: #0f172a;
+
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  --accent-green: #16a34a;
+  --accent-red: #dc2626;
+  --accent-yellow: #d97706;
+  --accent-cyan: #0891b2;
+
+  --gradient-primary: linear-gradient(135deg, #3b82f6, #2563eb);
+  --gradient-dark: #ffffff;
+  --gradient-card: #ffffff;
+  --gradient-success: linear-gradient(135deg, #16a34a, #0891b2);
+  --gradient-danger: linear-gradient(135deg, #dc2626, #d97706);
+
+  --shadow-sm: var(--cln-shadow-sm);
+  --shadow-md: var(--cln-shadow-md);
+  --shadow-lg: var(--cln-shadow-lg);
+  --shadow-glow-blue: var(--cln-shadow-md);
+  --shadow-glow-purple: var(--cln-shadow-md);
+
+  --primary: #3b82f6;
+  --text: #111827;
+  --bg: #f9fafb;
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* ── surfaces: cards & panels ── */
+body.theme-clean .glass-card,
+body.theme-clean .card,
+body.theme-clean .stat-card,
+body.theme-clean .panel,
+body.theme-clean .table-container {
+  background: #ffffff;
+  border: 1px solid var(--cln-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--cln-shadow-sm);
+}
+body.theme-clean .glass-card:hover,
+body.theme-clean .card:hover {
+  box-shadow: var(--cln-shadow-md);
+  transform: none;
+}
+
+/* ── buttons ── */
+body.theme-clean .btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+  border: 1px solid #2563eb;
+  box-shadow: none;
+}
+body.theme-clean .btn-primary:hover { background: #2563eb; }
+body.theme-clean .btn-small,
+body.theme-clean .btn-theme-switcher {
+  background: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid var(--cln-border);
+  box-shadow: none;
+}
+body.theme-clean .btn-small:hover,
+body.theme-clean .btn-theme-switcher:hover { background: var(--bg-glass-hover); }
+
+/* ── inputs ── */
+body.theme-clean .form-input,
+body.theme-clean .config-input,
+body.theme-clean input,
+body.theme-clean select,
+body.theme-clean textarea {
+  background: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid var(--cln-border);
+  box-shadow: none;
+}
+body.theme-clean .form-input:focus,
+body.theme-clean .config-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--border-focus);
+}
+
+/* ── sidebar chrome ── */
+body.theme-clean .sidebar {
+  background: #ffffff;
+  border-inline-start: 1px solid var(--cln-border);
+  box-shadow: none;
+}
+body.theme-clean .nav-label,
+body.theme-clean .nav-group-toggle,
+body.theme-clean .sidebar-header,
+body.theme-clean .page-title { color: var(--text-heading); }
+body.theme-clean .page-subtitle { color: var(--text-secondary); }
+
+body.theme-clean .nav-btn {
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+body.theme-clean .nav-btn:hover { background: var(--bg-glass-hover); }
+body.theme-clean .nav-btn.active {
+  background: #eff6ff;
+  color: var(--primary);
+}
+
+/* ── tables ── */
+body.theme-clean .data-table { background: #ffffff; }
+body.theme-clean .data-table thead,
+body.theme-clean .data-table th {
+  background: #f9fafb;
+  color: var(--text-heading);
+  border-bottom: 1px solid var(--cln-border);
+}
+body.theme-clean .data-table td {
+  color: var(--text-primary);
+  border-bottom: 1px solid #f1f3f5;
+}
+body.theme-clean .data-table tbody tr:nth-child(even) { background: #fbfcfd; }
+body.theme-clean .data-table tbody tr:hover { background: #eff6ff; }
+
+/* ── catch hardcoded-dark elements (flat white treatment) ── */
+body.theme-clean .page-header {
+  background: #ffffff;
+  background-image: none;
+  border: 1px solid var(--cln-border);
+  box-shadow: var(--cln-shadow-sm);
+  color: var(--text-primary);
+}
+body.theme-clean .page-header .page-title,
+body.theme-clean .page-header .page-subtitle,
+body.theme-clean .page-header h1,
+body.theme-clean .page-header h2 { color: var(--text-heading); }
+
+body.theme-clean .nav-group-toggle {
+  background: transparent;
+  background-image: none;
+  color: var(--text-secondary);
+  box-shadow: none;
+  border: none;
+}
+
+body.theme-clean #authUserSwitcher,
+body.theme-clean .config-select,
+body.theme-clean .config-input.config-select,
+body.theme-clean .emp-dropdown,
+body.theme-clean select.config-select,
+body.theme-clean input.form-input,
+body.theme-clean .form-input.day-input,
+body.theme-clean .day-input {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--cln-border) !important;
+  box-shadow: none;
+}
+
+body.theme-clean .result-card,
+body.theme-clean .result-card.earn-card,
+body.theme-clean .result-card.deduct-card {
+  background: #ffffff;
+  background-image: none;
+  border: 1px solid var(--cln-border);
+  box-shadow: var(--cln-shadow-sm);
+  color: var(--text-primary);
+}
+
+body.theme-clean .omni-language-toggle,
+body.theme-clean .omni-notification-bell {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--cln-border) !important;
+  box-shadow: none;
+}

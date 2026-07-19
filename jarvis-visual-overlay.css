@@ -1,0 +1,252 @@
+/* OCTAGON OMNISYSTEM - jarvis-visual-overlay.css */
+
+/* Highlight active ERP elements during JARVIS operation */
+.jarvis-action-highlight {
+  position: relative;
+  outline: none !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.4), 
+              0 0 20px rgba(56, 189, 248, 0.6) !important;
+  animation: jarvis-pulse 1.6s infinite ease-in-out !important;
+  transition: all 0.3s ease-in-out !important;
+  z-index: 99990 !important;
+}
+
+@keyframes jarvis-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.4), 0 0 20px rgba(56, 189, 248, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.6), 0 0 35px rgba(56, 189, 248, 0.8);
+  }
+}
+
+/* Floating step bubble near the active element */
+.jarvis-execution-bubble {
+  position: fixed;
+  z-index: 99999;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.98));
+  color: #fff;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.5), 
+              0 0 20px rgba(56, 189, 248, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  animation: bubble-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  direction: rtl;
+}
+
+.jarvis-execution-bubble i {
+  color: #38bdf8;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes bubble-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Action plan preview card in the assistant panel */
+.jarvis-plan-preview {
+  margin: 10px;
+  padding: 14px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 12px;
+  direction: rtl;
+  font-size: 12px;
+  animation: preview-slide 0.3s ease-out;
+}
+
+.jarvis-plan-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  color: #38bdf8;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.jarvis-plan-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.jarvis-plan-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e1;
+  padding: 4px 0;
+}
+
+.jarvis-plan-step i {
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+.jarvis-plan-step.is-risky i {
+  color: #f59e0b;
+}
+
+@keyframes preview-slide {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* JARVIS V2 Control Panel Card */
+.ptxai-jarvis-status-card {
+  margin: 10px 14px 4px 14px;
+  padding: 12px 14px;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  direction: rtl;
+  font-family: 'Tajawal', sans-serif;
+  backdrop-filter: blur(10px);
+}
+
+.jarvis-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 8px;
+}
+
+.jarvis-status-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #f8fafc;
+}
+
+.jarvis-pulse-icon {
+  color: #38bdf8;
+  animation: jarvis-icon-pulse 2s infinite alternate;
+}
+
+@keyframes jarvis-icon-pulse {
+  from { opacity: 0.6; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1.05); }
+}
+
+.jarvis-coverage-badge {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.jarvis-status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.jarvis-status-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.jarvis-status-item.full-width {
+  grid-column: span 2;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.jarvis-status-item .label {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.jarvis-status-item .value {
+  font-size: 12px;
+  font-weight: bold;
+  color: #e2e8f0;
+}
+
+.budget-value {
+  color: #10b981 !important; /* Green for budget */
+  font-family: monospace;
+}
+
+.jarvis-mini-select {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  font-size: 11px !important;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+}
+
+.jarvis-mini-select:focus {
+  border-color: #38bdf8 !important;
+}
+
+.jarvis-status-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: space-between;
+}
+
+.jarvis-btn-mini {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 4px;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.jarvis-btn-mini:hover {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+}
+
+.jarvis-btn-mini:active {
+  transform: scale(0.97);
+}

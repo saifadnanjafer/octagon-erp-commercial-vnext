@@ -1,0 +1,136 @@
+/* OCTAGON ERP — Dashboard skin (typeui.sh)
+ * Additive, opt-in. Active only under body.theme-dashboard (no leak).
+ * Near-black cloud-platform aesthetic (Vercel/GitHub), blue accent, rounded
+ * panels, soft shadows. Dark skin — light text.
+ */
+
+body.theme-dashboard {
+  --bg-primary: #09090b;
+  --bg-secondary: #111113;
+  --bg-card: #131316;
+  --bg-card-solid: #131316;
+  --bg-glass: #18181b;
+  --bg-glass-hover: #1f1f23;
+  --border-glass: rgba(255, 255, 255, 0.09);
+  --border-focus: rgba(47, 129, 247, 0.6);
+
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-heading: #ffffff;
+
+  --accent-blue: #2f81f7;
+  --accent-purple: #a78bfa;
+  --accent-green: #10b981;
+  --accent-red: #ef4444;
+  --accent-yellow: #f59e0b;
+  --accent-cyan: #22d3ee;
+
+  --gradient-primary: linear-gradient(135deg, #1f6feb, #0c5cab);
+  --gradient-dark: #09090b;
+  --gradient-card: #131316;
+  --gradient-success: linear-gradient(135deg, #10b981, #22d3ee);
+  --gradient-danger: linear-gradient(135deg, #ef4444, #f59e0b);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.40);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-glow-blue: 0 0 0 1px rgba(47, 129, 247, 0.25);
+  --shadow-glow-purple: 0 0 0 1px rgba(167, 139, 250, 0.25);
+
+  --primary: #2f81f7;
+  --text: #fafafa;
+  --bg: #09090b;
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+body.theme-dashboard .glass-card,
+body.theme-dashboard .card,
+body.theme-dashboard .stat-card,
+body.theme-dashboard .panel,
+body.theme-dashboard .table-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+body.theme-dashboard .glass-card:hover,
+body.theme-dashboard .card:hover { border-color: rgba(255,255,255,0.16); transform: none; }
+
+body.theme-dashboard .btn-primary {
+  background: var(--gradient-primary); color: #ffffff; border: 1px solid #1f6feb; box-shadow: none;
+}
+body.theme-dashboard .btn-small,
+body.theme-dashboard .btn-theme-switcher {
+  background: var(--bg-glass); color: var(--text-primary); border: 1px solid var(--border-glass);
+}
+body.theme-dashboard .btn-small:hover,
+body.theme-dashboard .btn-theme-switcher:hover { background: var(--bg-glass-hover); }
+
+body.theme-dashboard .form-input,
+body.theme-dashboard .config-input,
+body.theme-dashboard input,
+body.theme-dashboard select,
+body.theme-dashboard textarea {
+  background: var(--bg-glass); color: var(--text-primary);
+  border: 1px solid var(--border-glass); box-shadow: none;
+}
+body.theme-dashboard .form-input:focus,
+body.theme-dashboard .config-input:focus {
+  border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--border-focus);
+}
+
+body.theme-dashboard .sidebar {
+  background: #0c0c0f; border-inline-start: 1px solid var(--border-glass); box-shadow: none;
+}
+body.theme-dashboard .nav-label,
+body.theme-dashboard .nav-group-toggle,
+body.theme-dashboard .sidebar-header,
+body.theme-dashboard .page-title { color: var(--text-heading); }
+body.theme-dashboard .page-subtitle { color: var(--text-secondary); }
+body.theme-dashboard .nav-btn {
+  background: transparent; border: none; border-radius: var(--radius-md); color: var(--text-secondary);
+}
+body.theme-dashboard .nav-btn:hover { background: var(--bg-glass-hover); color: var(--text-primary); }
+body.theme-dashboard .nav-btn.active { background: rgba(47, 129, 247, 0.16); color: #ffffff; }
+
+body.theme-dashboard .data-table { background: transparent; }
+body.theme-dashboard .data-table thead,
+body.theme-dashboard .data-table th {
+  background: var(--bg-secondary); color: var(--text-heading); border-bottom: 1px solid var(--border-glass);
+}
+body.theme-dashboard .data-table td { color: var(--text-primary); border-bottom: 1px solid rgba(255,255,255,0.06); }
+body.theme-dashboard .data-table tbody tr:hover { background: rgba(255, 255, 255, 0.04); }
+
+/* normalize hardcoded-dark elements to the panel color */
+body.theme-dashboard .page-header {
+  background: var(--bg-card); background-image: none;
+  border: 1px solid var(--border-glass); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md); color: var(--text-primary);
+}
+body.theme-dashboard .nav-group-toggle { background: transparent; background-image: none; color: var(--text-secondary); box-shadow: none; border: none; }
+body.theme-dashboard #authUserSwitcher,
+body.theme-dashboard .config-select,
+body.theme-dashboard .config-input.config-select,
+body.theme-dashboard .emp-dropdown,
+body.theme-dashboard select.config-select,
+body.theme-dashboard input.form-input,
+body.theme-dashboard .form-input.day-input,
+body.theme-dashboard .day-input {
+  background: var(--bg-glass) !important; background-image: none !important;
+  color: var(--text-primary) !important; border: 1px solid var(--border-glass) !important;
+}
+body.theme-dashboard .result-card,
+body.theme-dashboard .result-card.earn-card,
+body.theme-dashboard .result-card.deduct-card {
+  background: var(--bg-card); background-image: none;
+  border: 1px solid var(--border-glass); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md); color: var(--text-primary);
+}
+body.theme-dashboard .omni-language-toggle,
+body.theme-dashboard .omni-notification-bell {
+  background: var(--bg-glass) !important; background-image: none !important;
+  color: var(--text-primary) !important; border: 1px solid var(--border-glass) !important;
+}

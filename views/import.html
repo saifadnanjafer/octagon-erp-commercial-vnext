@@ -1,0 +1,132 @@
+<section class="page" id="pageImport">
+        <div class="page-header">
+          <div class="page-header-text">
+            <h1 class="page-title">
+              <span class="title-icon">📥</span>
+              مركز استيراد البيانات
+            </h1>
+            <p class="page-subtitle">نظام المعالجة الذكي لملفات البصمة والحضور</p>
+          </div>
+        </div>
+
+        <div class="import-layout">
+          <div class="import-sidebar">
+            <div class="glass-card import-steps-card">
+              <h3 class="step-title">خطوات العمل المنطقية</h3>
+              <div class="import-step active" id="step1">
+                <span class="step-num">1</span>
+                <div class="step-text">
+                  <strong>رفع الملف</strong>
+                  <p>اختر ملف Excel من جهازك</p>
+                </div>
+              </div>
+              <div class="import-step" id="step2">
+                <span class="step-num">2</span>
+                <div class="step-text">
+                  <strong>المراجعة الأولية</strong>
+                  <p>تأكد من قراءة الأسماء والتواريخ</p>
+                </div>
+              </div>
+              <div class="import-step" id="step3">
+                <span class="step-num">3</span>
+                <div class="step-text">
+                  <strong>التثبيت النهائي</strong>
+                  <p>تصدير البيانات للتايم شيت</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-card info-card" style="margin-top: 20px;">
+              <h4>💡 نصيحة احترافية</h4>
+              <p style="font-size: 11px; line-height: 1.6; color: var(--text-muted); padding-top: 10px;">
+                النظام يتعرف تلقائياً على الأعمدة (تاريخ، دخول، خروج، سلفة، غرامة). تأكد من أن أسماء الأوراق (Sheets)
+                تمثل أسماء الموظفين بدقة.
+              </p>
+            </div>
+          </div>
+
+          <div class="import-main">
+            <div class="glass-card upload-container-pro">
+              <div class="upload-dropzone" id="dropzone" onclick="document.getElementById('timesheetFile').click()">
+                <div class="dropzone-icon">📁</div>
+                <h3>اسحب وأفلت الملف هنا أو انقر للاختيار</h3>
+                <p>يدعم ملفات Excel و CSV فقط</p>
+                <input type="file" id="timesheetFile" accept=".xlsx,.xls,.csv" style="display: none;"
+                  onchange="uploadTimesheet()">
+              </div>
+              <div class="smart-mapping-actions">
+                <label for="importAiInstructions" style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:6px;">
+                  <i class="fa-solid fa-robot" style="color:#a855f7;"></i> تعليمات للذكاء الاصطناعي (اختياري) — قل له شنو يحدّث وشنو يتجاهل:
+                </label>
+                <textarea id="importAiInstructions" rows="2"
+                  placeholder="مثال: حدّث أيام الحضور والخروج فقط، لا تغيّر السلف أو الغرامات، وتجاهل ورقة الملخص..."
+                  style="width:100%; margin-bottom:10px; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid var(--border-glass); border-radius:8px; color:var(--text); font-family:inherit; font-size:13px; resize:vertical; box-sizing:border-box;"></textarea>
+                <button class="btn-primary" onclick="smartMapImportFields()" type="button">
+                  سحب الحقول بالذكاء الاصطناعي
+                </button>
+              </div>
+
+              <div id="fileInfoArea" style="display: none; padding: 15px; border-top: 1px solid var(--border-glass);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div id="selectedFileName" style="font-weight: 600; color: var(--accent-blue);"></div>
+                  <button class="btn-primary" onclick="uploadTimesheet()" id="btnStartImport">
+                    ابدأ المعالجة 🚀
+                  </button>
+                  <button class="btn-primary" onclick="smartMapImportFields()" id="btnSmartFieldMap">
+                    سحب الحقول بالذكاء الاصطناعي
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-container glass-card" id="importedDataContainer" style="display:none; margin-top: 24px;">
+              <div id="smartMappingPreview" class="smart-mapping-preview" style="display:none;"></div>
+              <div class="table-header-pro">
+                <h2 class="section-title" style="margin-bottom: 0;">
+                  <span class="section-icon">📊</span>
+                  نتائج الاستخراج الأولية
+                </h2>
+                <div class="filters-pro">
+                  <select id="monthFilter" onchange="filterTableByMonth()" class="config-select">
+                    <option value="">كل الأشهر</option>
+                    <option value="01">يناير</option>
+                    <option value="02">فبرابر</option>
+                    <option value="03">مارس</option>
+                    <option value="04">أبريل</option>
+                    <option value="05">مايو</option>
+                    <option value="06">يونيو</option>
+                    <option value="07">يوليو</option>
+                    <option value="08">أغسطس</option>
+                    <option value="09">سبتمبر</option>
+                    <option value="10">أكتوبر</option>
+                    <option value="11">نوفمبر</option>
+                    <option value="12">ديسمبر</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="responsive-table-wrapper">
+                <table class="data-table" id="importedDataTable">
+                  <thead>
+                    <tr>
+                      <th>الموظف (الورقة)</th>
+                      <th>التاريخ</th>
+                      <th>الدخول</th>
+                      <th>الخروج</th>
+                      <th>إضافيات</th>
+                      <th>خصومات</th>
+                      <th>الحالة الذكية</th>
+                    </tr>
+                  </thead>
+                  <tbody id="importedDataBody"></tbody>
+                </table>
+              </div>
+              <div style="display:flex; justify-content: flex-end; gap:10px; padding: 15px; border-top: 1px solid var(--border-glass); margin-top: 15px;">
+                <button class="btn-success" onclick="saveImportedData()" id="btnSaveImport" style="background: #10b981; border: none; font-weight: bold; width: auto; padding: 10px 20px;">
+                  <i class="fa-solid fa-check"></i> الحفظ والتحويل للتايم شيت الذكي
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>

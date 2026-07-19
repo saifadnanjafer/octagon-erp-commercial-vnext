@@ -1,0 +1,202 @@
+/* clean-room; behavior modeled on chatter.css visual language (proprietary self, not copied) */
+/* ==========================================================================
+   Octagon Commercial VNext — record history panel (T1.4.2)
+   Prefix: .oxhp- only. Colors/radii/shadows come exclusively from the app's
+   CSS variables (style.css :root + skin overrides), mirroring chatter.css so
+   the two widgets read as one family. Fallbacks are theme-neutral.
+   ========================================================================== */
+
+.oxhp {
+  direction: rtl;
+  font-family: var(--font-ar, 'Tajawal', Arial, sans-serif);
+  color: var(--text-primary, inherit);
+  background: var(--bg-glass, rgba(127, 127, 127, 0.06));
+  border: 1px solid var(--border-glass, rgba(127, 127, 127, 0.15));
+  border-radius: var(--radius-md, 12px);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.oxhp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.oxhp-title {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-heading, inherit);
+}
+
+.oxhp-refresh {
+  background: transparent;
+  border: 1px solid var(--border-glass, rgba(127, 127, 127, 0.2));
+  color: var(--text-secondary, inherit);
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+  transition: var(--transition, all 0.2s ease);
+}
+
+.oxhp-refresh:hover {
+  background: var(--bg-glass-hover, rgba(127, 127, 127, 0.1));
+  color: var(--text-primary, inherit);
+}
+
+.oxhp-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+.oxhp-empty,
+.oxhp-error {
+  text-align: center;
+  color: var(--text-muted, inherit);
+  font-size: 0.85rem;
+  padding: 18px 8px;
+}
+
+.oxhp-error {
+  color: var(--accent-red, #f87171);
+}
+
+/* ---- day grouping ---- */
+.oxhp-day-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted, inherit);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+  padding-inline-start: 4px;
+}
+
+.oxhp-day-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ---- timeline entry ---- */
+.oxhp-item {
+  background: var(--bg-card, rgba(127, 127, 127, 0.05));
+  border: 1px solid var(--border-glass, rgba(127, 127, 127, 0.12));
+  border-inline-start: 3px solid var(--accent-blue, #38bdf8);
+  border-radius: var(--radius-sm, 8px);
+  padding: 10px 12px;
+}
+
+.oxhp-item-create { border-inline-start-color: var(--accent-green, #34d399); }
+.oxhp-item-delete { border-inline-start-color: var(--accent-red, #f87171); }
+.oxhp-item-snapshot_materialize { border-inline-start-color: var(--accent-purple, #818cf8); }
+.oxhp-item-snapshot_write_blocked { border-inline-start-color: var(--accent-yellow, #fbbf24); }
+
+.oxhp-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.oxhp-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary, var(--accent-blue, #38bdf8));
+  color: var(--bg-primary, #fff);
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.oxhp-user {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--text-heading, inherit);
+}
+
+.oxhp-action {
+  font-size: 0.78rem;
+  color: var(--text-secondary, inherit);
+}
+
+.oxhp-time {
+  margin-inline-start: auto;
+  font-size: 0.72rem;
+  color: var(--text-muted, inherit);
+}
+
+/* ---- field diff list ---- */
+.oxhp-diff-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.oxhp-diff-row {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.9fr) 1fr auto 1fr;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  padding: 3px 0;
+  border-top: 1px dashed var(--border-glass, rgba(127, 127, 127, 0.12));
+}
+
+.oxhp-diff-row:first-child {
+  border-top: none;
+}
+
+.oxhp-diff-field {
+  font-weight: 700;
+  color: var(--text-primary, inherit);
+}
+
+.oxhp-diff-from {
+  color: var(--text-muted, inherit);
+  text-decoration: line-through;
+  word-break: break-word;
+}
+
+.oxhp-diff-arrow {
+  color: var(--text-muted, inherit);
+}
+
+.oxhp-diff-to {
+  color: var(--accent-green, #34d399);
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.oxhp-no-diff {
+  font-size: 0.78rem;
+  color: var(--text-muted, inherit);
+  padding-inline-start: 32px;
+}
+
+/* ---- narrow containers (drawer / mobile) ---- */
+@media (max-width: 520px) {
+  .oxhp-diff-row {
+    grid-template-columns: 1fr;
+    row-gap: 2px;
+  }
+  .oxhp-diff-arrow { display: none; }
+}

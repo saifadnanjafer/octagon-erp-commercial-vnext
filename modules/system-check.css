@@ -1,0 +1,262 @@
+.sc-shell {
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 20px;
+  color: var(--text-primary, #172033);
+}
+
+.sc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.sc-header h2 {
+  margin: 0 0 6px;
+  font-size: 1.45rem;
+  letter-spacing: 0;
+}
+
+.sc-header p {
+  margin: 0;
+  color: var(--text-secondary, #64748b);
+  line-height: 1.7;
+}
+
+.sc-eyebrow {
+  color: #0f766e !important;
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-bottom: 4px !important;
+}
+
+.sc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.sc-primary,
+.sc-icon,
+.sc-row-btn {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  color: #172033;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sc-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  background: #0f766e;
+  color: #ffffff;
+  border-color: #0f766e;
+  font-weight: 800;
+}
+
+.sc-primary:disabled,
+.sc-icon:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.sc-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.sc-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.sc-summary-card {
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.sc-summary-card span {
+  display: block;
+  color: #64748b;
+  font-size: 0.78rem;
+  margin-bottom: 4px;
+}
+
+.sc-summary-card strong {
+  font-size: 1.2rem;
+}
+
+.sc-summary-card.ok strong {
+  color: #15803d;
+}
+
+.sc-summary-card.bad strong {
+  color: #b91c1c;
+}
+
+.sc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.sc-panel {
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.sc-table th,
+.sc-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  text-align: right;
+  vertical-align: top;
+}
+
+.sc-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.78rem;
+}
+
+.sc-table tr.ok td {
+  background: rgba(22, 163, 74, 0.035);
+}
+
+.sc-table tr.bad td {
+  background: rgba(220, 38, 38, 0.035);
+}
+
+.sc-table tr.warn td {
+  background: rgba(217, 119, 6, 0.05);
+}
+
+.sc-row-btn {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #0f172a;
+  font-weight: 800;
+  text-align: right;
+}
+
+.sc-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  min-height: 26px;
+  border-radius: 999px;
+  padding: 0 9px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border: 1px solid transparent;
+}
+
+.sc-pill.pending {
+  color: #475569;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.sc-pill.ok {
+  color: #166534;
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.sc-pill.bad {
+  color: #991b1b;
+  background: #fee2e2;
+  border-color: #fecaca;
+}
+
+.sc-pill.warn {
+  color: #92400e;
+  background: #fef3c7;
+  border-color: #fde68a;
+}
+
+.sc-detail {
+  position: sticky;
+  top: 12px;
+}
+
+.sc-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.sc-detail-head h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+.sc-detail-head p,
+.sc-detail-empty {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.sc-detail-empty {
+  padding: 16px;
+}
+
+.sc-json {
+  margin: 0;
+  max-height: 520px;
+  overflow: auto;
+  direction: ltr;
+  text-align: left;
+  white-space: pre-wrap;
+  background: #0f172a;
+  color: #dbeafe;
+  padding: 14px;
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 980px) {
+  .sc-header {
+    flex-direction: column;
+  }
+
+  .sc-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sc-detail {
+    position: static;
+  }
+}

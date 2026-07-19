@@ -1,0 +1,51 @@
+<section class="page" id="pageFinance">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">💹</span> الداشبورد المالي</h1>
+        <p class="page-subtitle">كل حركة مالية تدخل هنا حتى تبقى القاصة، الرواتب، العملاء، والواردات مربوطة بنفس الدفتر</p>
+      </div>
+      <div class="page-header-actions"><button class="btn-primary finance-demo-action" onclick="addFinanceDemoData('finance')">إضافة أمثلة تجريبية</button></div>
+    </div>
+    <div class="finance-tab-bar">
+      <button class="finance-tab active" data-tab="dashboard" onclick="switchFinanceTab('dashboard')">لوحة التحكم</button>
+      <button class="finance-tab" data-tab="journal" onclick="switchFinanceTab('journal')">القيود اليومية</button>
+      <button class="finance-tab" data-tab="trial_balance" onclick="switchFinanceTab('trial_balance')">ميزان المراجعة</button>
+      <button class="finance-tab" data-tab="pl" onclick="switchFinanceTab('pl')">الأرباح والخسائر</button>
+      <button class="finance-tab" data-tab="ledger" onclick="switchFinanceTab('ledger')">دفتر الأستاذ</button>
+    </div>
+    <div id="financeTabContent">
+    <div id="financeTab-dashboard">
+    <div class="finance-kpi-grid">
+      <div class="finance-kpi glass-card"><span>رصيد قاصة الورشة</span><strong id="financeCashBalance">0 د.ع</strong></div>
+      <div class="finance-kpi glass-card"><span>إجمالي الواردات</span><strong id="financeIncomeTotal">0 د.ع</strong></div>
+      <div class="finance-kpi glass-card"><span>إجمالي الصادرات</span><strong id="financeExpenseTotal">0 د.ع</strong></div>
+      <div class="finance-kpi glass-card"><span>صافي حركة اليوم</span><strong id="financeTodayNet">0 د.ع</strong></div>
+      <div class="finance-kpi glass-card"><span>الرواتب المدفوعة</span><strong id="financePayrollPaid">0 د.ع</strong></div>
+      <div class="finance-kpi glass-card"><span>ذمم العملاء</span><strong id="financeCustomerBalances">0 د.ع</strong></div>
+      <div class="finance-kpi glass-card"><span>مصروفات الورشة</span><strong id="financeWorkshopExpenses">0 د.ع</strong></div>
+      <div class="finance-kpi glass-card"><span>الصافي العام</span><strong id="financeNetBalance">0 د.ع</strong></div>
+    </div>
+    <div class="finance-two-col">
+      <div class="table-container glass-card">
+        <h3 class="section-title">آخر الحركات</h3>
+        <table class="data-table finance-table">
+          <thead><tr><th>التاريخ</th><th>النوع</th><th>الوصف</th><th>القسم</th><th>الطرف</th><th>المبلغ</th></tr></thead>
+          <tbody id="financeRecentBody"></tbody>
+        </table>
+      </div>
+      <div class="glass-card finance-panel">
+        <h3 class="section-title">الشجرة الحسابية المختصرة</h3>
+        <div id="chartAccountsList" class="account-list"></div>
+        <h3 class="section-title" style="margin-top:18px;">أرصدة الأشخاص</h3>
+        <div id="peopleBalancesList" class="account-list"></div>
+        <h3 class="section-title" style="margin-top:18px;">ملخص حسب القسم</h3>
+        <div id="departmentSummaryList" class="account-list"></div>
+      </div>
+    </div>
+    </div><!-- /financeTab-dashboard -->
+    <div id="financeTab-journal" style="display:none"></div>
+    <div id="financeTab-trial_balance" style="display:none"></div>
+    <div id="financeTab-pl" style="display:none"></div>
+    <div id="financeTab-ledger" style="display:none"></div>
+    </div><!-- /financeTabContent -->
+  </section>

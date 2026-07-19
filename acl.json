@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-12T15:47:46Z",
+  "groups": {
+    "finance": {
+      "labelAr": "المالية",
+      "collections": [
+        "finance",
+        "finance.accounts",
+        "finance.customers",
+        "finance.transactions",
+        "account_moves",
+        "journal_entries",
+        "employee_advances",
+        "payroll_payments",
+        "payments"
+      ]
+    },
+    "hr_payroll": {
+      "labelAr": "الموارد والرواتب",
+      "collections": [
+        "employees",
+        "payroll_periods",
+        "employee_payroll_closings",
+        "payroll_adjustments",
+        "omni.peopleOps",
+        "omni.peopleOps.leaveRequests",
+        "omni.peopleOps.candidates"
+      ]
+    },
+    "operations": {
+      "labelAr": "التشغيل",
+      "collections": [
+        "omni.jobOrders",
+        "omni.machines",
+        "omni.materials",
+        "omni.opPacks",
+        "maintenance_requests",
+        "production_orders",
+        "work_orders",
+        "stock_moves",
+        "transfers",
+        "omni.documents",
+        "omni.assetRegister",
+        "omni.fleet"
+      ]
+    },
+    "crm": {
+      "labelAr": "العملاء والمبيعات",
+      "collections": [
+        "contacts",
+        "omni.suppliers",
+        "omni.subscriptionHub",
+        "omni.helpdesk",
+        "omni.loyalty",
+        "omni.appointments",
+        "omni.surveys",
+        "omni.visitors",
+        "omni.events"
+      ]
+    },
+    "admin": {
+      "labelAr": "الإدارة",
+      "collections": [
+        "users",
+        "roles",
+        "departments",
+        "locations",
+        "audit_log",
+        "omni.adminSettings",
+        "omni.schemaViolations",
+        "scheduled_alerts"
+      ]
+    }
+  },
+  "roles": {
+    "manager": {
+      "finance": "write",
+      "hr_payroll": "write",
+      "operations": "write",
+      "crm": "write",
+      "admin": "write"
+    },
+    "system.admin": {
+      "finance": "write",
+      "hr_payroll": "write",
+      "operations": "write",
+      "crm": "write",
+      "admin": "write"
+    },
+    "workshop.manager": {
+      "finance": "write",
+      "hr_payroll": "write",
+      "operations": "write",
+      "crm": "write",
+      "admin": "write"
+    },
+    "finance.manager": {
+      "finance": "write",
+      "hr_payroll": "read",
+      "operations": "read",
+      "crm": "read",
+      "admin": "read"
+    },
+    "employee": {
+      "finance": "read",
+      "hr_payroll": "none",
+      "operations": "write",
+      "crm": "write",
+      "admin": "none"
+    },
+    "viewer": {
+      "finance": "read",
+      "hr_payroll": "read",
+      "operations": "read",
+      "crm": "read",
+      "admin": "read"
+    }
+  },
+  "roleAliases": {
+    "admin": "system.admin",
+    "administrator": "system.admin",
+    "system_admin": "system.admin",
+    "finance": "finance.manager",
+    "accountant": "finance.manager",
+    "workshop": "workshop.manager",
+    "worker": "employee",
+    "staff": "employee",
+    "read_only": "viewer",
+    "readonly": "viewer"
+  },
+  "defaultRole": "viewer"
+}

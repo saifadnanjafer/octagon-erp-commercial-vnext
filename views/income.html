@@ -1,0 +1,34 @@
+<section class="page" id="pageIncome">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">📥</span> الواردات</h1>
+        <p class="page-subtitle">أي قبض يدخل القاصة ويظهر فوراً بالداشبورد وحركة اليوم</p>
+      </div>
+      <div class="page-header-actions"><button class="btn-primary finance-demo-action" onclick="addFinanceDemoData('income')">إضافة أمثلة تجريبية</button></div>
+    </div>
+    <div class="finance-entry-grid">
+      <div class="glass-card finance-form-card">
+        <h3 class="section-title">تسجيل وارد</h3>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">التاريخ</label><input type="date" id="incomeDate" class="form-input"></div>
+          <div class="form-group"><label class="form-label">المبلغ</label><input type="number" id="incomeAmount" class="form-input" min="0"></div>
+          <div class="form-group"><label class="form-label">الصنف</label><select id="incomeCategory" class="form-input"></select></div>
+          <div class="form-group"><label class="form-label">القسم</label><select id="incomeDepartment" class="form-input"></select></div>
+          <div class="form-group"><label class="form-label">العميل</label><select id="incomeCustomer" class="form-input"></select></div>
+          <div class="form-group"><label class="form-label">الوصف</label><input type="text" id="incomeDescription" class="form-input" placeholder="مثال: دفعة مشروع، تسديد عميل"></div>
+        </div>
+        <button class="btn-primary finance-submit-action" id="incomeSubmitBtn" onclick="addIncomeFromForm()">تسجيل الوارد</button>
+      </div>
+      <div class="glass-card finance-form-card finance-setup-note-card">
+        <h3 class="section-title">إعدادات الواردات</h3>
+        <p>إدارة الأقسام والأشخاص والمصادر من لوحة الأدمن.</p>
+        <button class="btn-secondary" onclick="switchPage('admin_panel')">فتح لوحة الأدمن</button>
+      </div>
+    </div>
+    <div class="table-container glass-card">
+      <table class="data-table finance-table">
+        <thead><tr><th>التاريخ</th><th>الصنف</th><th>القسم</th><th>الوصف</th><th>الطرف</th><th>المبلغ</th></tr></thead>
+        <tbody id="incomeBody"></tbody>
+      </table>
+    </div>
+  </section>

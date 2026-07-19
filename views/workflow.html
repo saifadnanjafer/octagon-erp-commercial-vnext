@@ -1,0 +1,23 @@
+<section class="page" id="pageWorkflow">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">🔀</span> مصمم سير العمل</h1>
+        <p class="page-subtitle">لوحة بصرية تفاعلية: اسحب عقدة، اربطها، واربط كل خطوة بإجراء تشغيلي واضح</p>
+      </div>
+      <div class="page-header-actions">
+        <div class="workflow-header-summary" id="workflowSummary"></div>
+        <button class="btn-primary" onclick="runWorkflowSimulation()"><i class="fa-solid fa-vial"></i> اختبر وتحقّق</button>
+        <button class="btn-primary" style="background:var(--accent-green)" onclick="publishWorkflow()"><i class="fa-solid fa-check-circle"></i> نشر</button>
+        <button class="btn-secondary" onclick="triggerWorkflowExecution()"><i class="fa-solid fa-rocket"></i> تنفيذ سير العمل</button>
+        <button class="btn-primary" onclick="addWorkflowNode()">إضافة عقدة</button>
+        <button class="btn-primary" onclick="clearWorkflowSelection()">إلغاء الربط</button>
+      </div>
+    </div>
+    <div class="workflow-studio-shell">
+      <aside class="workflow-palette glass-card">
+        <h3 class="section-title">لوحة العقد</h3>
+        <div id="workflowPalette"></div>
+      </aside>
+      <div class="workflow-canvas glass-card" id="workflowCanvas" ondragover="event.preventDefault()" ondrop="workflowCanvasDrop(event)"></div>
+    </div>
+  </section>

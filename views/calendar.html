@@ -1,0 +1,75 @@
+<section class="page" id="pageCalendar">
+        <div class="page-header">
+          <div class="page-header-text">
+            <h1 class="page-title">
+              <span class="title-icon">🗓️</span>
+              تقويم الدوام الشهري
+            </h1>
+            <p class="page-subtitle">نظرة بانورامية شاملة لحضور الموظفين</p>
+          </div>
+          <div class="calendar-stats-mini">
+            <div class="stat-mini-item">
+              <span class="stat-label">إجمالي الساعات اليوم:</span>
+              <span class="stat-value" id="calDailyTotalHours">0</span>
+            </div>
+            <div class="stat-mini-item">
+              <span class="stat-label">الموظفون المتواجدون:</span>
+              <span class="stat-value" id="calDailyActiveEmps">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card calendar-container-pro">
+          <div class="calendar-header-controls">
+            <button class="btn-icon calendar-nav-btn" onclick="prevMonthCal()" title="الشهر السابق">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <h2 id="calHeaderMonthYear">مارس 2026</h2>
+            <div class="calendar-actions">
+              <button class="btn-icon calendar-today-btn" onclick="calendarJumpToday()" title="العودة إلى اليوم">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span>اليوم</span>
+              </button>
+              <button class="btn-icon calendar-config-btn" onclick="openMonthlyOperatingCostsModal()" title="ضبط مصاريف التشغيل" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
+                <i class="fa-solid fa-gears"></i>
+                <span>مصاريف التشغيل</span>
+              </button>
+              <button class="btn-icon calendar-close-month-btn" id="calendarCloseMonthBtn" onclick="toggleCalendarMonthClosed()" title="إغلاق الشهر وتجميد التوقعات" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3);">
+                <i class="fa-solid fa-lock"></i>
+                <span>إغلاق الشهر</span>
+              </button>
+              <button class="btn-icon calendar-nav-btn" onclick="nextMonthCal()" title="الشهر التالي">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar-grid-pro" id="attendanceCalendarGrid">
+            <!-- Calendar days will be generated here -->
+          </div>
+
+          <div class="calendar-day-details" id="calDayDetails"></div>
+        </div>
+
+        <div class="glass-card opc-doclog-card">
+          <div class="opc-doclog-header">
+            <h2><i class="fa-solid fa-file-shield"></i> سجل توثيق مصاريف التشغيل</h2>
+            <div class="opc-doclog-stats" id="opcDocLogStats"></div>
+          </div>
+          <div class="opc-doclog-table-wrap">
+            <table class="data-table opc-doclog-table">
+              <thead>
+                <tr>
+                  <th>الشهر</th>
+                  <th>البند</th>
+                  <th>المبلغ الموثّق</th>
+                  <th>تاريخ الدفع</th>
+                  <th>مصدر الدفع</th>
+                  <th>الحالة</th>
+                </tr>
+              </thead>
+              <tbody id="opcDocLogBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>

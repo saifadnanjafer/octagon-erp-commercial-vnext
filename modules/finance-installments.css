@@ -1,0 +1,44 @@
+.fi-wrap { padding:1rem; direction:rtl; font-family:'Tajawal',sans-serif;color:#e2e8f0 }
+.fi-kpi-strip { display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.75rem;margin-bottom:1.25rem }
+.fi-kpi-card { background:#1e293b;border-radius:10px;padding:1rem;text-align:center;border:1px solid #334155 }
+.fi-kpi-card .fi-kpi-value { font-size:1.4rem;font-weight:700;color:#38bdf8 }
+.fi-kpi-card .fi-kpi-label { font-size:0.8rem;color:#94a3b8;margin-top:0.25rem }
+.fi-toolbar { display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap }
+.fi-toolbar button { padding:0.5rem 1.2rem;border-radius:6px;border:none;background:#334155;color:#e2e8f0;cursor:pointer;font-size:0.85rem;transition:all 0.2s }
+.fi-toolbar button.active { background:#2563eb;color:#fff }
+.fi-toolbar button:hover { background:#475569 }
+.fi-content { background:#1e293b;border-radius:10px;padding:1.25rem;border:1px solid #334155;min-height:300px }
+.fi-table { width:100%;border-collapse:collapse;margin-top:1rem }
+.fi-table th { background:#0f172a;color:#94a3b8;padding:0.6rem 0.8rem;text-align:right;font-size:0.8rem;font-weight:600;border-bottom:2px solid #334155 }
+.fi-table td { padding:0.6rem 0.8rem;border-bottom:1px solid #1e293b;font-size:0.85rem }
+.fi-table tr:hover td { background:#1a2332 }
+.fi-badge { display:inline-block;padding:0.2rem 0.6rem;border-radius:999px;font-size:0.75rem;font-weight:600 }
+.fi-badge-active { background:#1e40af;color:#93c5fd }
+.fi-badge-completed { background:#14532d;color:#86efac }
+.fi-badge-defaulted { background:#7f1d1d;color:#fca5a5 }
+.fi-badge-pending { background:#713f12;color:#fde68a }
+.fi-badge-paid { background:#14532d;color:#86efac }
+.fi-badge-late { background:#7f1d1d;color:#fca5a5 }
+.fi-btn { padding:0.4rem 1rem;border-radius:6px;border:none;cursor:pointer;font-size:0.8rem;font-family:'Tajawal',sans-serif }
+.fi-btn-primary { background:#2563eb;color:#fff }
+.fi-btn-primary:hover { background:#1d4ed8 }
+.fi-btn-success { background:#16a34a;color:#fff }
+.fi-btn-success:hover { background:#15803d }
+.fi-btn-danger { background:#dc2626;color:#fff }
+.fi-btn-danger:hover { background:#b91c1c }
+.fi-btn-sm { padding:0.25rem 0.6rem;font-size:0.75rem }
+.fi-form-group { margin-bottom:0.75rem }
+.fi-form-group label { display:block;font-size:0.8rem;color:#94a3b8;margin-bottom:0.25rem }
+.fi-form-group input,.fi-form-group select { width:100%;padding:0.5rem;border-radius:6px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:0.85rem;font-family:'Tajawal',sans-serif;box-sizing:border-box }
+.fi-form-row { display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem }
+.fi-inline-form { display:flex;gap:0.5rem;align-items:flex-end;flex-wrap:wrap }
+.fi-inline-form .fi-form-group { flex:1;min-width:120px }
+.fi-empty { text-align:center;padding:2rem;color:#64748b;font-size:0.9rem }
+.fi-plan-card { background:#0f172a;border-radius:10px;padding:1rem;margin-bottom:1rem;border:1px solid #334155 }
+.fi-plan-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem }
+.fi-plan-ref { font-weight:700;font-size:1rem;color:#38bdf8 }
+.fi-plan-customer { font-size:0.85rem;color:#94a3b8 }
+.fi-plan-summary { display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:0.75rem;font-size:0.85rem }
+.fi-plan-summary span { background:#1e293b;padding:0.3rem 0.6rem;border-radius:4px }
+.fi-progress { height:8px;background:#1e293b;border-radius:4px;overflow:hidden;margin:0.5rem 0 }
+.fi-progress-bar { height:100%;background:#2563eb;border-radius:4px;transition:width 0.3s }

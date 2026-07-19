@@ -1,0 +1,49 @@
+/* ── Octagon ERP — Hotel Vertical styles ── */
+.ht-header { margin-bottom: 14px; }
+.ht-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.ht-tab-btn { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border,#e2e8f0); background: var(--bg-card,#fff); color: var(--text-secondary,#64748b); cursor: pointer; font-size: 13px; transition: all .15s; }
+.ht-tab-btn.active { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+.ht-tab-btn:hover:not(.active) { background: var(--bg-hover,#f1f5f9); }
+
+/* KPI */
+.ht-kpi-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.ht-kpi { flex: 1 1 130px; background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 10px; padding: 14px; text-align: center; }
+.ht-kpi-val { font-size: 1.3rem; font-weight: 700; color: #f59e0b; }
+.ht-kpi-lbl { font-size: 12px; color: var(--text-secondary,#64748b); margin-top: 4px; }
+.ht-kpi-warn .ht-kpi-val { color: #dc2626; }
+
+/* Room Grid & Cards */
+.ht-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+.ht-search { padding: 8px 12px; border: 1px solid var(--border,#e2e8f0); border-radius: 8px; font-size: 14px; flex: 1 1 200px; background: var(--bg-input,#f8fafc); }
+.ht-room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 12px; }
+.ht-room-card { background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 10px; padding: 14px; text-align: center; transition: box-shadow .15s; }
+.ht-room-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); }
+.ht-room-number { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: var(--text-primary,#1e293b); }
+.ht-room-details { font-size: 12px; color: var(--text-secondary,#64748b); margin-bottom: 8px; }
+.ht-room-actions { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+
+/* Status Badges */
+.ht-status-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.ht-status-avail { background: #dcfce7; color: #16a34a; }
+.ht-status-occ { background: #fee2e2; color: #dc2626; }
+.ht-status-maint { background: #fef3c7; color: #b45309; }
+.ht-status-dirty { background: #f1f5f9; color: #64748b; border: 1px dashed #cbd5e1; }
+
+/* Forms */
+.ht-form-card { background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 12px; padding: 20px; max-width: 760px; }
+.ht-form-card h3 { margin: 0 0 16px; }
+.ht-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; }
+.ht-field { display: flex; flex-direction: column; gap: 4px; }
+.ht-field-full { grid-column: 1 / -1; }
+.ht-field label { font-size: 12px; font-weight: 600; color: var(--text-secondary,#64748b); }
+.ht-field input, .ht-field select, .ht-field textarea { padding: 7px 10px; border: 1px solid var(--border,#e2e8f0); border-radius: 7px; font-size: 14px; background: var(--bg-input,#f8fafc); resize: vertical; font-family: inherit; }
+.ht-form-actions { margin-top: 16px; display: flex; gap: 10px; }
+
+/* Tables */
+.ht-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ht-table th, .ht-table td { border: 1px solid var(--border,#e2e8f0); padding: 7px 10px; text-align: right; }
+.ht-table th { background: var(--bg-hover,#f8fafc); font-weight: 600; }
+.ht-empty { text-align: center; color: var(--text-secondary,#64748b); padding: 32px; font-size: 13px; }
+
+/* Utility */
+.ht-btn-sm { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border,#e2e8f0); background: var(--bg-hover,#f8fafc); cursor: pointer; font-size: 12px; }

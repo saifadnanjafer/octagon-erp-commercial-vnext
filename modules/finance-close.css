@@ -1,0 +1,18 @@
+/* Phase 7H finance close and planning panel. */
+.fc7h-panel { margin: 16px 0; padding: 16px; border: 1px solid var(--border-color, rgba(148, 163, 184, .24)); border-radius: 8px; background: var(--card-bg, rgba(15, 23, 42, .04)); }
+.fc7h-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.fc7h-head h3 { margin: 0; font-size: 17px; }
+.fc7h-note { color: var(--text-muted, #64748b); font-size: 12px; line-height: 1.6; }
+.fc7h-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.fc7h-kpi { border: 1px solid var(--border-color, rgba(148, 163, 184, .22)); border-radius: 8px; padding: 10px 12px; background: var(--surface-bg, rgba(255, 255, 255, .04)); }
+.fc7h-kpi strong { display: block; font-size: 18px; }
+.fc7h-kpi span { display: block; color: var(--text-muted, #64748b); font-size: 12px; margin-top: 3px; }
+.fc7h-table-wrap { overflow-x: auto; }
+.fc7h-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.fc7h-table th, .fc7h-table td { padding: 7px 8px; border-bottom: 1px solid var(--border-color, rgba(148, 163, 184, .18)); text-align: right; vertical-align: top; }
+.fc7h-pill { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.fc7h-pill.ok { background: rgba(34, 197, 94, .14); color: #16a34a; }
+.fc7h-pill.warn { background: rgba(245, 158, 11, .15); color: #d97706; }
+.fc7h-pill.lock { background: rgba(239, 68, 68, .14); color: #dc2626; }
+.fc7h-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.fc7h-pre { white-space: pre-wrap; direction: ltr; text-align: left; max-height: 180px; overflow: auto; font-size: 11px; background: rgba(15, 23, 42, .08); border-radius: 8px; padding: 10px; margin-top: 10px; }

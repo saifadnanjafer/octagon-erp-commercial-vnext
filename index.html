@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <!-- IMPORTANT: Save this file as UTF-8. Arabic UI depends on UTF-8 encoding. -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <title>Octagon ERP | نظام إدارة الورشة والمخزون والرواتب</title>
+  <meta name="description" content="Octagon ERP نظام عربي لإدارة الورشة، المخزون، العهد، أوامر العمل، الجودة، الرواتب، التقارير، ولوحة تحكم الإدارة.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta property="og:title" content="Octagon ERP | نظام إدارة الورشة والمخزون والرواتب">
+  <meta property="og:description" content="نظام عربي لإدارة الورشة والمخزون والعهد والرواتب مع لوحة تحكم إدارية.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 8l20 12v24L32 56 12 44V20L32 8z' fill='none' stroke='%2338bdf8' stroke-width='5'/%3E%3Cpath d='M32 20l10 6v12l-10 6-10-6V26l10-6z' fill='%2322c55e'/%3E%3C/svg%3E">
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="stylesheet" href="style.css?v=20260706-calc-from-timesheet-v11">
+  <link rel="stylesheet" href="vnext/client/ui-crud.css">
+  <link rel="stylesheet" href="vnext/client/chatter.css">
+  <link rel="stylesheet" href="vnext/client/history-panel.css">
+  <link rel="stylesheet" href="vnext/client/shell/company-switcher.css">
+  <link rel="stylesheet" href="omni-ux-v2.css?v=20260609-octagon-recover-v1">
+  <link rel="stylesheet" href="omni-admin-crud-v2.css?v=20260609-octagon-recover-v1">
+  <link rel="stylesheet" href="omni-language-fix.css?v=20260609-octagon-recover-v1">
+  <link rel="stylesheet" href="omni-ai-assistant.css?v=20260707-restore-cluster-v2">
+  <link rel="stylesheet" href="jarvis-visual-overlay.css">
+  <link rel="stylesheet" href="modules/jarvis-orb.css?v=20260625-agent-cluster-v1">
+  <link rel="stylesheet" href="modules/pilot-review-session.css?v=20260703-pilot-review-v7">
+  <!-- GO 16+ module stylesheets (were never linked — modules rendered unstyled; fixed 2026-06-10) -->
+  <link rel="stylesheet" href="modules/command-palette.css?v=20260610-css-wire-v1">
+  <link rel="stylesheet" href="modules/jarvis-brain.css?v=20260702-audit-v1">
+  <link rel="stylesheet" href="modules/nl-reporting.css?v=20260626-phase7d-v1">
+  <link rel="stylesheet" href="modules/mrp.css?v=20260610-css-wire-v1">
+  <link rel="stylesheet" href="modules/multi-entity.css?v=20260613-tenant-v1">
+  <link rel="stylesheet" href="modules/tax-compliance.css?v=20260610-css-wire-v1">
+  <link rel="stylesheet" href="modules/pos.css?v=20260610-css-wire-v1">
+  <link rel="stylesheet" href="modules/vertical-pharmacy.css?v=20260610-pharmacy-v1">
+  <link rel="stylesheet" href="modules/vertical-retail.css?v=20260612-retail-v1">
+  <link rel="stylesheet" href="modules/vertical-clinic.css?v=20260612-clinic-v1">
+  <link rel="stylesheet" href="modules/vertical-restaurant.css?v=20260612-restaurant-v1">
+  <link rel="stylesheet" href="modules/vertical-real-estate.css?v=20260612-realestate-v1">
+  <link rel="stylesheet" href="modules/vertical-hotel.css?v=20260612-hotel-v1">
+  <link rel="stylesheet" href="modules/work-orders.css?v=20260610-wo-core-v1">
+  <link rel="stylesheet" href="modules/route-health.css?v=20260610-wo-core-v1">
+  <link rel="stylesheet" href="modules/workshop-ai.css?v=20260625-mic-v1">
+  <link rel="stylesheet" href="modules/ai-governance.css?v=20260626-agent-catalog-v1">
+  <link rel="stylesheet" href="modules/workshop-frontline.css?v=20260611-ai-layer-v1">
+  <link rel="stylesheet" href="modules/workshop-stabilization.css?v=20260612-stab-v1">
+  <link rel="stylesheet" href="modules/asset-maintenance.css?v=20260612-assets-v1">
+  <link rel="stylesheet" href="modules/subscriptions.css?v=20260612-subs-v1">
+  <link rel="stylesheet" href="modules/people-ops.css?v=20260626-hrms-v2">
+  <link rel="stylesheet" href="modules/helpdesk.css?v=20260612-hd-v1">
+  <link rel="stylesheet" href="modules/fleet.css?v=20260612-fleet-v1">
+  <link rel="stylesheet" href="modules/documents.css?v=20260612-dms-v1">
+  <link rel="stylesheet" href="modules/marketing.css?v=20260612-mkt-v1">
+  <link rel="stylesheet" href="modules/budgeting.css?v=20260612-bgt-v1">
+  <link rel="stylesheet" href="modules/finance-close.css?v=20260626-finclose-v1">
+  <link rel="stylesheet" href="modules/advanced-inventory.css?v=20260626-advinv-v1">
+  <link rel="stylesheet" href="modules/procurement.css?v=20260613-prc-v1">
+  <link rel="stylesheet" href="modules/project-management.css?v=20260613-pj-v1">
+  <link rel="stylesheet" href="modules/approvals.css?v=20260613-ap-v1">
+  <link rel="stylesheet" href="modules/field-service.css?v=20260613-fs-v1">
+  <link rel="stylesheet" href="modules/rental.css?v=20260613-rn-v1">
+  <link rel="stylesheet" href="modules/enterprise-suite.css?v=20260619-departments-v2">
+  <link rel="stylesheet" href="modules/appointments.css?v=20260622-appt-v1">
+  <link rel="stylesheet" href="modules/workshop-ledger.css?v=20260629-wsl-v1">
+  <link rel="stylesheet" href="modules/loyalty.css?v=20260622-loy-v1">
+  <link rel="stylesheet" href="modules/finance-installments.css?v=20260626-fi-v1">
+  <link rel="stylesheet" href="modules/sales-commission.css?v=20260626-sc-v1">
+  <link rel="stylesheet" href="modules/sales-contracts.css?v=20260626-sct-v1">
+  <link rel="stylesheet" href="modules/sales-price-lists.css?v=20260626-spl-v1">
+  <link rel="stylesheet" href="modules/sales-commercial-pack.css?v=20260626-sc7j-v1">
+  <link rel="stylesheet" href="modules/pos-deepening.css?v=20260626-posd-v1">
+  <link rel="stylesheet" href="modules/omni-communications.css?v=20260626-comm-v1">
+  <link rel="stylesheet" href="modules/implementation-methodology.css?v=20260626-im7k-v1">
+  <link rel="stylesheet" href="modules/platform-marketplace.css?v=20260626-pmk-v2">
+  <link rel="stylesheet" href="modules/ecommerce-connectors.css?v=20260626-ecom-v1">
+  <link rel="stylesheet" href="modules/esign.css?v=20260623-esign-v1">
+  <link rel="stylesheet" href="modules/events.css?v=20260623-events-v1">
+  <link rel="stylesheet" href="modules/knowledge.css?v=20260623-kb-v1">
+  <link rel="stylesheet" href="modules/knowledge-base.css?v=20260703-kb-v4">
+  <link rel="stylesheet" href="modules/surveys.css?v=20260623-svy-v1">
+  <link rel="stylesheet" href="modules/visitors.css?v=20260623-vis-v1">
+  <link rel="stylesheet" href="modules/risk-compliance.css?v=20260623-risk-v2">
+  <link rel="stylesheet" href="modules/phase6a-core.css?v=20260623-phase6c-v1">
+  <link rel="stylesheet" href="layout-improved.css">
+  <link rel="stylesheet" href="glass-real.css">
+  <link rel="stylesheet" href="force-horizontal.css">
+  <link rel="stylesheet" href="ui-contrast-fix.css?v=20260622-contrast-v1">
+  <link rel="stylesheet" href="theme-neumorphism.css?v=20260625-neu-v1">
+  <link rel="stylesheet" href="theme-clean.css?v=20260625-clean-v1">
+  <link rel="stylesheet" href="theme-bento.css?v=20260625-bento-v1">
+  <link rel="stylesheet" href="theme-premium.css?v=20260625-premium-v1">
+  <link rel="stylesheet" href="theme-glassmorphism.css?v=20260625-glass-v1">
+  <link rel="stylesheet" href="theme-dashboard.css?v=20260625-dash-v1">
+  <link rel="stylesheet" href="theme-refined.css?v=20260625-refined-v1">
+  <link rel="stylesheet" href="theme-shadcn.css?v=20260625-shadcn-v1">
+  <link rel="stylesheet" href="theme-perspective.css?v=20260625-perspective-v1">
+  <link rel="stylesheet" href="theme-switcher.css?v=20260625-switcher-v1">
+  <link rel="stylesheet" href="calendar-header-fix.css?v=20260707-cal-header-v1">
+  <link rel="stylesheet" href="calendar-opc-doclog.css?v=20260707-opc-doclog-v2">
+  <link rel="stylesheet" href="timesheet-forecast.css?v=20260708-ts-forecast-v2">
+  <!-- T3.2 -->
+  <link rel="stylesheet" href="modules/import-wizard.css?v=20260712-t3.2-v1">
+  <!-- T6.1 -->
+  <link rel="stylesheet" href="modules/system-settings.css?v=20260713-t6.1-v1">
+  <!-- T5.1 -->
+  <link rel="stylesheet" href="modules/system-check.css?v=20260714-t5.1-v1">
+  <link rel="stylesheet" href="vnext/client/connectivity/connection-status.css?v=t2-o10-1">
+  <style>
+    /* OMNISYSTEM V3.3 LAYOUT RECOVERY & FINISH */
+    :root {
+      --max-input-width: 400px;
+      --sidebar-width: 260px;
+    }
+    
+    .main-content {
+      padding: 30px 40px !important;
+      max-width: none;
+      margin: 0;
+      width: auto;
+      flex: 1 1 auto;
+    }
+
+    /* Keep every page in the content lane beside the sidebar. */
+    .app-container {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: stretch !important;
+      min-height: 100vh !important;
+      width: 100% !important;
+      overflow-x: hidden !important;
+    }
+
+    .sidebar {
+      flex: 0 0 var(--sidebar-width) !important;
+      width: var(--sidebar-width) !important;
+      min-width: var(--sidebar-width) !important;
+      max-width: var(--sidebar-width) !important;
+      min-height: 100vh !important;
+      position: sticky !important;
+      top: 0 !important;
+    }
+
+    .main-content {
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      max-width: calc(100vw - var(--sidebar-width)) !important;
+      min-height: 100vh !important;
+      height: auto !important;
+      max-height: none !important;
+      display: block !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+    }
+
+    body.sidebar-collapsed .sidebar {
+      display: none !important;
+    }
+
+    body.sidebar-collapsed .main-content {
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    .sidebar-toggle-btn {
+      position: fixed;
+      top: 96px;
+      right: calc(var(--sidebar-width) + 12px);
+      z-index: 1200;
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      background: rgba(15, 23, 42, 0.88);
+      color: #e0f2fe;
+      cursor: pointer;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(12px);
+    }
+
+    .sidebar-toggle-btn:hover {
+      border-color: rgba(56, 189, 248, 0.58);
+      color: #38bdf8;
+    }
+
+    body.sidebar-collapsed .sidebar-toggle-btn {
+      right: 12px;
+    }
+
+    .main-content > .header-meta-bar {
+      width: 100% !important;
+      margin: 0 0 24px 0 !important;
+      flex: none !important;
+    }
+
+    .main-content > .page {
+      display: none !important;
+      position: relative !important;
+      width: 100% !important;
+      min-height: calc(100vh - 126px) !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: visible !important;
+      flex: none !important;
+    }
+
+    .main-content > .page.page-active {
+      display: block !important;
+    }
+
+    #pageReport,
+    #pageEmployees {
+      max-width: none !important;
+      margin: 0 !important;
+    }
+
+    /* Fixed Top Bar Consistency */
+    .header-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      margin-bottom: 30px;
+      border: 1px solid var(--border-glass);
+    }
+    .meta-time-group { display: flex; align-items: center; gap: 15px; color: var(--accent-blue); font-family: var(--font-en); font-weight: bold; }
+    .meta-date-group { display: flex; align-items: center; gap: 10px; color: var(--text-muted); }
+
+    /* Constraints for massive stretching */
+    .config-bar, .form-grid, .upload-container-pro, .import-layout {
+      max-width: 1200px;
+    }
+
+    .config-input, .config-select, .form-input, .input-with-unit {
+      max-width: var(--max-input-width);
+    }
+
+    /* Global dark-theme fix for all select/option dropdowns */
+    select, select.form-input, select.config-select {
+      background-color: #1a1e2e !important;
+      color: #e2e8f0 !important;
+    }
+    select option {
+      background-color: #1a1e2e;
+      color: #e2e8f0;
+      padding: 8px 10px;
+    }
+    select option:checked,
+    select option:hover {
+      background-color: #2d3348;
+      color: #fff;
+    }
+
+    /* Kanban specific fixes */
+    .kanban-board-container {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+      min-height: 70vh;
+    }
+    .kanban-col {
+      min-width: 320px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 15px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .kanban-item {
+      padding: 15px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 10px;
+      cursor: grab;
+      transition: transform 0.2s;
+    }
+    .kanban-item:active { cursor: grabbing; transform: scale(0.98); }
+
+    /* ═══ EMPLOYEE PORTAL SCOPED CSS ═══ */
+    .employee-portal-status-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .employee-portal-status-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+    }
+    .employee-portal-status-item .ep-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .employee-portal-status-item .ep-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .employee-portal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    .employee-action-card {
+      background: var(--bg-card, rgba(0,0,0,0.2));
+      border: 1px solid var(--border-glass, rgba(255,255,255,0.08));
+      border-radius: 15px;
+      padding: 22px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+    }
+    .employee-action-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    .employee-action-card .eac-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .employee-action-card .eac-icon {
+      font-size: 28px;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+    }
+    .employee-action-card .eac-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .employee-action-card .eac-body {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .employee-task-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 12px 15px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .employee-task-card .etask-title { font-weight: 600; flex: 1; }
+    .employee-task-card .etask-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .employee-request-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr 1.5fr;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+      align-items: center;
+    }
+    .employee-request-row:first-child { font-weight: 700; color: var(--text-muted); }
+    .ep-badge-pending { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .ep-badge-approved { background: rgba(52,211,153,0.15); color: #34d399; }
+    .ep-badge-rejected { background: rgba(248,113,113,0.15); color: #f87171; }
+    .ep-badge-open { background: rgba(56,189,248,0.15); color: #38bdf8; }
+    .ep-badge-in-progress { background: rgba(168,85,247,0.15); color: #a855f7; }
+    .ep-badge-done { background: rgba(52,211,153,0.15); color: #34d399; }
+    @media(max-width:900px) {
+      .employee-portal-status-card { grid-template-columns: 1fr 1fr; }
+      .employee-portal-grid { grid-template-columns: 1fr; }
+      .employee-request-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* Fix Workflow studio */
+    #pageWorkflow { min-height: calc(100vh - 126px); height: auto; }
+    
+    /* SOP Hub Refined Grid */
+    .sop-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .sop-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .sop-search-input {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: var(--text-primary, #e2e8f0);
+      font-size: 13px;
+      min-width: 200px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .sop-search-input:focus { border-color: var(--accent-blue); }
+    .sop-filter-select {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-primary, #e2e8f0);
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+    }
+    .sop-filter-select option { background: #1e293b; color: #e2e8f0; }
+    .sop-toolbar-actions { display: flex; gap: 8px; }
+    .sop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+      padding: 10px 0;
+    }
+    .sop-card {
+      position: relative;
+      padding: 25px;
+      padding-top: 35px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-bottom: 4px solid transparent;
+      cursor: pointer;
+    }
+    .sop-card:hover {
+      transform: translateY(-8px);
+      border-bottom-color: var(--accent-blue);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      filter: brightness(1.1);
+    }
+    .sop-badge {
+       position: absolute;
+       top: 0;
+       right: 0;
+       padding: 4px 12px;
+       font-size: 11px;
+       font-weight: 800;
+       border-bottom-left-radius: 10px;
+       text-transform: uppercase;
+    }
+    .sop-code {
+      font-size: 11px;
+      color: var(--accent-blue);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .sop-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .sop-meta-tag {
+      font-size: 11px;
+      background: rgba(255,255,255,0.06);
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: var(--text-muted, #94a3b8);
+    }
+    .sop-meta-tag i { margin-left: 4px; font-size: 10px; }
+    .sop-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--text-muted, #94a3b8);
+    }
+    .sop-version {
+      background: rgba(99,102,241,0.15);
+      color: #a78bfa;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .sop-step-item {
+      position: relative;
+      padding: 8px 30px 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .sop-step-item .btn-xs {
+      position: absolute;
+      left: 0;
+      top: 8px;
+    }
+    .btn-xs {
+      padding: 2px 6px;
+      font-size: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: rgba(239,68,68,0.2);
+      color: #f87171;
+    }
+    .btn-xs:hover { background: rgba(239,68,68,0.4); }
+    .insp-check-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .insp-safety-list li, .insp-qc-list li, .insp-mistakes-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Workflow Studio Grid & Canvas */
+    .wf-canvas {
+      background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+      border: 1px solid var(--border-glass);
+      border-radius: 15px;
+      box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
+    }
+    .wf-node {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      animation: nodeEnter 0.5s ease;
+    }
+    @keyframes nodeEnter { from { opacity: 0; scale: 0.8; } to { opacity: 1; scale: 1; } }
+    
+    /* Calendar Pro Styles */
+    .calendar-container-pro {
+      padding: 20px;
+      border-radius: 15px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-glass);
+    }
+
+    .calendar-header-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .calendar-header-controls h2 {
+      font-size: 24px;
+      color: var(--text-color);
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .calendar-grid-pro {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      direction: rtl;
+    }
+
+    .cal-day-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .cal-day-box:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .cal-day-off {
+      background: transparent;
+      border: none;
+    }
+
+    .cal-day-friday {
+      background: rgba(239, 68, 68, 0.05);
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .cal-date-num {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--accent-blue);
+      margin-bottom: 8px;
+    }
+
+    .cal-day-friday .cal-date-num {
+      color: var(--accent-red);
+    }
+
+    .cal-emp-dots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .cal-emp-badge {
+      background: var(--accent-purple);
+      color: white;
+      font-size: 10px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .calendar-container-pro {
+      display: grid;
+      gap: 18px;
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(17, 24, 39, 0.72)) !important;
+    }
+
+    .calendar-header-controls {
+      gap: 12px;
+      padding: 8px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .calendar-header-controls h2 {
+      flex: 1;
+      text-align: center;
+      color: #f8fafc !important;
+    }
+
+    .calendar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .calendar-nav-btn,
+    .calendar-today-btn {
+      min-width: 42px;
+      height: 42px;
+      border-radius: 10px !important;
+      border: 1px solid rgba(56, 189, 248, 0.26) !important;
+      background: rgba(56, 189, 248, 0.12) !important;
+      color: #e0f2fe !important;
+      box-shadow: none !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .calendar-today-btn {
+      width: auto;
+      padding: 0 14px !important;
+      font-weight: 800;
+    }
+
+    .calendar-grid-pro {
+      gap: 8px !important;
+      align-items: stretch;
+    }
+
+    .cal-weekday {
+      padding: 10px 8px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-secondary);
+      text-align: center;
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .cal-weekday-friday {
+      color: #fda4af;
+      background: rgba(244, 63, 94, 0.1);
+    }
+
+    .cal-day-box {
+      min-height: 132px !important;
+      border-radius: 12px !important;
+      padding: 10px !important;
+      cursor: pointer;
+      gap: 8px;
+      outline: none;
+      background: rgba(15, 23, 42, 0.74) !important;
+    }
+
+    .cal-day-box:hover,
+    .cal-day-box:focus {
+      border-color: rgba(56, 189, 248, 0.45);
+      box-shadow: 0 10px 24px rgba(2, 8, 23, 0.22);
+    }
+
+    .cal-day-selected {
+      border-color: rgba(56, 189, 248, 0.9) !important;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.12), 0 16px 28px rgba(2, 8, 23, 0.28) !important;
+    }
+
+    .cal-day-empty {
+      opacity: 0.72;
+    }
+
+    .cal-day-has-attendance {
+      background: linear-gradient(145deg, rgba(14, 165, 233, 0.14), rgba(15, 23, 42, 0.88)) !important;
+      border-color: rgba(34, 211, 238, 0.22) !important;
+    }
+
+    .cal-day-friday {
+      background: linear-gradient(145deg, rgba(244, 63, 94, 0.12), rgba(15, 23, 42, 0.88)) !important;
+      border-color: rgba(244, 63, 94, 0.28) !important;
+    }
+
+    .cal-day-friday.cal-day-has-attendance {
+      background: linear-gradient(145deg, rgba(244, 63, 94, 0.18), rgba(34, 211, 238, 0.11), rgba(15, 23, 42, 0.88)) !important;
+      border-color: rgba(251, 113, 133, 0.5) !important;
+    }
+
+    .cal-date-num {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 0 !important;
+    }
+
+    .cal-date-num span {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(56, 189, 248, 0.12);
+      color: #bae6fd;
+      font-size: 14px;
+    }
+
+    .cal-date-num small {
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .cal-day-friday .cal-date-num span {
+      color: #fecdd3;
+      background: rgba(244, 63, 94, 0.15);
+    }
+
+    .cal-day-summary {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2px 8px;
+      align-items: baseline;
+      padding: 8px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .cal-day-summary strong {
+      color: #67e8f9;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .cal-day-summary span,
+    .cal-day-summary em {
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    .cal-day-summary em {
+      grid-column: 1 / -1;
+      color: #c4b5fd;
+    }
+
+    .cal-emp-dots {
+      min-height: 28px;
+      align-content: flex-start;
+    }
+
+    .cal-emp-badge,
+    .cal-emp-more {
+      min-width: 26px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(129, 140, 248, 0.22) !important;
+      border-radius: 999px !important;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .cal-emp-more {
+      color: #bae6fd;
+      background: rgba(56, 189, 248, 0.16) !important;
+    }
+
+    .calendar-day-details {
+      border-radius: 14px;
+      border: 1px solid rgba(56, 189, 248, 0.16);
+      background: rgba(2, 6, 23, 0.34);
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .cal-detail-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+    }
+
+    .cal-detail-kicker {
+      display: inline-flex;
+      margin-bottom: 5px;
+      color: #38bdf8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .cal-detail-header h3 {
+      margin: 0;
+      color: #f8fafc;
+      font-size: 20px;
+    }
+
+    .cal-detail-total {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(52, 211, 153, 0.13);
+      color: #86efac;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .cal-detail-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .cal-detail-stats div {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .cal-detail-stats span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .cal-detail-stats strong {
+      color: #e0f2fe;
+      font-size: 20px;
+      font-family: var(--font-en);
+    }
+
+    /* Friday's weekly operating-cost rollup — deliberately distinct from the
+       regular daily stat cells so it reads as "this is different, it's the
+       week's total, not a daily figure." */
+    .cal-detail-stats .cal-weekly-opcost-stat {
+      background: rgba(129, 140, 248, 0.12);
+      border: 1px solid rgba(129, 140, 248, 0.35);
+      grid-column: span 2;
+    }
+    .cal-detail-stats .cal-weekly-opcost-stat span {
+      color: #a5b4fc;
+    }
+    .cal-detail-stats .cal-weekly-opcost-stat strong {
+      color: #c7d2fe;
+    }
+
+    .cal-workers-list {
+      display: grid;
+      gap: 8px;
+      max-height: 280px;
+      overflow: auto;
+      padding-inline-end: 2px;
+    }
+
+    .cal-worker-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.055);
+    }
+
+    .cal-worker-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .cal-worker-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(129, 140, 248, 0.25);
+      color: #ddd6fe;
+      font-weight: 900;
+      flex: none;
+    }
+
+    .cal-worker-main strong,
+    .cal-worker-main span {
+      display: block;
+    }
+
+    .cal-worker-main strong {
+      color: #f8fafc;
+      font-size: 13px;
+    }
+
+    .cal-worker-main span {
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .cal-worker-hours {
+      color: #67e8f9;
+      font-weight: 900;
+      font-family: var(--font-en);
+      white-space: nowrap;
+    }
+
+    .cal-empty-detail {
+      color: var(--text-muted);
+      padding: 18px;
+      text-align: center;
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .calendar-container-pro {
+        padding: 12px !important;
+        overflow-x: hidden;
+      }
+
+      .calendar-header-controls {
+        align-items: stretch;
+      }
+
+      .calendar-header-controls h2 {
+        font-size: 18px !important;
+        align-self: center;
+      }
+
+      .calendar-today-btn span {
+        display: none;
+      }
+
+      .calendar-nav-btn,
+      .calendar-today-btn {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 10px !important;
+      }
+
+      .calendar-grid-pro {
+        gap: 5px !important;
+      }
+
+      .cal-weekday {
+        padding: 8px 2px;
+        font-size: 10px;
+      }
+
+      .cal-day-box {
+        min-height: 112px !important;
+        padding: 6px !important;
+        gap: 5px;
+      }
+
+      .cal-date-num {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .cal-date-num span {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        border-radius: 7px;
+      }
+
+      .cal-date-num small {
+        font-size: 9px;
+      }
+
+      .cal-day-summary {
+        padding: 6px;
+        gap: 1px 5px;
+      }
+
+      .cal-day-summary strong {
+        font-size: 16px;
+      }
+
+      .cal-day-summary span,
+      .cal-day-summary em {
+        font-size: 9px;
+      }
+
+      .cal-emp-badge,
+      .cal-emp-more {
+        min-width: 22px;
+        height: 20px;
+        font-size: 9px;
+      }
+
+      .cal-detail-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media print {
+        body * { visibility: hidden; }
+        #pageReport, #pageReport * { visibility: visible; }
+        #pageReport { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; padding: 0; }
+        .emp-tabs, #reportPrintBtn, .nav-btn, .sidebar, .page-header, .payment-confirmation-box { display: none !important; }
+        .glass-card { background: white !important; border: 1px solid #000 !important; box-shadow: none !important; color: black !important; }
+        .report-print-only { display: block !important; }
+        .report-value.val-earn { color: #000 !important; font-weight: bold; }
+        .report-value.val-deduct { color: #000 !important; text-decoration: underline; }
+        .report-final-row { background: #eee !important; color: #000 !important; border: 2px solid #000 !important; }
+        table { width: 100% !important; border-collapse: collapse; }
+        td, th { border: 1px solid #000 !important; padding: 10px !important; color: black !important; }
+    }
+  </style>
+  <!-- SVG Filter for Glass Distortion (theme-glass mode) -->
+  <svg style="display: none">
+    <filter id="glass-distortion">
+      <feTurbulence type="turbulence" baseFrequency="0.008" numOctaves="2" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="77" />
+    </filter>
+  </svg>
+</head>
+
+<body>
+  <div id="vnextConnectivityStatus" dir="ltr" data-state="connecting" aria-label="Server connectivity status"></div>
+  <div id="legacyConfigBridge" style="display:none" aria-hidden="true">
+    <input id="cfgMonthLegacy" type="hidden" value="3">
+    <input id="cfgYearLegacy" type="hidden" value="2026">
+    <input id="cfgSalaryLegacy" type="hidden" value="500000">
+    <input id="cfgTransportLegacy" type="hidden" value="50000">
+    <input id="cfgFoodLegacy" type="hidden" value="50000">
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="system-boot-logo" aria-label="جاري تحميل النظام">
+      <div class="system-boot-logo-mark">
+        <span>⬡</span>
+      </div>
+    </div>
+  </div>
+  <script>
+    window.hideOctagonLoadingOverlay = function (reason) {
+      var overlay = document.getElementById('loadingOverlay');
+      if (!overlay) return;
+      var previousReason = window.__octagonLoadingHiddenReason || '';
+      var nextReason = reason || 'inline-failsafe';
+      if (previousReason && /failsafe/.test(nextReason)) return;
+      overlay.classList.add('hidden');
+      overlay.style.opacity = '0';
+      overlay.style.visibility = 'hidden';
+      overlay.style.pointerEvents = 'none';
+      setTimeout(function () {
+        if (overlay && overlay.parentNode) overlay.style.display = 'none';
+      }, 550);
+      window.__octagonLoadingHiddenReason = nextReason;
+    };
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        window.hideOctagonLoadingOverlay('window-load-failsafe');
+      }, 3500);
+    });
+    setTimeout(function () {
+      window.hideOctagonLoadingOverlay('boot-timeout-failsafe');
+    }, 9000);
+  </script>
+
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+  </div>
+
+  <div class="app-container">
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" type="button" onclick="toggleSidebarCompact()" aria-pressed="false" title="إخفاء الشريط الجانبي">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-badge">
+          <span class="logo-icon">⬡</span>
+        </div>
+        <div class="logo-text">
+          <span class="logo-sub">نظام إدارة الأعمال</span>
+          <span class="logo-main">نظام التشغيل</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group" data-nav-group="octagon">
+          <button class="nav-group-toggle" type="button" onclick="toggleNavGroup('octagon')">
+            <span>النظام الأساسي</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="nav-group-body" id="navGroupOctagon">
+        <button class="nav-btn active" data-page="home" id="navHome" onclick="switchPage('home')">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">الرئيسية</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="calculator" id="navCalculator" onclick="switchPage('calculator')">
+          <span class="nav-icon">🧮</span>
+          <span class="nav-label">الحاسبة الذكية</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="timesheet" id="navTimesheet" onclick="switchPage('timesheet')">
+          <span class="nav-icon">📅</span>
+          <span class="nav-label">التايم شيت الذكي</span>
+          <span class="status-dot blue" title="تحتاج مراجعة"></span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="calendar" id="navCalendar" onclick="switchPage('calendar')">
+          <span class="nav-icon">🗓️</span>
+          <span class="nav-label">تقويم الدوام</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="import" id="navImport" onclick="switchPage('import')">
+          <span class="nav-icon">📂</span>
+          <span class="nav-label">استيراد البيانات</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="employees" id="navEmployees" onclick="switchPage('employees')">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">الموظفين والأرصدة</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="finance" id="navFinance" onclick="switchPage('finance')">
+          <span class="nav-icon">💹</span>
+          <span class="nav-label">الداشبورد المالي</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="cashbox" id="navCashbox" onclick="switchPage('cashbox')">
+          <span class="nav-icon">🏦</span>
+          <span class="nav-label">قاصة الورشة</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="workshop_ledger" id="navWorkshopLedger" onclick="switchPage('workshop_ledger')">
+          <span class="nav-icon">📒</span>
+          <span class="nav-label">محاسبة ودوام الورشة</span>
+          <span class="status-dot blue" title="استيراد رسمي"></span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="expenses" id="navExpenses" onclick="switchPage('expenses')">
+          <span class="nav-icon">💸</span>
+          <span class="nav-label">المصروفات</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="income" id="navIncome" onclick="switchPage('income')">
+          <span class="nav-icon">📥</span>
+          <span class="nav-label">الواردات</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="customers" id="navCustomers" onclick="switchPage('customers')">
+          <span class="nav-icon">🧾</span>
+          <span class="nav-label">أرصدة العملاء</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="receipt" id="navReceipt" onclick="switchPage('receipt')">
+          <span class="nav-icon">🖨️</span>
+          <span class="nav-label">إنشاء وصل</span>
+          <span class="nav-indicator"></span>
+        </button>
+        <button class="nav-btn" data-page="report" id="navReport" onclick="switchPage('report')">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">التقرير النهائي</span>
+          <span class="status-dot blue" title="تحتاج مراجعة"></span>
+          <span class="nav-indicator"></span>
+        </button>
+          </div>
+        </div>
+
+        <div class="nav-group" data-nav-group="omni_ops">
+          <button class="nav-group-toggle" type="button" onclick="toggleNavGroup('omni_ops')">
+            <span>العمليات والتشغيل</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="nav-group-body" id="navGroupOmniOps">
+            <button class="nav-btn" data-page="command_center" id="navCommandCenter" onclick="switchPage('command_center')">
+              <span class="nav-icon">🎯</span>
+              <span class="nav-label">مركز القيادة</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="kanban" id="navKanban" onclick="switchPage('kanban')">
+              <span class="nav-icon">📋</span>
+              <span class="nav-label">اللوحة التنفيذية</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="workflow" id="navWorkflow" onclick="switchPage('workflow')">
+              <span class="nav-icon">🔀</span>
+              <span class="nav-label">مصمم العمليات</span>
+              <span class="status-dot yellow" title="قيد الإنشاء"></span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="op_packs" id="navOpPacks" onclick="switchPage('op_packs')">
+              <span class="nav-icon">📦</span>
+              <span class="nav-label">باقات العمليات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="mrp" id="navMrp" onclick="switchPage('mrp')">
+              <span class="nav-icon">🏭</span>
+              <span class="nav-label">تخطيط موارد التصنيع</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="work_orders" id="navWorkOrders" onclick="switchPage('work_orders')">
+              <span class="nav-icon">🛠️</span>
+              <span class="nav-label">أوامر العمل</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="task_manager" id="navTaskManager" onclick="switchPage('task_manager')">
+              <span class="nav-icon">✅</span>
+              <span class="nav-label">إدارة المهام</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="sop" id="navSop" onclick="switchPage('sop')">
+              <span class="nav-icon">📚</span>
+              <span class="nav-label">مكتبة SOP</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="machines" id="navMachines" onclick="switchPage('machines')">
+              <span class="nav-icon">⚙️</span>
+              <span class="nav-label">المكائن</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="inventory" id="navInventory" onclick="switchPage('inventory')">
+              <span class="nav-icon">🧱</span>
+              <span class="nav-label">المخزون والمواد</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="equipment" id="navEquipment" onclick="switchPage('equipment')">
+              <span class="nav-icon">🔨</span>
+              <span class="nav-label">معدات الورشة</span>
+              <span class="status-dot yellow" title="قيد الإنشاء"></span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="qc_center" id="navQcCenter" onclick="switchPage('qc_center')">
+              <span class="nav-icon">🧪</span>
+              <span class="nav-label">مركز الجودة</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="wfl_home" id="navWflHome" onclick="switchPage('wfl_home')">
+              <span class="nav-icon">🏠</span>
+              <span class="nav-label">الرئيسية حسب الدور</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="employee_mobile" id="navEmployeeMobile" onclick="switchPage('employee_mobile')">
+              <span class="nav-icon">📱</span>
+              <span class="nav-label">مهامي اليوم (موبايل)</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="workshop_tv" id="navWorkshopTv" onclick="switchPage('workshop_tv')">
+              <span class="nav-icon">📺</span>
+              <span class="nav-label">شاشة الورشة الحية</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="kiosk" id="navKiosk" onclick="switchPage('kiosk')">
+              <span class="nav-icon">🤖</span>
+              <span class="nav-label">روح النظام (كيوسك)</span>
+              <span class="nav-indicator"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="nav-group" data-nav-group="omni_analytics">
+          <button class="nav-group-toggle" type="button" onclick="toggleNavGroup('omni_analytics')">
+            <span>الذكاء والتحليلات</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="nav-group-body" id="navGroupOmniAnalytics">
+            <button class="nav-btn" data-page="analytics" id="navAnalytics" onclick="switchPage('analytics')">
+              <span class="nav-icon">📈</span>
+              <span class="nav-label">التحليلات والذكاء</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="nl_reports" id="navNlReports" onclick="switchPage('nl_reports')">
+              <span class="nav-icon">🔎</span>
+              <span class="nav-label">التقارير الذكية</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="intelligence" id="navIntelligence" onclick="switchPage('intelligence')">
+              <span class="nav-icon"><i class="fa-solid fa-brain"></i></span>
+              <span class="nav-label">لوحة الذكاء</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="automation" id="navAutomation" onclick="switchPage('automation')">
+              <span class="nav-icon"><i class="fa-solid fa-bolt"></i></span>
+              <span class="nav-label">محرك الأتمتة</span>
+              <span class="status-dot yellow" title="قيد الإنشاء"></span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="whatsapp" id="navWhatsapp" onclick="switchPage('whatsapp')">
+              <span class="nav-icon"><i class="fa-brands fa-whatsapp"></i></span>
+              <span class="nav-label">استقبال واتساب</span>
+              <span class="status-dot yellow" title="قيد الإنشاء"></span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="telegram" id="navTelegram" onclick="switchPage('telegram')">
+              <span class="nav-icon"><i class="fa-brands fa-telegram"></i></span>
+              <span class="nav-label">بوابة Telegram</span>
+              <span class="status-dot blue" title="آمن للعرض العام"></span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="route_health" id="navRouteHealth" onclick="switchPage('route_health')">
+              <span class="nav-icon">🩺</span>
+              <span class="nav-label">فحص صحة النظام</span>
+              <span class="status-dot blue" title="تحتاج مراجعة"></span>
+              <span class="nav-indicator"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="nav-group" data-nav-group="omni_business">
+          <button class="nav-group-toggle" type="button" onclick="toggleNavGroup('omni_business')">
+            <span>إدارة الأعمال والمبيعات</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="nav-group-body" id="navGroupOmniBusiness">
+            <button class="nav-btn" data-page="sales" id="navSales" onclick="switchPage('sales')">
+              <span class="nav-icon"><i class="fa-solid fa-handshake"></i></span>
+              <span class="nav-label">المبيعات والعملاء</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="pos" id="navPOS" onclick="switchPage('pos')">
+              <span class="nav-icon">🛒</span>
+              <span class="nav-label">نقطة البيع</span>
+              <span class="status-dot blue" title="تحتاج مراجعة"></span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="pharmacy" id="navPharmacy" onclick="switchPage('pharmacy')">
+              <span class="nav-icon">💊</span>
+              <span class="nav-label">الصيدلية</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="retail" id="navRetail" onclick="switchPage('retail')">
+              <span class="nav-icon">🏪</span>
+              <span class="nav-label">المتجر</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="clinic" id="navClinic" onclick="switchPage('clinic')">
+              <span class="nav-icon">🏥</span>
+              <span class="nav-label">العيادة</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="restaurant" id="navRestaurant" onclick="switchPage('restaurant')">
+              <span class="nav-icon">🍽️</span>
+              <span class="nav-label">المطعم</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="real-estate" id="navRealEstate" onclick="switchPage('real-estate')">
+              <span class="nav-icon">🏢</span>
+              <span class="nav-label">العقارات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="hotel" id="navHotel" onclick="switchPage('hotel')">
+              <span class="nav-icon">🏨</span>
+              <span class="nav-label">الفندق</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="assets" id="navAssets" onclick="switchPage('assets')">
+              <span class="nav-icon">🏷️</span>
+              <span class="nav-label">الأصول والصيانة</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="sales_price_lists" id="navSalesPriceLists" onclick="switchPage('sales_price_lists')">
+              <span class="nav-icon">🏷️</span>
+              <span class="nav-label">قوائم الأسعار</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="subscriptions" id="navSubscriptions" onclick="switchPage('subscriptions')">
+              <span class="nav-icon">🔁</span>
+              <span class="nav-label">الاشتراكات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="appointments" id="navAppointments" onclick="switchPage('appointments')">
+              <span class="nav-icon">📆</span>
+              <span class="nav-label">المواعيد والحجوزات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="finance_installments" id="navFinanceInstallments" onclick="switchPage('finance_installments')">
+              <span class="nav-icon">📅</span>
+              <span class="nav-label">خطط التقسيط</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="loyalty" id="navLoyalty" onclick="switchPage('loyalty')">
+              <span class="nav-icon">🏆</span>
+              <span class="nav-label">برنامج الولاء والمكافآت</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="sales_commission" id="navSalesCommission" onclick="switchPage('sales_commission')">
+              <span class="nav-icon">💰</span>
+              <span class="nav-label">العمولات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="events" id="navEvents" onclick="switchPage('events')">
+              <span class="nav-icon">🎉</span>
+              <span class="nav-label">الفعاليات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="sales_contracts" id="navSalesContracts" onclick="switchPage('sales_contracts')">
+              <span class="nav-icon">📝</span>
+              <span class="nav-label">العقود والموافقات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="pos_deepening" id="navPOSDeepening" onclick="switchPage('pos_deepening')">
+              <span class="nav-icon">🪙</span>
+              <span class="nav-label">إدارة نقطة البيع</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="omni_communications" id="navOmniCommunications" onclick="switchPage('omni_communications')">
+              <span class="nav-icon">📤</span>
+              <span class="nav-label">مشاركة وإرسال</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="people_ops" id="navPeopleOps" onclick="switchPage('people_ops')">
+              <span class="nav-icon">🧑‍💼</span>
+              <span class="nav-label">التوظيف والإجازات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="helpdesk" id="navHelpdesk" onclick="switchPage('helpdesk')">
+              <span class="nav-icon">🎫</span>
+              <span class="nav-label">خدمة العملاء</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="fleet" id="navFleet" onclick="switchPage('fleet')">
+              <span class="nav-icon">🚚</span>
+              <span class="nav-label">المركبات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="documents" id="navDocuments" onclick="switchPage('documents')">
+              <span class="nav-icon">🗂️</span>
+              <span class="nav-label">الوثائق</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="esign" id="navEsign" onclick="switchPage('esign')">
+              <span class="nav-icon">✍️</span>
+              <span class="nav-label">التوقيع الإلكتروني</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="knowledge" id="navKnowledge" onclick="switchPage('knowledge')">
+              <span class="nav-icon">📖</span>
+              <span class="nav-label">قاعدة المعرفة</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="knowledge_base" id="navKnowledgeBase" onclick="switchPage('knowledge_base')">
+              <span class="nav-icon">📚</span>
+              <span class="nav-label">قاعدة المعرفة (الفنية)</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="surveys" id="navSurveys" onclick="switchPage('surveys')">
+              <span class="nav-icon">🗳️</span>
+              <span class="nav-label">الاستبيانات والتقييمات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="visitors" id="navVisitors" onclick="switchPage('visitors')">
+              <span class="nav-icon">🪪</span>
+              <span class="nav-label">إدارة الزوّار والاستقبال</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="risk_compliance" id="navRiskCompliance" onclick="switchPage('risk_compliance')">
+              <span class="nav-icon">🛡️</span>
+              <span class="nav-label">المخاطر والامتثال</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="marketing" id="navMarketing" onclick="switchPage('marketing')">
+              <span class="nav-icon">📣</span>
+              <span class="nav-label">التسويق والحملات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="budgeting" id="navBudgeting" onclick="switchPage('budgeting')">
+              <span class="nav-icon">🧮</span>
+              <span class="nav-label">الموازنات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="procurement" id="navProcurement" onclick="switchPage('procurement')">
+              <span class="nav-icon">🛒</span>
+              <span class="nav-label">المشتريات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="projects" id="navProjects" onclick="switchPage('projects')">
+              <span class="nav-icon">📁</span>
+              <span class="nav-label">المشاريع</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="approvals" id="navApprovals" onclick="switchPage('approvals')">
+              <span class="nav-icon">🔏</span>
+              <span class="nav-label">الموافقات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="field_service" id="navFieldService" onclick="switchPage('field_service')">
+              <span class="nav-icon">🧰</span>
+              <span class="nav-label">الخدمة الميدانية</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="rental" id="navRental" onclick="switchPage('rental')">
+              <span class="nav-icon">📤</span>
+              <span class="nav-label">تأجير المعدات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="warranty" id="navWarranty" onclick="switchPage('warranty')">
+              <span class="nav-icon"><i class="fa-solid fa-shield-halved"></i></span>
+              <span class="nav-label">الضمان والمرتجعات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="banking" id="navBanking" onclick="switchPage('banking')">
+              <span class="nav-icon"><i class="fa-solid fa-building-columns"></i></span>
+              <span class="nav-label">البنوك والخزينة</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="ar_ap" id="navArAp" onclick="switchPage('ar_ap')">
+              <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+              <span class="nav-label">الذمم المدينة والدائنة</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="contracts" id="navContracts" onclick="switchPage('contracts')">
+              <span class="nav-icon"><i class="fa-solid fa-file-signature"></i></span>
+              <span class="nav-label">العقود والشؤون القانونية</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="logistics" id="navLogistics" onclick="switchPage('logistics')">
+              <span class="nav-icon"><i class="fa-solid fa-truck-fast"></i></span>
+              <span class="nav-label">اللوجستيات والتوصيل</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="supplier_portal" id="navSupplierPortal" onclick="switchPage('supplier_portal')">
+              <span class="nav-icon"><i class="fa-solid fa-handshake-angle"></i></span>
+              <span class="nav-label">بوابة الموردين</span>
+              <span class="nav-indicator"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="nav-group" data-nav-group="omni_dev">
+          <button class="nav-group-toggle" type="button" onclick="toggleNavGroup('omni_dev')">
+            <span>التطوير وبوابات النظام</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="nav-group-body" id="navGroupOmniDev">
+            <button class="nav-btn" data-page="multi_entity" id="navMultiEntity" onclick="switchPage('multi_entity')">
+              <span class="nav-icon">🌐</span>
+              <span class="nav-label">الفروع والعملات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="tax_compliance" id="navTaxCompliance" onclick="switchPage('tax_compliance')">
+              <span class="nav-icon">🧾</span>
+              <span class="nav-label">الضرائب والفوترة</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="employee_ui" id="navEmployeeUI" onclick="switchPage('employee_ui')">
+              <span class="nav-icon">🧑‍🔧</span>
+              <span class="nav-label">لوحة الموظف</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="customer_portal" id="navCustomerPortal" onclick="switchPage('customer_portal')">
+              <span class="nav-icon">🏢</span>
+              <span class="nav-label">بوابة العميل</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="vnext_platform" id="navVnextPlatform" onclick="switchPage('vnext_platform')">
+              <span class="nav-icon">🧩</span>
+              <span class="nav-label">نواة المنصة (R1)</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="admin_panel" id="navAdminPanel" onclick="switchPage('admin_panel')">
+              <span class="nav-icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+              <span class="nav-label">لوحة تحكم الأدمن</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="integration_hub" id="navIntegrationHub" onclick="switchPage('integration_hub')">
+              <span class="nav-icon"><i class="fa-solid fa-plug-circle-bolt"></i></span>
+              <span class="nav-label">مركز التكامل</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="security_center" id="navSecurityCenter" onclick="switchPage('security_center')">
+              <span class="nav-icon"><i class="fa-solid fa-user-shield"></i></span>
+              <span class="nav-label">التدقيق والأمن</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="data_quality" id="navDataQuality" onclick="switchPage('data_quality')">
+              <span class="nav-icon"><i class="fa-solid fa-database"></i></span>
+              <span class="nav-label">جودة البيانات</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="training_lms" id="navTrainingLms" onclick="switchPage('training_lms')">
+              <span class="nav-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+              <span class="nav-label">التدريب والتعلم</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="scenario_planner" id="navScenarioPlanner" onclick="switchPage('scenario_planner')">
+              <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+              <span class="nav-label">مخطط سيناريوهات الذكاء</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="device_center" id="navDeviceCenter" onclick="switchPage('device_center')">
+              <span class="nav-icon"><i class="fa-solid fa-mobile-screen-button"></i></span>
+              <span class="nav-label">مركز الأجهزة وإنترنت الأشياء</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="help_manual" id="navHelpManual" onclick="switchPage('help_manual')">
+              <span class="nav-icon"><i class="fa-solid fa-circle-question"></i></span>
+              <span class="nav-label">دليل الاستخدام</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="ai_queue" id="navAiQueue" onclick="switchPage('ai_queue')">
+              <span class="nav-icon">⚙️</span>
+              <span class="nav-label">طابور الذكاء</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="ai_factory" id="navAiFactory" onclick="switchPage('ai_factory')">
+              <span class="nav-icon">🏗️</span>
+              <span class="nav-label">مصنع التطوير</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="ai_tools" id="navAiTools" onclick="switchPage('ai_tools')">
+              <span class="nav-icon">🔩</span>
+              <span class="nav-label">سجل أدوات الذكاء</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="ai_status" id="navAiStatus" onclick="switchPage('ai_status')">
+              <span class="nav-icon">🤖</span>
+              <span class="nav-label">حالة الذكاء الصناعي</span>
+              <span class="nav-indicator"></span>
+            </button>
+            <button class="nav-btn" data-page="deploy_ready" id="navDeployReady" onclick="switchPage('deploy_ready')">
+              <span class="nav-icon">🚀</span>
+              <span class="nav-label">جاهزية التشغيل</span>
+              <span class="nav-indicator"></span>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-actions" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+          <div class="theme-switcher-wrap" id="themeSwitcherWrap">
+            <button class="btn-theme-switcher" id="btnThemeSwitcher" onclick="toggleThemeMenu(event)" title="تبديل المظهر"
+              aria-haspopup="true" aria-expanded="false" style="width: 100%; display: flex; align-items: center; gap: 8px;">
+              <span class="theme-icon">🎨</span>
+              <span class="theme-label">المظهر</span>
+              <span class="theme-caret">▾</span>
+            </button>
+            <div class="theme-menu" id="themeMenu" role="menu"></div>
+          </div>
+          <div class="sidebar-row" style="display: flex; gap: 8px;">
+            <button class="btn-small-action" onclick="exportData()" title="تصدير نسخة احتياطية"
+              style="flex: 1; padding: 8px; font-size: 11px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2); color: var(--accent-blue); border-radius: 6px; cursor: pointer;">
+              📤 نسخة احتياطية
+            </button>
+            <button class="btn-small-action" onclick="importDataClick()" title="استعادة نسخة احتياطية"
+              style="flex: 1; padding: 8px; font-size: 11px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2); color: var(--accent-green); border-radius: 6px; cursor: pointer;">
+              📥 استعادة
+            </button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+          </div>
+        </div>
+        <button class="btn-reset" id="btnResetData" onclick="resetAllData()">
+          <span>🗑️</span> مسح البيانات
+        </button>
+        <button id="btnDevClearCache" class="btn-clear-cache" onclick="clearCache()" title="تنظيف الذاكرة المؤقتة (للمبرمجين فقط)"
+          style="display:none; width: 100%; margin-top: 4px; padding: 6px; font-size: 10px; background: transparent; border: 1px dashed rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); border-radius: 4px; cursor: pointer; transition: all 0.3s; height: auto;">
+          ⚡ مسح الذاكرة
+        </button>
+        <div class="sidebar-version">أوكتاغون — الإصدار 5.0</div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+      <div class="module-domain-tabs" id="moduleDomainTabs" aria-label="مجالات النظام"></div>
+      
+      <!-- Unified Top Bar Meta -->
+      <div class="header-meta-bar">
+        <div class="meta-time-group">
+          <i class="fa-solid fa-clock"></i>
+          <span id="globalClock">00:00:00</span>
+        </div>
+        <div class="meta-date-group">
+          <span id="globalDate"></span>
+          <i class="fa-solid fa-calendar-day"></i>
+        </div>
+        <div class="meta-auth-group" style="display:flex;align-items:center;gap:10px;margin-right:20px;padding:5px 15px;background:rgba(255,255,255,0.05);border-radius:10px;">
+          <i class="fa-solid fa-user-shield" style="color:var(--primary)"></i>
+          <select id="authUserSwitcher" onchange="switchAuthUser(this.value)" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:13px;outline:none;cursor:pointer;">
+            <option value="system">مدير النظام (Admin)</option>
+            <option value="mgr_finance">حسابات - مدير (Manager)</option>
+            <option value="user_finance">محاسب متدرب (User)</option>
+            <option value="mgr_workshop">مدير الورشة (Workshop)</option>
+          </select>
+          <button onclick="performLogout()" style="background:none; border:none; color:var(--accent-red); cursor:pointer; font-size:14px; margin-right:5px; padding:0;" title="تسجيل الخروج">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+        <div id="omniNotificationHost" class="omni-notification-host"></div>
+      </div>
+
+      <!-- ═══════════ CALCULATOR PAGE ═══════════ -->
+      <!-- view:calculator -->
+
+      <!-- ═══════════ IMPORT DATA PAGE (Professional Redesign) ═══════════ -->
+      <!-- view:import -->
+
+      <!-- ATTENDANCE CALENDAR PAGE -->
+      <!-- view:calendar -->
+
+      <!-- ═══════════ SMART TIMESHEET PAGE ═══════════ -->
+      <!-- view:timesheet -->
+
+      <!-- ═══════════ REPORT PAGE ═══════════ -->
+  <!-- view:report -->
+
+  <!-- ═══════════ EMPLOYEES & BALANCES PAGE ═══════════ -->
+  <!-- view:employees -->
+
+  <!-- ═══════════ EMPLOYEE UI (DUAL UI LAYER) ═══════════ -->
+  <!-- view:finance -->
+
+  <!-- view:cashbox -->
+
+  <!-- view:expenses -->
+
+  <!-- view:income -->
+
+  <!-- view:customers -->
+
+  <!-- view:receipt -->
+
+  <!-- view:employee_ui -->
+
+  <!-- ═══════════ WORKFLOW STUDIO (PIPELINES) ═══════════ -->
+  <!-- view:workflow -->
+
+  <!-- ═══════════ KANBAN BOARD ═══════════ -->
+  <!-- view:kanban -->
+
+  <!-- view:task_manager -->
+
+  <!-- ═══════════ SOP HUB (KNOWLEDGE BASE) ═══════════ -->
+  <!-- view:sop -->
+
+  <!-- ═══════════ COMMAND CENTER ═══════════ -->
+  <!-- view:command_center -->
+
+  <!-- ═══════════ OPERATION PACKS ═══════════ -->
+  <!-- view:op_packs -->
+
+  <!-- MACHINES -->
+  <!-- view:machines -->
+
+  <!-- ═══════════ INVENTORY ═══════════ -->
+  <!-- view:inventory -->
+
+  <!-- ═══════════ WORKSHOP EQUIPMENT ═══════════ -->
+  <!-- view:equipment -->
+
+  <!-- ═══════════ QC CENTER ═══════════ -->
+  <!-- view:qc_center -->
+
+  <!-- ═══════════ ANALYTICS ═══════════ -->
+  <!-- view:analytics -->
+  <!-- view:automation -->
+  <!-- view:intelligence -->
+  <!-- view:whatsapp -->
+  <!-- view:telegram -->
+  <!-- view:vnext_platform -->
+  <!-- view:admin_panel -->
+  <!-- ═══════════ SALES / CRM ═══════════ -->
+  <!-- view:sales -->
+  <!-- view:help_manual -->
+
+  <!-- ═══════════ CUSTOMER PORTAL ═══════════ -->
+  <!-- view:customer_portal -->
+
+  <!-- ═══════════ RESTORED MODULE PAGES (re-wired 2026-06-08) ═══════════ -->
+  <!-- view:mrp -->
+  <!-- view:nl_reports -->
+  <!-- view:multi_entity -->
+  <!-- view:tax_compliance -->
+  <!-- view:pos -->
+  <!-- view:pharmacy -->
+  <!-- view:retail -->
+  <!-- view:clinic -->
+  <!-- view:restaurant -->
+  <!-- view:real-estate -->
+  <!-- view:hotel -->
+  <!-- view:assets -->
+  <!-- view:sales_price_lists -->
+  <!-- view:subscriptions -->
+  <!-- view:appointments -->
+  <!-- view:loyalty -->
+  <!-- view:finance_installments -->
+  <!-- view:sales_commission -->
+  <!-- view:sales_contracts -->
+  <!-- view:pos_deepening -->
+  <!-- view:omni_communications -->
+  <!-- view:people_ops -->
+  <!-- view:helpdesk -->
+  <!-- view:fleet -->
+  <!-- view:documents -->
+  <!-- view:esign -->
+  <!-- view:events -->
+  <!-- view:knowledge -->
+  <!-- view:knowledge_base -->
+  <!-- view:surveys -->
+  <!-- view:visitors -->
+  <!-- view:risk_compliance -->
+  <!-- view:marketing -->
+  <!-- view:budgeting -->
+  <!-- view:procurement -->
+  <!-- view:projects -->
+  <!-- view:approvals -->
+  <!-- view:field_service -->
+  <!-- view:rental -->
+  <!-- view:warranty -->
+  <!-- view:banking -->
+  <!-- view:ar_ap -->
+  <!-- view:contracts -->
+  <!-- view:logistics -->
+  <!-- view:supplier_portal -->
+  <!-- view:integration_hub -->
+  <!-- view:security_center -->
+  <!-- view:data_quality -->
+  <!-- view:training_lms -->
+  <!-- view:scenario_planner -->
+  <!-- view:device_center -->
+  <!-- view:work_orders -->
+  <!-- view:route_health -->
+  <!-- view:wfl_home -->
+  <!-- view:employee_mobile -->
+  <!-- view:workshop_tv -->
+  <!-- view:workshop_ledger -->
+  <!-- view:kiosk -->
+  <!-- view:ai_queue -->
+  <!-- view:ai_factory -->
+  <!-- view:ai_tools -->
+  <!-- view:ai_status -->
+  <!-- view:deploy_ready -->
+
+  <!-- ═══════════ UNIVERSAL INSPECTOR PANEL ═══════════ -->
+  <div class="inspector-overlay hidden" id="inspectorOverlay" onclick="closeInspector()"></div>
+  <aside class="inspector-panel hidden" id="inspectorPanel">
+    <div class="inspector-header">
+      <h3 id="inspectorTitle">التفاصيل</h3>
+      <button class="icon-btn" onclick="closeInspector()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="inspector-tabs" id="inspectorTabs"></div>
+    <div class="inspector-body" id="inspectorBody"></div>
+  </aside>
+
+  <!-- ═══════════ COMMAND PALETTE ═══════════ -->
+  <div class="cmd-palette-overlay hidden" id="cmdPaletteOverlay" onclick="closeCmdPalette()"></div>
+  <div class="cmd-palette hidden" id="cmdPalette">
+    <div class="cmd-palette-input-wrap">
+      <i class="fa-solid fa-terminal"></i>
+      <input type="text" id="cmdPaletteInput" placeholder="اكتب أمر... (مثلاً: إضافة مهمة ليزر، فتح ماكينة، بحث طلب)" oninput="filterCmdPalette()" onkeydown="cmdPaletteKeydown(event)">
+    </div>
+    <div class="cmd-palette-results" id="cmdPaletteResults"></div>
+  </div>
+
+  </main>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+
+  <script>
+    window.__octagonBootLibs = {
+      html2pdf: 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
+      jszip: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
+      xlsx: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+    };
+    window.loadOctagonBootLib = function (key, globalName) {
+      if (globalName && window[globalName]) return Promise.resolve(window[globalName]);
+      window.__octagonBootLibPromises = window.__octagonBootLibPromises || {};
+      if (window.__octagonBootLibPromises[key]) return window.__octagonBootLibPromises[key];
+      var src = window.__octagonBootLibs && window.__octagonBootLibs[key];
+      if (!src) return Promise.reject(new Error('Missing library: ' + key));
+      window.__octagonBootLibPromises[key] = new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.onload = function () { resolve(globalName ? window[globalName] : true); };
+        script.onerror = function () { reject(new Error('Failed to load ' + key)); };
+        document.head.appendChild(script);
+      });
+      return window.__octagonBootLibPromises[key];
+    };
+  </script>
+  <script src="glass-real.js"></script>
+  <script src="services/auditService.js?v=20260716-t5.9-v1"></script>
+  <script src="services/tenantService.js?v=20260614-tenant-service-v1"></script>
+  <script src="services/recordService.js?v=20260614-tenant-service-v1"></script>
+  <script src="services/stateService.js?v=20260514c2"></script>
+  <script src="vnext/client/ui-crud.js"></script>
+  <script src="vnext/client/chatter.js"></script>
+  <script src="vnext/client/history-panel.js"></script>
+  <script src="vnext/client/print.js"></script>
+  <script src="vnext/client/views-fields.js"></script>
+  <script src="vnext/client/excel.js"></script>
+  <script src="vnext/client/entity-ui-registry.js"></script>
+  <script src="vnext/client/inbox.js"></script>
+  <script src="vnext/client/home-widgets.js"></script>
+  <script src="vnext/client/workflow-builder.js"></script>
+  <script src="vnext/client/acl-admin.js"></script>
+  <script src="vnext/client/shell/company-switcher.js"></script>
+  <script src="modules/vnext-platform.js"></script>
+  <script src="services/permissionService.js?v=20260623-phase6d-v1"></script>
+  <script src="services/stockService.js?v=20260614-tenant-service-v1"></script>
+  <script src="services/financeService.js?v=20260713-t2.3-chatter-v1"></script>
+  <script src="services/index.js?v=20260614-tenant-service-v1"></script>
+  <!-- Custom API Integration for ContactBox Tools -->
+  <script src="custom-api-integration.js"></script>
+  <script src="custom-api-examples.js"></script>
+  <!-- GO 16 de-monolith: static data providers MUST load before app.js (defines getDefaultAdminSettings, getOctagonPageTruthRegistry, etc.) -->
+  <script src="modules/data-providers.js?v=20260707-opcost-premium-v10"></script>
+  <!-- T4.4: Equipment Management cluster; loads before app.js because ensureOmni() calls normalizeEquipment(). -->
+  <script src="modules/equipment-management.js?v=20260714-t4.4-v1"></script>
+  <!-- T4.11: Automation Engine cluster (rules/fire-log/simulation/manual-scan), moved verbatim out of app.js.
+       Loads before app.js because ensureOmni() calls normalizeAutomation(). -->
+  <script src="modules/automation-engine.js?v=20260715-t4.11-v1"></script>
+  <!-- T5.6: seeds db.locations (LOC_MAIN/LOC_WIP/LOC_SUPPLIERS/LOC_SCRAP) services/stockService.js
+       hardcodes but nothing ever created; loads before app.js because ensureOmni() calls
+       seedMissingStockLocations(). -->
+  <script src="modules/stock-locations-seed.js?v=20260716-t5.9-v1"></script>
+  <!-- T1.1: schema registry (warn-first collection validation boundary) MUST load before app.js -->
+  <script src="modules/schema-registry.js?v=20260716-t1.6-v1"></script>
+  <!-- T1.4: unified document numbering (OctagonSeq.next('inv') -> INV-2026-00042) -->
+  <script src="modules/sequence-service.js?v=20260713-t1.4-v1"></script>
+  <!-- T2.4: read-only trial-balance assertion (window.runTrialBalanceCheck) -->
+  <script src="modules/finance-selftest.js?v=20260713-t2.4-v1"></script>
+  <!-- T5.1: unified system-check page (runs the whole test arsenal) -->
+  <script src="modules/system-check.js?v=20260714-t5.1-v1"></script>
+  <!-- T2.3: chatter-lite change history (TrackChanges.record / openDrawer) -->
+  <script src="modules/change-tracker.js?v=20260713-t2.3-v2"></script>
+  <!-- T3.3: Acl.can() coarse role x collection checks (client-side, cosmetic — server enforces) -->
+  <script src="modules/acl-client.js?v=20260712-t3.3-v1"></script>
+  <!-- T3.4: unified document-state registry (OctagonStates.transition()) -->
+  <script src="modules/state-registry.js?v=20260712-t3.4-v1"></script>
+  <!-- T6.2: repository facade for NEW code (Repo.get/list/save/remove) -->
+  <script src="modules/repo.js?v=20260713-t6.2-v1"></script>
+  <!-- T4.16 (Phase 4): Sales/CRM/Quotation cluster loads before app.js because ensureOmni() normalizes it at boot. -->
+  <script src="modules/sales-crm.js?v=20260716-t4.16-v1"></script>
+  <!-- T4.18 (Phase 4): MRP/work-order execution cluster loads before app.js because ensureOmni() calls normalizeOmniWorkOrders() at boot. -->
+  <script src="modules/mrp-work-orders.js?v=20260716-t4.18-v1"></script>
+  <!-- T4.18 (Phase 4): Inventory Deepening cluster loads before app.js because ensureOmni() calls normalizeInventoryDeepening() at boot. -->
+  <script src="modules/inventory-deepening.js?v=20260716-t4.18-v1"></script>
+  <script src="app.js?v=20260716-t4.18-v1"></script>
+  <!-- T4.17 (Phase 4): Employee Portal Engine (Sprint V1), moved verbatim out of app.js.
+       Loads immediately AFTER app.js — normalizeEmployeePortalData() is not called from
+       ensureOmni(), so no forced boot-order dependency. -->
+  <script src="modules/employee-portal.js?v=20260716-t4.17-v1"></script>
+  <!-- T4.15 (Phase 4): Workflow Studio canvas, validation, renderer, and editor. -->
+  <script src="modules/workflow-studio.js?v=20260716-t4.15-v1"></script>
+  <!-- T4.13 (Phase 4): Op-Packs cluster (two regions: rule/pricing engine + page renderer),
+       moved verbatim out of app.js. Loads immediately AFTER app.js — all functions are
+       global via window scope, and the region's own internal calls resolve fine either way. -->
+  <script src="modules/op-packs.js?v=20260715-t4.13-v1"></script>
+  <!-- T4.14 (Phase 4): Cashbox cluster (cash-totals core + page renderer + transaction modal),
+       moved verbatim out of app.js. Loads immediately AFTER app.js — all functions are
+       global via window scope. -->
+  <script src="modules/cashbox.js?v=20260715-t4.14-v1"></script>
+  <!-- T4.10 (Phase 4): Task Manager V2 cluster, moved verbatim out of app.js.
+       Loads immediately AFTER app.js — all TM functions are global via window scope. -->
+  <script src="modules/task-manager.js?v=20260716-t5.9-v2"></script>
+  <!-- T4.2 (Phase 4): Command Center cluster, moved verbatim out of app.js.
+       Loads immediately AFTER app.js and BEFORE modules that wrap renderCommandCenter. -->
+  <script src="modules/command-center.js?v=20260714-t4.2-v2"></script>
+  <!-- T4.3 (Phase 4): Analytics Intelligence Brain cluster, moved verbatim out of app.js. -->
+  <script src="modules/analytics-dashboard.js?v=20260714-t4.3-v1"></script>
+  <!-- T4.5 (Phase 4): Machine management page and inspector cluster, moved verbatim out of app.js. -->
+  <script src="modules/machine-management.js?v=20260714-t4.5-v1"></script>
+  <!-- T4.6 (Phase 4): Finance UI Tabs cluster, moved verbatim out of app.js. -->
+  <script src="modules/finance-ui.js?v=20260714-t4.6-v1"></script>
+  <!-- T4.7 (Phase 4): Kanban Board cluster, moved verbatim out of app.js. -->
+  <script src="modules/kanban.js?v=20260715-t4.7-v1"></script>
+  <!-- T4.8 (Phase 4): Admin Panel UI cluster, moved verbatim out of app.js.
+       Wiring completed by a second agent (claude-opus-4-8) — see coordination/claims/T4.8.md:
+       the functions were already deleted from app.js with no script-tag reference added,
+       leaving addAdminUser/deleteAdminUser/addCompany/computeAdminSystemHealth/etc. undefined. -->
+  <script src="modules/admin-panel.js?v=20260715-t4.8-v1"></script>
+  <script>
+    function loadOctagonAIAssistant() {
+      if (window.octagonAIAssistant && typeof window.octagonAIAssistant.open === 'function') {
+        return Promise.resolve(window.octagonAIAssistant);
+      }
+      if (window.__octagonAIAssistantPromise) return window.__octagonAIAssistantPromise;
+      window.__octagonAIAssistantPromise = new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = 'omni-ai-assistant.js?v=20260707-restore-cluster-v2';
+        script.async = true;
+        script.onload = function () { resolve(window.octagonAIAssistant || null); };
+        script.onerror = function () { reject(new Error('AI assistant failed to load')); };
+        document.body.appendChild(script);
+      });
+      return window.__octagonAIAssistantPromise;
+    }
+    function toggleAIChat() {
+      if (window.octagonAIAssistant && typeof window.octagonAIAssistant.open === 'function') {
+        window.octagonAIAssistant.open();
+        return;
+      }
+      loadOctagonAIAssistant().then(function (assistant) {
+        if (assistant && typeof assistant.open === 'function') assistant.open();
+      }).catch(function (err) {
+        console.error(err);
+        if (typeof showToast === 'function') showToast('تعذر تحميل مساعد الذكاء حالياً. الواجهة الأساسية تعمل بشكل طبيعي.', 'warning');
+      });
+    }
+    function ensureAIChatLauncher() {
+      if (document.getElementById('ptxAIButton') || window.octagonAIAssistant) return;
+      loadOctagonAIAssistant().catch(function (err) {
+        console.warn('AI assistant launcher preload failed:', err);
+      });
+    }
+    window.loadOctagonAIAssistant = loadOctagonAIAssistant;
+    window.toggleAIChat = toggleAIChat;
+    window.ensureAIChatLauncher = ensureAIChatLauncher;
+    window.addEventListener('load', function () {
+      var schedule = window.requestIdleCallback || function (fn) { return setTimeout(fn, 1200); };
+      schedule(ensureAIChatLauncher);
+    });
+  </script>
+
+  <!-- OMNI MODAL CONTAINER -->
+  <div id="omniModalOverlay" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); backdrop-filter:blur(5px); z-index:30000; display:none; align-items:center; justify-content:center;">
+    <div id="omniModalBox" class="glass-card" style="width:400px; max-width:90vw; max-height:85vh; padding:25px; border-radius:15px; display:flex; flex-direction:column; gap:15px; overflow:hidden; box-shadow:0 15px 50px rgba(0,0,0,0.5);">
+      <h3 id="omniModalTitle" style="margin:0; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; font-size:18px; flex:0 0 auto;"></h3>
+      <div id="omniModalBody" style="display:flex; flex-direction:column; gap:12px; overflow-y:auto; flex:1 1 auto; min-height:0; padding-right:4px;"></div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px; flex:0 0 auto;">
+        <button id="omniModalCancel" class="btn-secondary">إلغاء</button>
+        <button id="omniModalConfirm" class="btn-primary">تأكيد</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ INTRO SCREEN (WELCOME PAGE) ═══════════ -->
+  <div id="introScreen" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:var(--bg); background-image: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 80%); z-index: 19999; display:none; flex-direction:column; align-items:center; justify-content:center; overflow-y:auto; padding:20px;">
+    <div class="glass-card" style="width:680px; max-width:90vw; padding:40px; text-align:center; box-shadow:0 25px 50px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:25px; align-items:center;">
+      <div style="background:var(--primary); width:90px; height:90px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 30px rgba(59, 130, 246, 0.4); margin-bottom:10px;">
+        <span style="font-size:45px; line-height:90px;">🏭</span>
+      </div>
+      <div>
+        <h1 style="margin:0 0 10px; color:var(--text); font-size:28px; font-weight:700;">أوكتاغون — نظام إدارة الأعمال</h1>
+        <p style="color:var(--text-muted); font-size:15px; margin:0; line-height:1.6;">نظام إدارة الأعمال والورش الذكي، المخازن، المبيعات، المحاسبة المزدوجة، والرواتب</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:15px; width:100%; margin:10px 0;">
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:15px; border-radius:12px; text-align:center;">
+          <div style="font-size:24px; margin-bottom:5px;">🌐</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:3px;">الفرع النشط</div>
+          <div id="introBranch" style="font-size:14px; font-weight:600; color:var(--text);">الرئيسي</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:15px; border-radius:12px; text-align:center;">
+          <div style="font-size:24px; margin-bottom:5px;">🗄️</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:3px;">قاعدة البيانات</div>
+          <div style="font-size:14px; font-weight:600; color:var(--text);">قاعدة بيانات محلية</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:15px; border-radius:12px; text-align:center;">
+          <div style="font-size:24px; margin-bottom:5px;">🩺</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:3px;">حالة النظام</div>
+          <div style="font-size:14px; font-weight:600; color:var(--accent-green);">جاهز ومستقر ✅</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:15px; width:100%;">
+        <button class="btn-primary" style="flex:1; padding:15px; font-size:16px; font-weight:600; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 5px 15px rgba(59, 130, 246, 0.3);" onclick="showLoginFromIntro()">
+          <i class="fa-solid fa-right-to-bracket"></i> دخول النظام (تسجيل الدخول)
+        </button>
+      </div>
+
+      <div style="font-size:12px; color:var(--text-muted); margin-top:10px;">
+        أوكتاغون &copy; 2026
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ LOGIN OVERLAY (SPRINT F) ═══════════ -->
+  <div id="loginOverlay" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:var(--bg); background-image: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 80%); z-index: 20000; display:none; flex-direction:column; align-items:center; justify-content:center;">
+    <div class="glass-card" style="width:400px; padding:40px; text-align:center; box-shadow:0 25px 50px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); position:relative;">
+      <button class="btn-secondary" style="position:absolute; top:15px; left:15px; padding:5px 12px; font-size:12px; border-radius:8px; display:flex; align-items:center; gap:6px; min-width:unset; width:auto; height:auto;" onclick="showIntroFromLogin()"><i class="fa-solid fa-arrow-left"></i> رجوع</button>
+      <div style="background:var(--primary); width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:15px auto 20px; box-shadow:0 0 20px rgba(59, 130, 246, 0.4);">
+        <i class="fa-solid fa-lock fa-2x" style="color:white;"></i>
+      </div>
+      <h2 style="margin-bottom:10px; color:var(--text);">تسجيل الدخول للنظام</h2>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:30px;">يرجى اختيار هويتك للوصول إلى الصلاحيات المخصصة</p>
+      <div id="loginUserList" style="display:flex; flex-direction:column; gap:12px; max-height:300px; overflow-y:auto; padding-right:5px;">
+        <!-- User list will be populated here -->
+      </div>
+      <div style="margin-top:30px; font-size:12px; color:var(--text-muted);">
+        أوكتاغون &copy; 2026
+      </div>
+    </div>
+  </div>
+
+  <script src="omni-ux-v2.js?v=20260609-octagon-recover-v1"></script>
+  <script src="omni-admin-crud-v2.js?v=20260609-octagon-recover-v1"></script>
+  <!-- GO 16+ de-monolith modules: extracted page renderers + new feature overlays.
+       All self-contained IIFEs / globals that load AFTER app.js and wrap switchPage. -->
+  <script src="modules/page-help-manual.js?v=20260624-arabic-v2"></script>
+  <!-- T4.12 (Phase 4): SOP Issues & AI Context Index cluster, moved verbatim out of app.js.
+       Loads before page-sop.js, which calls getSopIssues()/renderSopIssuesPanel() at render time. -->
+  <script src="modules/sop-issues-ai-index.js?v=20260715-t4.12-v1"></script>
+  <script src="modules/page-sop.js?v=20260608-modules-wire-v1"></script>
+  <script src="modules/page-qc.js?v=20260625-wire-fix-v1"></script>
+  <script src="modules/ai-providers.js?v=20260703-omni-v6"></script>
+  <script src="modules/pilot-review-registry.js?v=20260702-pilot-review-v1"></script>
+  <script src="modules/pilot-review-session.js?v=20260703-pilot-review-v7"></script>
+  <script src="jarvis-voice-runtime.js?v=20260703-omni-v6"></script>
+  <script src="modules/jarvis-system-map.js?v=20260617-v2"></script>
+  <script src="modules/jarvis-action-agent.js?v=20260703-omni-v1"></script>
+  <!-- AI assistant is loaded on demand by toggleAIChat(); keep it out of the parser boot path. -->
+  <script src="modules/jarvis-test-harness.js?v=20260703-omni-v1"></script>
+  <script src="modules/jarvis-brain.js?v=20260703-omni-v6"></script>
+  <script src="modules/jarvis-audit.js?v=20260703-omni-v1"></script>
+  <script src="modules/jarvis-orb.js?v=20260703-omni-v1"></script>
+  <script src="modules/command-palette.js?v=20260608-modules-wire-v1"></script>
+  <script src="modules/nl-reporting.js?v=20260626-phase7d-v1"></script>
+  <script src="modules/mrp.js?v=20260608-modules-wire-v1"></script>
+  <script src="modules/multi-entity.js?v=20260614-tenant-service-v1"></script>
+  <script src="modules/tax-compliance.js?v=20260608-modules-wire-v1"></script>
+  <script src="modules/pos.js?v=20260614-route-hydrate-v1"></script>
+  <!-- Phase 5 industry verticals: load AFTER pos.js (they wrap switchPage/posZReport) -->
+  <script src="modules/vertical-pharmacy.js?v=20260610-pharmacy-v1"></script>
+  <script src="modules/vertical-retail.js?v=20260624-retail-v2-activate"></script>
+  <script src="modules/vertical-clinic.js?v=20260624-clinic-v2-activate"></script>
+  <script src="modules/vertical-restaurant.js?v=20260624-restaurant-v2-activate"></script>
+  <script src="modules/vertical-real-estate.js?v=20260624-realestate-v2-activate"></script>
+  <script src="modules/vertical-hotel.js?v=20260624-hotel-v2-activate"></script>
+  <!-- Workshop Unified Execution Core + Route Health diagnostic -->
+  <script src="modules/work-orders.js?v=20260713-t2.3-chatter-v1"></script>
+  <!-- T3.1: read-only scheduled alerts panel (server-scheduler.js is the server half) -->
+  <script src="modules/scheduled-alerts.js?v=20260712-t3.1-v1"></script>
+  <script src="modules/route-health.js?v=20260709-rh-batched-yield-v4"></script>
+  <!-- Workshop AI Operating Layer (load AFTER work-orders + route-health) -->
+  <script src="modules/workshop-ai.js?v=20260703-omni-v1"></script>
+  <script src="modules/workshop-frontline.js?v=20260611-ai-layer-v1"></script>
+  <!-- AI Governance core: manifest, tool registry v2, approval gates, injection guard,
+       AI audit log + ai_status page. Loads AFTER the brain/providers/workshop-ai it governs. -->
+  <script src="modules/ai-governance.js?v=20260703-omni-v1"></script>
+  <!-- Workshop-First stabilization self-test: read-only launch-readiness checks injected
+       into deploy_ready. Loads AFTER everything it inspects (route-health, governance, frontline). -->
+  <script src="modules/workshop-stabilization.js?v=20260703-omni-v1"></script>
+  <!-- Fixed Assets & Preventive Maintenance: asset register, straight-line depreciation,
+       warranty + maintenance scheduling, non-cash GL posting. Add-only universal ERP pillar. -->
+  <script src="modules/asset-maintenance.js?v=20260612-assets-v1"></script>
+  <!-- Subscriptions & Recurring Billing: plans, subscriptions, MRR/ARR, recurring invoices via
+       the customer_charge finance bridge. Add-only universal SaaS/ERP pillar. -->
+  <script src="modules/subscriptions.js?v=20260612-subs-v1"></script>
+  <!-- People Operations: Recruitment (ATS) + Leave/Time-off. Self-contained omni.peopleOps;
+       never touches payroll/timesheet. Add-only HR pillar. -->
+  <script src="modules/people-ops.js?v=20260626-hrms-v2"></script>
+  <!-- Helpdesk / Support Tickets, Fleet Management, Document Management — three standalone ERP
+       pillars. Add-only; self-contained in omni.helpdesk / omni.fleet / omni.documents. -->
+  <script src="modules/helpdesk.js?v=20260613-hd-v2"></script>
+  <script src="modules/fleet.js?v=20260703-omni-v1"></script>
+  <script src="modules/documents.js?v=20260612-dms-v1"></script>
+  <!-- Marketing/Campaigns (ROI/CPL) + Budgeting (budget-vs-actual, reads finance read-only).
+       Add-only; self-contained in omni.marketing / omni.budgeting. -->
+  <script src="modules/marketing.js?v=20260612-mkt-v1"></script>
+  <script src="modules/budgeting.js?v=20260612-bgt-v1"></script>
+  <script src="modules/finance-close.js?v=20260626-finclose-v2"></script>
+  <script src="modules/advanced-inventory.js?v=20260626-advinv-v1"></script>
+  <script src="modules/procurement.js?v=20260613-prc-v4"></script>
+  <script src="modules/project-management.js?v=20260613-pj-v1"></script>
+  <script src="modules/approvals.js?v=20260613-ap-v3"></script>
+  <script src="modules/field-service.js?v=20260613-fs-v2"></script>
+  <script src="modules/rental.js?v=20260613-rn-v1"></script>
+  <script src="modules/warranty-rma.js?v=20260619-major-erp-v1"></script>
+  <script src="modules/enterprise-suite.js?v=20260624-arabic-v4"></script>
+  <script src="modules/appointments.js?v=20260622-appt-v1"></script>
+  <script src="modules/workshop-ledger.js?v=20260715-t5.5-v1"></script>
+  <script src="modules/ws-timesheet-bridge.js?v=20260701-wstb-v1"></script>
+  <script src="modules/loyalty.js?v=20260622-loy-v1"></script>
+  <script src="modules/finance-installments.js?v=20260626-fi-v1"></script>
+  <script src="modules/sales-commission.js?v=20260626-sc-v1"></script>
+  <script src="modules/sales-contracts.js?v=20260626-sct-v1"></script>
+  <script src="modules/sales-price-lists.js?v=20260626-spl-v1"></script>
+  <script src="modules/sales-commercial-pack.js?v=20260626-sc7j-v1"></script>
+  <script src="modules/pos-deepening.js?v=20260626-posd-v1"></script>
+  <script src="modules/omni-communications.js?v=20260626-comm-v1"></script>
+  <script src="modules/implementation-methodology.js?v=20260626-im7k-v1"></script>
+  <script src="modules/platform-marketplace.js?v=20260626-pmk-v2"></script>
+  <script src="modules/ecommerce-connectors.js?v=20260626-ecom-v1"></script>
+  <script src="modules/esign.js?v=20260623-esign-v1"></script>
+  <script src="modules/events.js?v=20260623-events-v1"></script>
+  <script src="modules/knowledge.js?v=20260623-kb-v1"></script>
+  <script src="modules/knowledge-base-seed.js?v=20260703-seed-v1"></script>
+  <script src="modules/knowledge-base.js?v=20260703-kb-v4"></script>
+  <script src="modules/surveys.js?v=20260623-svy-v1"></script>
+  <script src="modules/visitors.js?v=20260623-vis-v1"></script>
+  <script src="modules/risk-compliance.js?v=20260624-arabic-v3"></script>
+  <script src="modules/phase6a-core.js?v=20260624-arabic-v2"></script>
+  <script src="modules/phase6c-security-matrix.js?v=20260623-phase6d-v1"></script>
+  <script src="modules/phase7a-stabilization.js?v=20260626-phase7a-v1"></script>
+  <!-- T3.2: universal CSV/Excel import wizard (import_center page) -->
+  <script src="modules/import-wizard.js?v=20260712-t3.2-v1"></script>
+  <!-- T6.1: unified System Settings page (system_settings) -->
+  <script src="modules/system-settings.js?v=20260713-t6.1-v1"></script>
+  <!-- T4.1 (Phase 4): WhatsApp integration cluster, moved verbatim out of app.js.
+       Loads AFTER app.js so its runtime references to app.js helpers resolve. -->
+  <script src="modules/whatsapp-integration.js?v=20260713-t4.1-v1"></script>
+  <!-- language repair stays LAST so it runs after all modules have rendered/registered -->
+  <script src="omni-language-fix.js?v=20260609-octagon-recover-v1"></script>
+  <script>
+    // Dynamic view template loader wrapper
+    (function() {
+      function installSwitchPageTemplateGuard() {
+        const originalSwitchPageChain = window.switchPage;
+        if (typeof originalSwitchPageChain !== 'function' || originalSwitchPageChain.__octagonTemplateGuard) return;
+        const guardedSwitchPage = async function(page) {
+        if (typeof window.ensurePageTemplateLoaded === 'function') {
+          await window.ensurePageTemplateLoaded(page);
+        }
+        if (typeof originalSwitchPageChain === 'function') {
+            return originalSwitchPageChain.apply(this, arguments);
+        }
+      };
+        guardedSwitchPage.__octagonTemplateGuard = true;
+        guardedSwitchPage.__octagonWrappedSwitchPage = originalSwitchPageChain;
+        window.switchPage = guardedSwitchPage;
+      }
+      installSwitchPageTemplateGuard();
+      document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(installSwitchPageTemplateGuard, 0);
+      });
+      window.addEventListener('load', function () {
+        setTimeout(installSwitchPageTemplateGuard, 0);
+      });
+      
+      // Do not prefetch every view on boot. The ERP now has enough page
+      // templates that eager prefetch can freeze the browser before login.
+      // Individual pages are still loaded on demand by ensurePageTemplateLoaded().
+      window.octagonStartViewPrefetch = function () {
+        if (typeof window.prefetchAllViews === 'function') {
+          window.prefetchAllViews();
+        }
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      const isLocalhost = Boolean(
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname === '[::1]'
+      );
+      const urlParams = new URLSearchParams(window.location.search);
+      const forcePwa = urlParams.get('pwa') === '1' || localStorage.octagonEnablePwa === '1';
+
+      if ('serviceWorker' in navigator) {
+        if (isLocalhost && !forcePwa) {
+          navigator.serviceWorker.getRegistrations().then(registrations => {
+            for (let registration of registrations) {
+              registration.unregister().then(success => {
+                if (success) {
+                  console.log('[Octagon SW] Unregistered existing service worker for local development.');
+                }
+              });
+            }
+          });
+          if ('caches' in window) {
+            caches.keys().then(keys => {
+              keys.forEach(key => {
+                if (key.startsWith('octagon-')) {
+                  caches.delete(key).then(() => {
+                    console.log(`[Octagon SW] Deleted local development cache: ${key}`);
+                  });
+                }
+              });
+            });
+          }
+        } else {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+              .then(reg => console.log('ServiceWorker registered:', reg.scope))
+              .catch(err => console.error('ServiceWorker registration failed:', err));
+          });
+        }
+      }
+    })();
+  </script>
+  <script src="vnext/client/offline/offline-store.js?v=t2-o10-1"></script>
+  <script src="vnext/client/connectivity/connection-status.js?v=t2-o10-1"></script>
+
+</body>
+</html>

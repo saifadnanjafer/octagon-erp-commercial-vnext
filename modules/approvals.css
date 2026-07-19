@@ -1,0 +1,47 @@
+/* OCTAGON ERP — Approvals (طلبات الموافقات). Add-only. RTL. */
+#pageApprovals { direction: rtl; }
+.ap-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; border-bottom: 2px solid var(--border-color, #e2e8f0); padding-bottom: 4px; }
+.ap-tab-btn { background: transparent; border: none; padding: 10px 18px; font-size: 15px; font-weight: 600; color: var(--text-secondary, #64748b); cursor: pointer; border-radius: 8px 8px 0 0; transition: all .15s; }
+.ap-tab-btn:hover { background: var(--hover-bg, #f1f5f9); }
+.ap-tab-btn.active { color: #0d9488; border-bottom: 3px solid #0d9488; }
+
+.ap-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.ap-kpi { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.ap-kpi-val { font-size: 24px; font-weight: 800; color: var(--text-primary, #0f172a); line-height: 1.15; }
+.ap-kpi-label { font-size: 13px; color: var(--text-secondary, #64748b); margin-top: 6px; font-weight: 600; }
+.ap-kpi-sub { font-size: 11px; color: var(--text-muted, #94a3b8); margin-top: 2px; }
+.ap-kpi-accent { border-color: #0d9488; } .ap-kpi-accent .ap-kpi-val { color: #0d9488; }
+.ap-kpi-pos { border-color: #16a34a; } .ap-kpi-pos .ap-kpi-val { color: #16a34a; }
+
+.ap-panel { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
+.ap-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.ap-panel-head h3 { margin: 0; font-size: 16px; font-weight: 700; }
+.ap-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.ap-input { padding: 8px 12px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); width: 100%; box-sizing: border-box; }
+.ap-input:focus { outline: none; border-color: #0d9488; }
+.ap-mini-select { padding: 4px 8px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 6px; font-size: 12px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); }
+.ap-note { background: #f0fdfa; border: 1px solid #99f6e4; color: #0f766e; border-radius: 10px; padding: 9px 14px; font-size: 13px; margin-bottom: 12px; }
+
+.ap-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ap-table th { text-align: right; padding: 10px 12px; background: var(--table-head-bg, #f8fafc); color: var(--text-secondary, #475569); font-weight: 700; font-size: 13px; border-bottom: 2px solid var(--border-color, #e2e8f0); white-space: nowrap; }
+.ap-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color, #eef2f7); vertical-align: middle; }
+.ap-table tbody tr:hover { background: var(--hover-bg, #f8fafc); }
+.ap-empty { text-align: center; color: var(--text-muted, #94a3b8); padding: 24px !important; font-style: italic; }
+.ap-muted { color: var(--text-muted, #94a3b8); font-size: 12px; }
+.ap-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.ap-mini-btn { background: var(--hover-bg, #f1f5f9); border: 1px solid var(--border-color, #e2e8f0); border-radius: 7px; padding: 5px 11px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-primary, #334155); transition: all .12s; }
+.ap-mini-btn:hover { background: #0d9488; color: #fff; border-color: #0d9488; }
+.ap-mini-btn.ap-ok:hover { background: #16a34a; border-color: #16a34a; }
+.ap-mini-btn.ap-danger:hover { background: #dc2626; border-color: #dc2626; }
+.ap-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.ap-st-pending { background: #fef3c7; color: #b45309; } .ap-st-approved { background: #dcfce7; color: #15803d; } .ap-st-rejected { background: #fee2e2; color: #b91c1c; } .ap-st-cancelled { background: #e5e7eb; color: #6b7280; }
+.ap-prio { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+.ap-prio-low { background: #f1f5f9; color: #64748b; } .ap-prio-normal { background: #e0f2fe; color: #0369a1; } .ap-prio-high { background: #ffedd5; color: #c2410c; } .ap-prio-urgent { background: #fee2e2; color: #b91c1c; }
+.ap-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.ap-chip { background: var(--hover-bg, #f1f5f9); border: 1px solid var(--border-color, #e2e8f0); border-radius: 999px; padding: 5px 12px; font-size: 13px; }
+
+.ap-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+.ap-form-grid label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary, #475569); margin-bottom: 5px; }
+.ap-form-full { grid-column: 1 / -1; }
+.ap-form-actions { display: flex; gap: 10px; margin-top: 16px; }

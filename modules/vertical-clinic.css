@@ -1,0 +1,83 @@
+/* ── Octagon ERP — Clinic Vertical styles ── */
+.cl-header { margin-bottom: 14px; }
+.cl-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.cl-tab-btn { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border,#e2e8f0); background: var(--bg-card,#fff); color: var(--text-secondary,#64748b); cursor: pointer; font-size: 13px; transition: all .15s; }
+.cl-tab-btn.active { background: #0891b2; color: #fff; border-color: #0891b2; }
+.cl-tab-btn:hover:not(.active) { background: var(--bg-hover,#f1f5f9); }
+
+/* KPI */
+.cl-kpi-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.cl-kpi { flex: 1 1 130px; background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 10px; padding: 14px; text-align: center; }
+.cl-kpi-val { font-size: 1.3rem; font-weight: 700; color: #0891b2; }
+.cl-kpi-lbl { font-size: 12px; color: var(--text-secondary,#64748b); margin-top: 4px; }
+.cl-kpi-warn .cl-kpi-val { color: #d97706; }
+
+/* Schedule */
+.cl-sched-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; padding: 12px 16px; background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 10px; font-size: 13px; }
+.cl-sched-meta { color: var(--text-secondary,#64748b); }
+.cl-appt-list { display: flex; flex-direction: column; gap: 10px; }
+.cl-appt-card { display: flex; align-items: center; gap: 12px; background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 10px; padding: 12px 16px; transition: box-shadow .15s; }
+.cl-appt-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); }
+.cl-appt-card.cl-status-prog { border-right: 4px solid #0891b2; }
+.cl-appt-card.cl-status-arrived { border-right: 4px solid #f59e0b; }
+.cl-appt-card.cl-status-done { border-right: 4px solid #16a34a; opacity: .8; }
+.cl-appt-card.cl-status-cancel { opacity: .5; }
+.cl-appt-time { font-size: 18px; font-weight: 700; color: #0891b2; min-width: 52px; text-align: center; }
+.cl-appt-info { flex: 1; }
+.cl-appt-patient { font-weight: 600; font-size: 14px; }
+.cl-appt-phone { font-weight: 400; color: var(--text-secondary,#64748b); font-size: 12px; margin-right: 8px; }
+.cl-appt-service { font-size: 12px; color: var(--text-secondary,#64748b); }
+.cl-appt-ref { font-size: 11px; color: var(--text-secondary,#94a3b8); font-family: monospace; }
+.cl-appt-status { min-width: 90px; }
+.cl-appt-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Status badges */
+.cl-status-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.cl-status-sched { background: #e0f2fe; color: #0369a1; }
+.cl-status-arrived { background: #fef3c7; color: #b45309; }
+.cl-status-prog { background: #cffafe; color: #0e7490; }
+.cl-status-done { background: #dcfce7; color: #16a34a; }
+.cl-status-cancel { background: #fee2e2; color: #dc2626; }
+
+/* Patients */
+.cl-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+.cl-search { padding: 8px 12px; border: 1px solid var(--border,#e2e8f0); border-radius: 8px; font-size: 14px; flex: 1 1 200px; background: var(--bg-input,#f8fafc); }
+.cl-patient-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 12px; }
+.cl-patient-card { background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 10px; padding: 14px; }
+.cl-pat-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.cl-pat-details { font-size: 12px; color: var(--text-secondary,#64748b); margin-bottom: 4px; }
+.cl-pat-alert { font-size: 12px; color: #dc2626; margin-bottom: 2px; }
+.cl-pat-chronic { font-size: 12px; color: #d97706; margin-bottom: 4px; }
+.cl-pat-stats { font-size: 11px; color: var(--text-secondary,#94a3b8); margin-bottom: 8px; }
+.cl-pat-actions { display: flex; gap: 6px; }
+.cl-pat-summary { font-size: 12px; color: var(--text-secondary,#64748b); margin-top: 4px; }
+
+/* Record form */
+.cl-record-form { background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 12px; padding: 20px; max-width: 760px; }
+.cl-record-header { margin-bottom: 16px; font-size: 14px; font-weight: 600; }
+
+/* Forms */
+.cl-form-card { background: var(--bg-card,#fff); border: 1px solid var(--border,#e2e8f0); border-radius: 12px; padding: 20px; max-width: 760px; }
+.cl-form-card h3 { margin: 0 0 16px; }
+.cl-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; }
+.cl-field { display: flex; flex-direction: column; gap: 4px; }
+.cl-field-full { grid-column: 1 / -1; }
+.cl-field label { font-size: 12px; font-weight: 600; color: var(--text-secondary,#64748b); }
+.cl-field input, .cl-field select, .cl-field textarea { padding: 7px 10px; border: 1px solid var(--border,#e2e8f0); border-radius: 7px; font-size: 14px; background: var(--bg-input,#f8fafc); resize: vertical; font-family: inherit; }
+.cl-form-actions { margin-top: 16px; display: flex; gap: 10px; }
+
+/* Table */
+.cl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cl-table th, .cl-table td { border: 1px solid var(--border,#e2e8f0); padding: 7px 10px; text-align: right; }
+.cl-table th { background: var(--bg-hover,#f8fafc); font-weight: 600; }
+.cl-row-inactive { opacity: .5; }
+.cl-table .cl-empty { text-align: center; color: var(--text-secondary,#64748b); padding: 20px; }
+
+/* Buttons */
+.cl-btn-sm { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border,#e2e8f0); background: var(--bg-hover,#f8fafc); cursor: pointer; font-size: 12px; }
+.cl-empty { text-align: center; color: var(--text-secondary,#64748b); padding: 32px; font-size: 13px; }
+.btn-danger-sm { color: #dc2626; background: none; border: none; cursor: pointer; font-size: 12px; padding: 4px 8px; }
+.btn-primary { padding: 7px 16px; background: #0891b2; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
+.btn-primary:hover { background: #0e7490; }
+.btn-secondary { padding: 7px 16px; background: var(--bg-hover,#f1f5f9); color: var(--text-primary,#1e293b); border: 1px solid var(--border,#e2e8f0); border-radius: 8px; cursor: pointer; font-size: 13px; }
+.btn-ghost { padding: 7px 16px; background: transparent; border: 1px solid var(--border,#e2e8f0); border-radius: 8px; cursor: pointer; font-size: 13px; }

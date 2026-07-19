@@ -1,0 +1,85 @@
+/* OCTAGON ERP — Workshop AI Operating Layer (the "soul"). Namespaced .wai-* */
+
+/* ---------- shared ---------- */
+.wai-toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+.wai-toolbar .spacer { flex:1; }
+.wai-btn { padding:9px 16px; border-radius:10px; border:1px solid rgba(148,163,184,0.3); background:rgba(148,163,184,0.12); color:inherit; cursor:pointer; font-size:13px; font-family:inherit; transition:all .12s; }
+.wai-btn:hover { background:rgba(148,163,184,0.2); }
+.wai-btn.primary { background:linear-gradient(135deg,#6366f1,#4f46e5); border:none; color:#fff; font-weight:800; }
+.wai-btn.primary:hover { filter:brightness(1.08); }
+.wai-btn.ok { background:linear-gradient(135deg,#10b981,#059669); border:none; color:#fff; font-weight:700; }
+.wai-btn.danger { border-color:rgba(248,113,113,0.45); color:#fca5a5; }
+.wai-btn.danger:hover { background:rgba(248,113,113,0.12); }
+.wai-btn.ghost { background:transparent; }
+.wai-btn.mini { padding:4px 10px; font-size:11.5px; border-radius:8px; }
+.wai-btn:disabled { opacity:.45; cursor:not-allowed; }
+
+.wai-card { background:rgba(30,41,59,0.5); border:1px solid rgba(148,163,184,0.18); border-radius:12px; padding:14px; margin-bottom:12px; }
+.wai-card-title { font-weight:800; font-size:14px; margin-bottom:10px; color:#e2e8f0; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
+.wai-section-title { font-weight:800; font-size:13px; color:#a5b4fc; margin:12px 0 6px; }
+.wai-empty { padding:18px; text-align:center; color:#94a3b8; font-size:13px; }
+.wai-muted { color:#94a3b8; font-size:11.5px; }
+.wai-hint { font-size:11px; color:#94a3b8; margin-top:4px; }
+
+.wai-pill { display:inline-block; padding:2px 9px; border-radius:10px; font-size:10px; font-weight:800; white-space:nowrap; }
+.wai-pill.ok { background:rgba(52,211,153,0.15); color:#6ee7b7; } .wai-pill.warn { background:rgba(251,191,36,0.16); color:#fde68a; }
+.wai-pill.bad { background:rgba(248,113,113,0.18); color:#fca5a5; } .wai-pill.info { background:rgba(56,189,248,0.14); color:#7dd3fc; }
+.wai-pill.muted { background:rgba(148,163,184,0.13); color:#cbd5e1; } .wai-pill.ai { background:rgba(129,140,248,0.2); color:#c7d2fe; }
+
+/* ---------- kiosk (روح النظام) ---------- */
+.wai-kiosk { display:grid; grid-template-columns:1fr 300px; gap:14px; align-items:start; }
+@media (max-width:1000px){ .wai-kiosk { grid-template-columns:1fr; } }
+.wai-chat-wrap { background:rgba(15,23,42,0.55); border:1px solid rgba(129,140,248,0.3); border-radius:16px; padding:14px; display:flex; flex-direction:column; min-height:62vh; }
+.wai-chat-head { font-weight:900; font-size:18px; color:#c7d2fe; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.wai-chat-log { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:6px; max-height:52vh; }
+.wai-msg { max-width:85%; padding:10px 13px; border-radius:14px; font-size:14px; line-height:1.7; white-space:pre-wrap; }
+.wai-msg.user { align-self:flex-start; background:rgba(99,102,241,0.22); border:1px solid rgba(129,140,248,0.4); }
+.wai-msg.bot { align-self:flex-end; background:rgba(30,41,59,0.7); border:1px solid rgba(148,163,184,0.2); }
+.wai-msg.bot b { color:#a5b4fc; }
+.wai-msg-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.wai-chat-input-row { display:flex; gap:8px; margin-top:10px; }
+.wai-chat-input { flex:1; padding:12px 14px; border-radius:12px; border:1px solid rgba(148,163,184,0.3); background:rgba(15,23,42,0.6); color:inherit; font-size:15px; font-family:inherit; }
+.wai-mic { width:48px; border-radius:12px; border:1px solid rgba(129,140,248,0.4); background:rgba(99,102,241,0.18); color:#c7d2fe; cursor:pointer; font-size:18px; }
+.wai-mic:hover { background:rgba(99,102,241,0.3); }
+.wai-mic.listening { background:rgba(239,68,68,0.85); color:#fff; border-color:rgba(239,68,68,0.9); animation:waiMicPulse 1s ease-in-out infinite; }
+@keyframes waiMicPulse { 0%,100% { box-shadow:0 0 0 0 rgba(239,68,68,0.5); } 50% { box-shadow:0 0 0 8px rgba(239,68,68,0); } }
+.wai-quick { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.wai-quick button { padding:7px 12px; border-radius:20px; border:1px solid rgba(148,163,184,0.25); background:rgba(148,163,184,0.1); color:#cbd5e1; cursor:pointer; font-size:12px; }
+.wai-quick button:hover { background:rgba(129,140,248,0.18); border-color:#818cf8; }
+.wai-side-card { background:rgba(30,41,59,0.55); border:1px solid rgba(148,163,184,0.18); border-radius:14px; padding:13px; margin-bottom:12px; }
+.wai-status-row { display:flex; justify-content:space-between; font-size:12px; padding:5px 0; border-bottom:1px dashed rgba(148,163,184,0.12); }
+.wai-status-row:last-child { border-bottom:none; }
+
+/* ---------- briefing ---------- */
+.wai-brief-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+.wai-brief-box { background:rgba(15,23,42,0.5); border:1px solid rgba(148,163,184,0.15); border-radius:11px; padding:11px; }
+.wai-brief-box.danger { border-color:rgba(248,113,113,0.4); }
+.wai-brief-box.warn { border-color:rgba(251,191,36,0.4); }
+.wai-brief-box-title { font-size:12px; font-weight:800; margin-bottom:6px; display:flex; justify-content:space-between; }
+.wai-brief-line { font-size:11.5px; padding:3px 0; color:#cbd5e1; display:flex; justify-content:space-between; gap:6px; cursor:pointer; }
+.wai-brief-line:hover { color:#fff; }
+.wai-brief-empty { font-size:11px; color:#34d399; }
+.wai-suggest { background:rgba(99,102,241,0.1); border:1px dashed rgba(129,140,248,0.4); border-radius:11px; padding:11px; margin-top:10px; }
+.wai-suggest-item { font-size:12.5px; padding:5px 0; display:flex; justify-content:space-between; gap:8px; align-items:center; }
+
+/* ---------- queue / factory / tools tables ---------- */
+.wai-table-wrap { overflow-x:auto; background:rgba(15,23,42,0.45); border:1px solid rgba(148,163,184,0.18); border-radius:12px; }
+.wai-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+.wai-table th { text-align:right; padding:9px 11px; color:#94a3b8; font-size:11px; border-bottom:1px solid rgba(148,163,184,0.22); white-space:nowrap; }
+.wai-table td { padding:9px 11px; border-bottom:1px solid rgba(148,163,184,0.1); vertical-align:top; }
+.wai-table tr:last-child td { border-bottom:none; }
+.wai-risk { display:inline-block; padding:2px 8px; border-radius:9px; font-size:10px; font-weight:800; }
+.wai-risk.low { background:rgba(52,211,153,0.15); color:#6ee7b7; } .wai-risk.medium { background:rgba(251,191,36,0.16); color:#fde68a; }
+.wai-risk.high { background:rgba(248,113,113,0.18); color:#fca5a5; } .wai-risk.critical { background:rgba(248,113,113,0.28); color:#fecaca; border:1px solid #f87171; }
+
+/* ---------- SOP draft ---------- */
+.wai-sop-preview { background:rgba(15,23,42,0.5); border:1px solid rgba(148,163,184,0.18); border-radius:12px; padding:14px; font-size:13px; line-height:1.8; max-height:50vh; overflow-y:auto; white-space:pre-wrap; }
+.wai-sop-preview h4 { color:#a5b4fc; margin:10px 0 4px; font-size:13.5px; }
+
+/* ---------- forms ---------- */
+.wai-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+.wai-field { display:flex; flex-direction:column; gap:4px; }
+.wai-field label { font-size:11px; color:#94a3b8; }
+.wai-field input, .wai-field select, .wai-field textarea { padding:8px 10px; border-radius:8px; border:1px solid rgba(148,163,184,0.3); background:rgba(15,23,42,0.5); color:inherit; font-size:13px; font-family:inherit; }
+.wai-field.full { grid-column:1/-1; }
+.wai-msgbox { background:rgba(16,185,129,0.07); border:1px dashed rgba(52,211,153,0.4); border-radius:10px; padding:11px; font-size:13px; line-height:1.8; white-space:pre-wrap; margin-top:8px; }

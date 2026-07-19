@@ -1,0 +1,26 @@
+/* OCTAGON ERP — UI contrast fixes (2026-06-22).
+ *
+ * Bug: three vertical stylesheets (vertical-retail/clinic/restaurant.css) ship an
+ * UNSCOPED, light-theme `.btn-secondary { background: var(--bg-hover,#f1f5f9);
+ * color: var(--text-primary,#1e293b); }`. In this dark app `--text-primary`
+ * resolves to a light color (#f1f5f9) and `--bg-hover` is unset → light text on a
+ * light background = invisible "white-on-white" buttons (modal إلغاء/رجوع, demo
+ * actions, calculator quick-add, kanban view toggle, etc.).
+ *
+ * Fix: a default-theme `.btn-secondary` style with `body` specificity (0,1,1) so it
+ * beats the vertical plain `.btn-secondary` (0,1,0) regardless of load order, while
+ * still losing to the themed `body.theme-glass .btn-secondary` (0,2,0) so the glass
+ * and abstract themes keep their own button styling. ADD-ONLY.
+ */
+body .btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+body .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+body .btn-secondary:active {
+  background: rgba(255, 255, 255, 0.18);
+}

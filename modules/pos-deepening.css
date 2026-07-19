@@ -1,0 +1,27 @@
+.posd-wrap { padding:1rem; direction:rtl; font-family:'Tajawal',sans-serif;color:#e2e8f0 }
+.posd-kpi-strip { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0.75rem;margin-bottom:1rem }
+.posd-kpi-card { background:#1e293b;border-radius:10px;padding:1rem;text-align:center;border:1px solid #334155 }
+.posd-kpi-card .posd-kpi-value { font-size:1.3rem;font-weight:700;color:#38bdf8 }
+.posd-kpi-card .posd-kpi-label { font-size:0.8rem;color:#94a3b8 }
+.posd-toolbar { display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap }
+.posd-toolbar button { padding:0.5rem 1.2rem;border-radius:6px;border:none;background:#334155;color:#e2e8f0;cursor:pointer;font-size:0.85rem }
+.posd-toolbar button.active { background:#2563eb;color:#fff }
+.posd-content { background:#1e293b;border-radius:10px;padding:1.25rem;border:1px solid #334155;min-height:200px }
+.posd-table { width:100%;border-collapse:collapse;margin-top:1rem }
+.posd-table th { background:#0f172a;color:#94a3b8;padding:0.6rem 0.8rem;text-align:right;font-size:0.8rem;border-bottom:2px solid #334155 }
+.posd-table td { padding:0.6rem 0.8rem;border-bottom:1px solid #1e293b;font-size:0.85rem }
+.posd-table tr:hover td { background:#1a2332 }
+.posd-badge { display:inline-block;padding:0.2rem 0.6rem;border-radius:999px;font-size:0.75rem;font-weight:600 }
+.posd-badge-open { background:#1e40af;color:#93c5fd }
+.posd-badge-closed { background:#14532d;color:#86efac }
+.posd-badge-return { background:#7f1d1d;color:#fca5a5 }
+.posd-btn { padding:0.4rem 1rem;border-radius:6px;border:none;cursor:pointer;font-size:0.8rem;font-family:'Tajawal',sans-serif }
+.posd-btn-primary { background:#2563eb;color:#fff }
+.posd-btn-success { background:#16a34a;color:#fff }
+.posd-btn-danger { background:#dc2626;color:#fff }
+.posd-btn-sm { padding:0.25rem 0.6rem;font-size:0.75rem }
+.posd-form-group { margin-bottom:0.75rem }
+.posd-form-group label { display:block;font-size:0.8rem;color:#94a3b8;margin-bottom:0.25rem }
+.posd-form-group input,.posd-form-group select { width:100%;padding:0.5rem;border-radius:6px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:0.85rem;font-family:'Tajawal',sans-serif;box-sizing:border-box }
+.posd-form-row { display:grid;grid-template-columns:1fr 1fr;gap:0.75rem }
+.posd-empty { text-align:center;padding:2rem;color:#64748b;font-size:0.9rem }

@@ -1,0 +1,109 @@
+/* Official, persistent documentation log for verified/documented monthly
+   operating-cost items — lives on the calendar page as a standing section
+   (not a popup), so verified entries stay visible/reviewable after the
+   configuration modal closes. Reuses .data-table for the same look as the
+   rest of the app's ledger-style tables. */
+
+.opc-doclog-card {
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.opc-doclog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.opc-doclog-header h2 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-heading, #e2e8f0);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.opc-doclog-header h2 i {
+  color: var(--accent-blue, #38bdf8);
+}
+
+.opc-doclog-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 12.5px;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.opc-doclog-stats strong {
+  color: var(--text-primary, #f1f5f9);
+  font-size: 14px;
+  margin-left: 5px;
+}
+
+.opc-doclog-table-wrap {
+  overflow-x: auto;
+  max-height: 360px;
+  overflow-y: auto;
+  border-radius: var(--radius-md, 12px);
+  border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.08));
+}
+
+.opc-doclog-amount {
+  font-weight: 700;
+  color: var(--text-primary, #f1f5f9);
+}
+
+.opc-doclog-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.opc-doclog-posted {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--accent-green, #34d399);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.opc-doclog-pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--accent-yellow, #fbbf24);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.opc-doclog-empty {
+  text-align: center;
+  color: var(--text-muted, #64748b);
+  padding: 24px !important;
+  white-space: normal !important;
+}
+
+/* Friday's weekly operating-cost rollup badge inside the small month-grid
+   day box — intentionally distinct (purple accent, pill shape) from the
+   plain daily "كلفة اليوم" text so it reads as a different kind of figure. */
+.cal-weekly-mini-badge {
+  margin-top: 6px;
+  font-size: 10.5px;
+  background: rgba(129, 140, 248, 0.15);
+  color: #c7d2fe;
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  border-radius: 999px;
+  padding: 3px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.cal-weekly-mini-badge b {
+  font-weight: 700;
+  white-space: nowrap;
+}

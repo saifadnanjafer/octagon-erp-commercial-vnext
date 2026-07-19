@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Octagon VNext — R3 Commercial</title>
+  <link rel="stylesheet" href="r3.css">
+</head>
+<body>
+  <main class="r3-shell">
+    <header>
+      <div>
+        <p class="eyebrow">OCTAGON VNEXT · RELEASE 3</p>
+        <h1 id="r3PanelTitle">التجارة والتصنيع والخدمات</h1>
+        <p>مساحة عمل تجارية متصلة بالدفتر العام والمخزون</p>
+      </div>
+      <div class="header-controls">
+        <label>الشركة <input id="r3Company" value="company-r0-demo" autocomplete="off"></label>
+        <button id="r3LangToggle" type="button" title="Language">EN</button>
+        <span id="r3Connectivity" data-state="connecting">جاري الاتصال</span>
+      </div>
+    </header>
+    <div class="r3-body">
+      <nav id="r3Nav" class="r3-nav" aria-label="R3 domains"></nav>
+      <section id="r3App" class="r3-app" aria-live="polite"></section>
+    </div>
+    <p class="notice">تعمل المساحة بوضع online-first. لا تُنفذ كتابات حساسة للمالية أو المخزون أو الموافقات أو الهوية أو الرواتب أو الحضور دون جلسة وصلاحية وخادم متصل.</p>
+  </main>
+  <!-- Platform kernel widgets (Approval Center) -->
+  <script src="chatter.js"></script>
+  <script src="inbox.js"></script>
+  <!-- Operational UI kernel -->
+  <script src="r3-ui.js"></script>
+  <!-- Domain module descriptors (registry-driven operational surfaces) -->
+  <script src="modules/products/index.js"></script>
+  <script src="modules/pricing/index.js"></script>
+  <script src="modules/sales/index.js"></script>
+  <script src="modules/procurement/index.js"></script>
+  <script src="modules/inventory/index.js"></script>
+  <script src="modules/manufacturing/index.js"></script>
+  <script src="modules/subcontracting/index.js"></script>
+  <script src="modules/projects/index.js"></script>
+  <script src="modules/helpdesk/index.js"></script>
+  <script src="modules/approvals/index.js"></script>
+  <script src="modules/legacy-workshop/index.js"></script>
+  <script>window.OctagonR3.boot();</script>
+</body>
+</html>

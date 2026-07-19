@@ -1,0 +1,74 @@
+/* GO 24 — Manufacturing MRP II depth — styles (scoped to .mrp-wrap) */
+.mrp-wrap { direction: rtl; padding: 4px 2px 40px; }
+.mrp-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.08); padding-bottom: 10px; }
+.mrp-tab { background: rgba(255,255,255,.04); color: #cbd5e1; border: 1px solid rgba(255,255,255,.08); padding: 9px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all .15s; }
+.mrp-tab:hover { background: rgba(99,102,241,.15); color: #fff; }
+.mrp-tab.active { background: linear-gradient(135deg,#6366f1,#8b5cf6); color: #fff; border-color: transparent; box-shadow: 0 4px 14px rgba(99,102,241,.35); }
+
+.mrp-kpis, .mrp-run-summary { display: flex; gap: 12px; flex-wrap: wrap; margin: 6px 0 16px; }
+.mrp-kpi { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 12px 18px; min-width: 130px; flex: 1; }
+.mrp-kpi .v { font-size: 20px; font-weight: 800; color: #a5b4fc; }
+.mrp-kpi .l { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+
+.mrp-newbom, .mrp-runbar { display: flex; gap: 8px; align-items: center; margin: 10px 0 16px; flex-wrap: wrap; }
+.mrp-newbom input { flex: 1; min-width: 200px; }
+
+.mrp-btn { background: linear-gradient(135deg,#6366f1,#8b5cf6); color: #fff; border: none; padding: 9px 16px; border-radius: 9px; cursor: pointer; font-weight: 600; font-size: 13px; }
+.mrp-btn:hover { filter: brightness(1.1); }
+.mrp-btn.sm { padding: 6px 12px; font-size: 12px; }
+.mrp-btn.big { padding: 12px 24px; font-size: 15px; }
+.mrp-btn.ghost { background: rgba(255,255,255,.06); color: #cbd5e1; border: 1px solid rgba(255,255,255,.1); }
+.mrp-btn.danger { background: rgba(239,68,68,.18); color: #fca5a5; border: 1px solid rgba(239,68,68,.3); }
+.mrp-x { background: transparent; border: none; color: #f87171; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 6px; }
+.mrp-x:hover { background: rgba(239,68,68,.15); }
+
+.mrp-wrap input, .mrp-wrap select { background: rgba(15,23,42,.6); color: #e2e8f0; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; padding: 7px 10px; font-size: 13px; font-family: inherit; }
+
+/* BOM cards */
+.mrp-bom { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+.mrp-bom.inactive { opacity: .72; }
+.mrp-bom-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; cursor: pointer; }
+.mrp-bom-head:hover { background: rgba(255,255,255,.03); }
+.mrp-bom-name { font-weight: 700; color: #f1f5f9; font-size: 15px; }
+.mrp-bom-body { padding: 4px 16px 16px; border-top: 1px solid rgba(255,255,255,.06); }
+.mrp-bom-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+.mrp-bom-meta { margin-top: 10px; font-size: 12px; color: #94a3b8; }
+.mrp-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 900px) { .mrp-grid2 { grid-template-columns: 1fr; } }
+.mrp-grid2 h4 { margin: 6px 0 8px; color: #c7d2fe; font-size: 13px; }
+.mrp-addrow { display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+
+.mrp-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: rgba(148,163,184,.18); color: #cbd5e1; margin: 0 2px; }
+.mrp-badge.ver { background: rgba(99,102,241,.2); color: #c7d2fe; }
+.mrp-badge.ok { background: rgba(16,185,129,.18); color: #6ee7b7; }
+.mrp-badge.warn { background: rgba(245,158,11,.18); color: #fcd34d; }
+.mrp-badge.danger { background: rgba(239,68,68,.2); color: #fca5a5; }
+
+.mrp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.mrp-table th { text-align: right; color: #94a3b8; font-weight: 600; padding: 8px 6px; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 12px; }
+.mrp-table td { padding: 8px 6px; border-bottom: 1px solid rgba(255,255,255,.04); color: #e2e8f0; }
+.mrp-table tr.short td { background: rgba(239,68,68,.07); }
+.mrp-muted { color: #64748b; font-size: 12px; }
+.mrp-empty, .mrp-ok-banner { padding: 20px; text-align: center; color: #94a3b8; background: rgba(255,255,255,.02); border-radius: 12px; }
+.mrp-ok-banner { color: #6ee7b7; background: rgba(16,185,129,.08); margin: 12px 0; }
+
+.mrp-demand h4, .mrp-tabbody h4 { color: #c7d2fe; font-size: 14px; margin: 18px 0 8px; }
+.mrp-procure { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 12px 0; }
+
+/* Capacity */
+.mrp-cap-config { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; background: rgba(255,255,255,.03); padding: 12px 16px; border-radius: 12px; }
+.mrp-cap-config label { font-size: 12px; color: #cbd5e1; display: flex; flex-direction: column; gap: 4px; }
+.mrp-cap-config input { width: 90px; }
+.mrp-bar { display: inline-block; width: 120px; height: 8px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; vertical-align: middle; margin-left: 6px; }
+.mrp-bar-fill { height: 100%; background: #10b981; border-radius: 999px; }
+.mrp-bar-fill.hot { background: #f59e0b; }
+.mrp-bar-fill.over { background: #ef4444; }
+.mrp-table tr.over td { background: rgba(239,68,68,.08); }
+
+/* Gantt finite schedule */
+.mrp-gantt-scroll { overflow-x: auto; }
+.mrp-gantt { border-collapse: collapse; min-width: 520px; }
+.mrp-gantt th { color: #94a3b8; font-size: 11px; padding: 4px 6px; text-align: center; border-bottom: 1px solid rgba(255,255,255,.08); }
+.mrp-gantt-name { font-size: 12px; color: #e2e8f0; white-space: nowrap; padding-left: 10px; }
+.mrp-gantt-cell { width: 30px; height: 46px; vertical-align: bottom; padding: 2px; border-right: 1px solid rgba(255,255,255,.04); }
+.mrp-gantt-bar { width: 100%; border-radius: 3px 3px 0 0; min-height: 4px; }

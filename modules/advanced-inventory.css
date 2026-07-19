@@ -1,0 +1,17 @@
+/* Phase 7I advanced inventory and supply chain panel. */
+.ai7i-panel { margin: 16px 0; padding: 16px; border: 1px solid var(--border-color, rgba(148, 163, 184, .24)); border-radius: 8px; background: var(--card-bg, rgba(15, 23, 42, .04)); }
+.ai7i-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.ai7i-head h3 { margin: 0; font-size: 17px; }
+.ai7i-note { color: var(--text-muted, #64748b); font-size: 12px; line-height: 1.6; }
+.ai7i-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.ai7i-kpi { border: 1px solid var(--border-color, rgba(148, 163, 184, .22)); border-radius: 8px; padding: 10px 12px; background: var(--surface-bg, rgba(255, 255, 255, .04)); }
+.ai7i-kpi strong { display: block; font-size: 18px; }
+.ai7i-kpi span { display: block; color: var(--text-muted, #64748b); font-size: 12px; margin-top: 3px; }
+.ai7i-table-wrap { overflow-x: auto; }
+.ai7i-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.ai7i-table th, .ai7i-table td { padding: 7px 8px; border-bottom: 1px solid var(--border-color, rgba(148, 163, 184, .18)); text-align: right; vertical-align: top; }
+.ai7i-pill { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.ai7i-pill.ok { background: rgba(34, 197, 94, .14); color: #16a34a; }
+.ai7i-pill.warn { background: rgba(245, 158, 11, .15); color: #d97706; }
+.ai7i-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.ai7i-pre { white-space: pre-wrap; direction: ltr; text-align: left; max-height: 180px; overflow: auto; font-size: 11px; background: rgba(15, 23, 42, .08); border-radius: 8px; padding: 10px; margin-top: 10px; }

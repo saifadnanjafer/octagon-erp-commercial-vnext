@@ -1,0 +1,542 @@
+/* ═══════════════════════════════════════════════════
+   IMPROVED LAYOUT & SPACING
+   Better organization and visual hierarchy
+   ═══════════════════════════════════════════════════ */
+
+/* Sidebar improvements */
+.sidebar {
+  padding: 0;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sidebar-header {
+  padding: 24px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sidebar-header .logo-badge {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.2));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header .logo-icon {
+  font-size: 20px;
+}
+
+.sidebar-header .logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-header .logo-main {
+  font-size: 14px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.sidebar-header .logo-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 1px;
+}
+
+/* Navigation section */
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.nav-btn {
+  padding: 12px 14px;
+  height: 44px;
+  gap: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.nav-btn .nav-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.nav-btn .nav-label {
+  flex: 1;
+  text-align: right;
+}
+
+.nav-btn .nav-indicator {
+  width: 3px;
+  height: 24px;
+  background: var(--accent-blue);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav-btn.active .nav-indicator {
+  opacity: 1;
+}
+
+/* Sidebar footer */
+.sidebar-footer {
+  padding: 12px 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.theme-switcher-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px;
+}
+
+.btn-theme-switcher {
+  flex: 1;
+  padding: 10px 12px;
+  height: 40px;
+  font-size: 12px;
+  gap: 6px;
+  border-radius: 8px;
+}
+
+.theme-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.btn-reset {
+  padding: 10px 12px;
+  height: 40px;
+  font-size: 12px;
+  gap: 6px;
+  border-radius: 8px;
+}
+
+.sidebar-version {
+  padding: 8px 6px;
+  text-align: center;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.page {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 32px;
+}
+
+/* Page header */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  padding: 20px 24px;
+  border-radius: 14px;
+}
+
+.page-header-text {
+  flex: 1;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-icon {
+  font-size: 32px;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.page-header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Config bar improvements */
+.config-bar,
+.emp-selector-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  padding: 18px 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.config-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
+}
+
+.config-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.5px;
+}
+
+.config-input,
+.config-select {
+  padding: 10px 14px;
+  height: 40px;
+  width: 140px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Input with unit */
+.input-with-unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 140px;
+  min-width: 140px;
+}
+
+.input-with-unit .config-input,
+.input-with-unit input {
+  width: 140px;
+  min-width: 140px;
+  padding-left: 14px;
+  padding-right: 50px;
+  box-sizing: border-box;
+}
+
+.input-unit {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Cards container */
+.calc-form {
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+}
+
+/* Form sections */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.section-icon {
+  font-size: 16px;
+}
+
+/* Info cards grid */
+.info-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.info-card {
+  padding: 18px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-card-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.info-card-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Salary cards */
+.salary-card {
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.salary-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.salary-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.salary-change {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Table containers */
+.table-container {
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead {
+  position: sticky;
+  top: 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.data-table th {
+  padding: 12px 14px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.data-table th:last-child {
+  border-right: none;
+}
+
+.data-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+}
+
+.data-table td:last-child {
+  border-right: none;
+}
+
+.data-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Buttons spacing */
+.btn-primary,
+.btn-secondary,
+.btn-success {
+  padding: 11px 22px;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 8px;
+  transition: all 0.25s ease;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  height: 28px;
+  font-size: 11px;
+  border-radius: 6px;
+}
+
+/* Toast notifications */
+.toast {
+  padding: 14px 18px;
+  border-radius: 10px;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1400px) {
+  .config-group {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+  }
+
+  .config-input,
+  .config-select {
+    width: 120px;
+    min-width: 120px;
+  }
+
+  .input-with-unit {
+    width: 120px;
+    min-width: 120px;
+  }
+
+  .input-with-unit .config-input,
+  .input-with-unit input {
+    width: 120px;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .page {
+    padding: 20px 24px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .config-bar,
+  .emp-selector-bar {
+    flex-wrap: nowrap;
+    gap: 14px;
+    padding: 16px 20px;
+  }
+
+  .config-group {
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
+  }
+
+  .config-input,
+  .config-select {
+    width: 110px;
+    min-width: 110px;
+  }
+
+  .input-with-unit {
+    width: 110px;
+    min-width: 110px;
+  }
+
+  .input-with-unit .config-input,
+  .input-with-unit input {
+    width: 110px;
+    min-width: 110px;
+  }
+
+  .info-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .page {
+    padding: 16px 20px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .info-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .config-bar,
+  .emp-selector-bar {
+    flex-wrap: nowrap;
+    flex-direction: row;
+    gap: 12px;
+    padding: 14px 16px;
+    overflow-x: auto;
+  }
+
+  .config-group {
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
+  }
+
+  .config-input,
+  .config-select {
+    width: 110px;
+    min-width: 110px;
+  }
+
+  .config-group {
+    min-width: 120px;
+  }
+}

@@ -1,0 +1,452 @@
+<section class="page page-active" id="pageCalculator">
+        <div class="page-header">
+          <div class="page-header-text">
+            <h1 class="page-title">
+              <span class="title-icon">🧮</span>
+              حاسبة الراتب
+            </h1>
+            <p class="page-subtitle">أدخل بيانات الموظف لحساب الراتب الشهري بشكل فوري</p>
+          </div>
+          <div class="page-header-actions" style="display: flex; gap: 10px;">
+            <button class="btn-primary" onclick="verifyCalculatorWithAI()" id="btnVerifyCalcAI" style="background: linear-gradient(135deg, #a855f7, #ec4899); border: none; font-weight: bold;">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> مراجعة الراتب بالذكاء الاصطناعي
+            </button>
+            <button class="btn-primary" onclick="printReceipt()">
+              <span>🖨️</span> طباعة الوصل
+            </button>
+          </div>
+        </div>
+
+        <!-- Employee Selector -->
+        <div class="emp-selector-bar glass-card" id="calcEmpSelector">
+          <div class="emp-selector-content">
+            <span class="emp-selector-icon">👤</span>
+            <div class="emp-selector-group">
+              <label class="config-label">اختيار الموظف</label>
+              <select id="calcEmpSelect" class="config-input config-select emp-dropdown" onchange="onCalcEmpChange()">
+                <option value="-1">— حساب مباشر (بدون موظف) —</option>
+              </select>
+            </div>
+            <div class="emp-selector-badge" id="calcEmpBadge" style="display:none;">
+              <span class="badge-icon">📋</span>
+              <span class="badge-text" id="calcEmpBadgeText">بيانات مسحوبة من التايم شيت</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Config -->
+        <div class="config-bar glass-card">
+          <div class="config-group">
+            <label class="config-label">الشهر</label>
+            <select id="cfgMonth" class="config-input config-select" onchange="onMonthYearChange()">
+              <option value="1">يناير</option>
+              <option value="2">فبراير</option>
+              <option value="3" selected>مارس</option>
+              <option value="4">أبريل</option>
+              <option value="5">مايو</option>
+              <option value="6">يونيو</option>
+              <option value="7">يوليو</option>
+              <option value="8">أغسطس</option>
+              <option value="9">سبتمبر</option>
+              <option value="10">أكتوبر</option>
+              <option value="11">نوفمبر</option>
+              <option value="12">ديسمبر</option>
+            </select>
+          </div>
+          <div class="config-group">
+            <label class="config-label">السنة</label>
+            <input type="number" id="cfgYear" class="config-input" value="2026" min="2020" max="2040"
+              onchange="onMonthYearChange()">
+          </div>
+          <div class="config-group">
+            <label class="config-label">الراتب الاسمي</label>
+            <div class="input-with-unit">
+              <input type="number" id="cfgSalary" class="config-input" value="500000" onchange="recalculate()">
+              <span class="input-unit">د.ع</span>
+            </div>
+          </div>
+          <div class="config-group">
+            <label class="config-label">مخصصات النقل</label>
+            <div class="input-with-unit">
+              <input type="number" id="cfgTransport" class="config-input" value="50000" onchange="recalculate()">
+              <span class="input-unit">د.ع</span>
+            </div>
+          </div>
+          <div class="config-group">
+            <label class="config-label">مخصصات الطعام</label>
+            <div class="input-with-unit">
+              <input type="number" id="cfgFood" class="config-input" value="50000" onchange="recalculate()">
+              <span class="input-unit">د.ع</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calculator AI Response Box -->
+        <div id="calcAIResponseContainer" class="glass-card" style="display: none; margin-bottom: 20px; padding: 20px 25px; border-right: 4px solid #a855f7;">
+          <div style="display: flex; gap: 15px; align-items: flex-start;">
+            <div style="background: rgba(168, 85, 247, 0.1); padding: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 5px;">
+              <i class="fa-solid fa-robot fa-2x" style="color: #a855f7;"></i>
+            </div>
+            <div style="flex: 1;">
+              <strong style="color: #a855f7; font-size: 15px; display: block; margin-bottom: 10px;">تقرير مراجعة الذكاء الاصطناعي للحاسبة:</strong>
+              <div id="calcAIResponseText" style="color: #e2e8f0; font-size: 14px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.3);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calculator Form -->
+        <div class="calc-grid">
+          <!-- LEFT: Input Form -->
+          <div class="calc-form glass-card">
+            <h2 class="section-title">
+              <span class="section-icon">📅</span>
+              توزيع أيام الشهر
+            </h2>
+
+            <!-- Days Warning -->
+            <div class="days-warning" id="daysWarning" style="display:none;">
+              <span class="warning-icon">⚠️</span>
+              <span class="warning-text" id="daysWarningText">مجموع الأيام يتجاوز أيام الشهر!</span>
+            </div>
+
+            <!-- Days Summary Bar -->
+            <div class="days-summary-bar" id="daysSummaryBar">
+              <div class="days-summary-info">
+                <span>المجموع: <b id="daysSumDisplay">0</b> / <b id="daysMonthDisplay">31</b> يوم</span>
+                <span class="days-remaining" id="daysRemaining"></span>
+              </div>
+              <div class="days-bar-track">
+                <div class="days-bar-attend" id="daysBarAttend" style="width:0%"></div>
+                <div class="days-bar-friday" id="daysBarFriday" style="width:0%"></div>
+                <div class="days-bar-leave" id="daysBarLeave" style="width:0%"></div>
+                <div class="days-bar-absent" id="daysBarAbsent" style="width:0%"></div>
+              </div>
+              <div class="days-bar-legend">
+                <span class="legend-item"><span class="legend-dot"
+                    style="background:var(--accent-green)"></span>حضور</span>
+                <span class="legend-item"><span class="legend-dot"
+                    style="background:var(--accent-purple)"></span>جمعة</span>
+                <span class="legend-item"><span class="legend-dot"
+                    style="background:var(--accent-yellow)"></span>إجازة</span>
+                <span class="legend-item"><span class="legend-dot"
+                    style="background:var(--accent-red)"></span>غياب</span>
+              </div>
+            </div>
+
+            <div class="form-grid form-grid-4">
+              <div class="form-group">
+                <label class="form-label">🟢 أيام الحضور</label>
+                <input type="number" id="inpAttendance" class="form-input day-input day-attend" value="0" min="0"
+                  max="31" oninput="validateDays(); recalculate();">
+                <span class="form-hint">دوام عادي + سماحية + شيفت ليلي + عطلة</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">🟣 أيام الجمعة العاملة</label>
+                <input type="number" id="inpFridayDays" class="form-input day-input day-friday" value="0" min="0" max="5" oninput="recalculate()">
+                <span class="form-hint">عدد أيام الجمعة التي داومها الموظف</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">🟡 أيام الإجازة</label>
+                <input type="number" id="inpLeaves" class="form-input day-input day-leave" value="0" min="0" max="31"
+                  oninput="validateDays(); autoCalcEligibleFridays()">
+                <span class="form-hint">غير مدفوعة الأجر (بدون مخصصات)</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">🔴 أيام الغياب</label>
+                <input type="number" id="inpAbsent" class="form-input day-input day-absent" value="0" min="0" max="31"
+                  oninput="validateDays(); autoCalcEligibleFridays()">
+                <span class="form-hint">خصم يوم (بدون مخصصات)</span>
+              </div>
+            </div>
+
+            <h2 class="section-title" style="margin-top: 24px;">
+              <span class="section-icon">📝</span>
+              بيانات الإضافي والتأخير
+            </h2>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">ساعات الإضافي</label>
+                <input type="number" id="inpOvertime" class="form-input" value="0" min="0" step="0.5"
+                  oninput="recalculate()">
+                <span class="form-hint">×1.5 من سعر الساعة</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">ساعات إضافي الجمعة</label>
+                <input type="number" id="inpFridayOT" class="form-input" value="0" min="0" step="0.5"
+                  oninput="recalculate()">
+                <span class="form-hint">×2 من سعر الساعة</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">ساعات التأخير</label>
+                <input type="number" id="inpLateness" class="form-input" value="0" min="0" step="0.5"
+                  oninput="recalculate()">
+                <span class="form-hint">×2 من سعر الساعة</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">جمعات مستحقة (تحسب تلقائياً)</label>
+                <input type="number" id="inpFridays" class="form-input" value="4" min="0" max="4"
+                  oninput="recalculate()">
+                <span class="form-hint" id="inpFridaysHint">عدد الجمع المستحقة ÷ 4 (كل 6 أيام غياب/إجازة = جمعة أقل)</span>
+              </div>
+            </div>
+
+            <h2 class="section-title" style="margin-top: 24px;">
+              <span class="section-icon">💸</span>
+              خصومات وإضافات
+            </h2>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">سلف الشهر الحالي</label>
+                <div class="input-with-unit">
+                  <input type="number" id="inpCurrentAdvance" class="form-input" value="0" min="0"
+                    onchange="recalculate()">
+                  <span class="input-unit">د.ع</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">الرصيد السابق (سلف سابقة)</label>
+                <div class="input-with-unit">
+                  <input type="number" id="inpPreviousAdvance" class="form-input" value="0"
+                    onchange="onCalcPrevAdvanceChange()">
+                  <span class="input-unit">د.ع</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">غرامات الالتزام (تُحسب تلقائياً)</label>
+                <div class="input-with-unit">
+                  <input type="number" id="inpPenalty" class="form-input" value="0" min="0" readonly>
+                  <span class="input-unit">د.ع</span>
+                </div>
+                <span class="form-hint">التأخير + الغياب + الجمع المقتطعة</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">المكافآت</label>
+                <div class="input-with-unit">
+                  <input type="number" id="inpBonus" class="form-input" value="0" min="0" onchange="recalculate()">
+                  <span class="input-unit">د.ع</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">عقوبات وأضرار (من البيانات)</label>
+                <div class="input-with-unit">
+                  <input type="number" id="inpDamage" class="form-input" value="0" min="0" onchange="recalculate()">
+                  <span class="input-unit">د.ع</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Results -->
+          <div class="calc-results">
+            <!-- Month Info Card -->
+            <div class="info-card glass-card">
+              <h3 class="info-card-title">📅 معلومات الشهر</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="info-label">إجمالي الأيام</span>
+                  <span class="info-value" id="resTotalDays">31</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">أيام الجمعة</span>
+                  <span class="info-value" id="resFridayCount">4</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">أيام العمل</span>
+                  <span class="info-value" id="resWorkDays">27</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">سعر اليوم</span>
+                  <span class="info-value" id="resDailyRate">0</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">سعر الساعة</span>
+                  <span class="info-value" id="resHourlyRate">0</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">مخصصات/يوم</span>
+                  <span class="info-value" id="resAllowanceRate">0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Earnings Cards -->
+            <div class="result-cards">
+              <div class="result-card earn-card">
+                <div class="result-card-icon">💵</div>
+                <div class="result-card-content">
+                  <span class="result-card-label">الراتب الأساسي</span>
+                  <span class="result-card-value" id="resBaseSalary">0</span>
+                </div>
+              </div>
+              <div class="result-card earn-card">
+                <div class="result-card-icon">🚌</div>
+                <div class="result-card-content">
+                  <span class="result-card-label">المخصصات</span>
+                  <span class="result-card-value" id="resAllowances">0</span>
+                </div>
+              </div>
+              <div class="result-card earn-card">
+                <div class="result-card-icon">⏰</div>
+                <div class="result-card-content">
+                  <span class="result-card-label">الإضافيات</span>
+                  <span class="result-card-value" id="resOvertime">0</span>
+                </div>
+              </div>
+              <div class="result-card earn-card">
+                <div class="result-card-icon">📅</div>
+                <div class="result-card-content">
+                  <span class="result-card-label">تعويض الجمعة</span>
+                  <span class="result-card-value" id="resFridayComp">0</span>
+                </div>
+              </div>
+              <div class="result-card earn-card">
+                <div class="result-card-icon">🎁</div>
+                <div class="result-card-content">
+                  <span class="result-card-label">المكافآت</span>
+                  <span class="result-card-value" id="resBonusTotal">0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Deductions Cards -->
+            <div class="result-cards deduction-cards">
+              <div class="result-card deduct-card">
+                <div class="result-card-icon">⏱️</div>
+                <div class="result-card-content">
+                  <span class="result-card-label">خصم التأخيرات</span>
+                  <span class="result-card-value deduct-value" id="resLatenessDeduct">0</span>
+                </div>
+              </div>
+              <div class="result-card deduct-card">
+                <div class="result-card-icon">❌</div>
+                <div class="result-card-content">
+                  <span class="result-card-label">خصم الغيابات</span>
+                  <span class="result-card-value deduct-value" id="resAbsenceDeduct">0</span>
+                </div>
+              </div>
+              <div class="result-card deduct-card">
+                <div class="result-card-icon">💳</div>
+                <div class="result-card-content">
+                  <span class="result-card-label">السلف + العقوبات + الأضرار</span>
+                  <span class="result-card-value deduct-value" id="resOtherDeduct">0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Registration Section -->
+            <div class="payment-section glass-card">
+              <h3 class="section-title">
+                <span class="section-icon">💰</span>
+                تسجيل الدفع
+              </h3>
+              <div class="payment-form" style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                  <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
+                    <label class="form-label">مبلغ الدفع الفعلي</label>
+                    <div class="input-with-unit">
+                      <input type="number" id="inpPaymentAmount" class="form-input" value="0" min="0" oninput="window.paymentAmountManuallyEdited = true; updatePaymentChangeDisplay();">
+                      <span class="input-unit">د.ع</span>
+                    </div>
+                  </div>
+                  <div class="payment-quick-actions" style="display: flex; gap: 8px;">
+                    <button class="btn-secondary" type="button" onclick="adjustPaymentAmount(1000)" style="padding: 10px 14px; font-weight: bold; border-radius: 8px; font-size: 13px;">+1,000</button>
+                    <button class="btn-secondary" type="button" onclick="adjustPaymentAmount(5000)" style="padding: 10px 14px; font-weight: bold; border-radius: 8px; font-size: 13px;">+5,000</button>
+                    <button class="btn-secondary" type="button" onclick="roundPaymentAmountTo1000()" style="padding: 10px 14px; font-weight: bold; border-radius: 8px; font-size: 13px; background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.2); color: var(--accent-blue);">تقريب لـ 1,000</button>
+                  </div>
+                  <button class="btn-primary" id="btnRegisterPayment" onclick="registerPayment()" style="height: 44px; margin-top: 0; padding: 0 20px;">
+                    <span>✅</span> تسجيل الدفع
+                  </button>
+                </div>
+                <!-- Dynamic Change/Rounding Info -->
+                <div id="paymentChangeInfo" style="font-size: 12px; padding: 8px 12px; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                  <span>الصافي المطلوب: <strong id="lblNetRequired">0 د.ع</strong></span>
+                  <span id="lblCarryOverContainer">الخردة المرحّلة (الباقي): <strong id="lblChangeCarryOver" style="color: var(--accent-green);">0 د.ع</strong></span>
+                </div>
+              </div>
+              <div class="payment-status" id="paymentStatus" style="display:none;"></div>
+            </div>
+
+            <!-- Salary Comparison Cards -->
+            <div class="salary-cards-container">
+              <!-- Card 1: Salary Due (Without Advances) -->
+              <div class="salary-card glass-card salary-due-card">
+                <div class="salary-header">
+                  <span class="salary-icon">📋</span>
+                  الراتب المستحق
+                </div>
+                <div class="salary-amount">
+                  <span id="resSalaryDue">0</span>
+                  <span class="final-currency">د.ع</span>
+                </div>
+                <div class="salary-breakdown">
+                  <div class="breakdown-item">
+                    <span>الراتب الأساسي:</span>
+                    <span id="resSalaryDueBase">0</span>
+                  </div>
+                  <div class="breakdown-item">
+                    <span>المخصصات:</span>
+                    <span id="resSalaryDueAllowance">0</span>
+                  </div>
+                  <div class="breakdown-item">
+                    <span>الإضافيات:</span>
+                    <span id="resSalaryDueOvertime">0</span>
+                  </div>
+                  <div class="breakdown-item deduction">
+                    <span>الخصومات (بدون سلف):</span>
+                    <span id="resSalaryDueDeductions">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2: Current Balance (With All Deductions) -->
+              <div class="salary-card glass-card current-balance-card">
+                <div class="salary-header">
+                  <span class="salary-icon">🏦</span>
+                  الرصيد الحالي
+                </div>
+                <div class="salary-amount">
+                  <span id="resCurrentBalance">0</span>
+                  <span class="final-currency">د.ع</span>
+                </div>
+                <div class="salary-breakdown">
+                  <div class="breakdown-item">
+                    <span>الراتب المستحق:</span>
+                    <span id="resCurrentBalanceBase">0</span>
+                  </div>
+                  <div class="breakdown-item deduction">
+                    <span>السلف الحالية:</span>
+                    <span id="resCurrentBalanceCurrentAdv">0</span>
+                  </div>
+                  <div class="breakdown-item deduction">
+                    <span>الرصيد السابق:</span>
+                    <span id="resCurrentBalancePrevAdv">0</span>
+                  </div>
+                  <div class="breakdown-item deduction">
+                    <span>العقوبات والأضرار:</span>
+                    <span id="resCurrentBalancePenaltyDamage">0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Final Salary (Legacy - kept for compatibility) -->
+            <div class="final-salary-card glass-card" id="finalSalaryCard">
+              <div class="final-salary-label">
+                <span class="final-icon">🏦</span>
+                الراتب النهائي المستحق
+              </div>
+              <div class="final-salary-value" id="resFinalSalary">
+                <span class="final-amount">0</span>
+                <span class="final-currency">د.ع</span>
+              </div>
+              <div class="final-salary-bar">
+                <div class="salary-bar-fill" id="salaryBarFill"></div>
+              </div>
+              <div class="final-salary-note">
+                <span id="resSalaryPercent">0</span>% من الراتب الاسمي
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>

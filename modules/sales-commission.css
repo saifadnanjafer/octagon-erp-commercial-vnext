@@ -1,0 +1,42 @@
+.sc-wrap { padding:1rem; direction:rtl; font-family:'Tajawal',sans-serif;color:#e2e8f0 }
+.sc-kpi-strip { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0.75rem;margin-bottom:1.25rem }
+.sc-kpi-card { background:#1e293b;border-radius:10px;padding:1rem;text-align:center;border:1px solid #334155 }
+.sc-kpi-card .sc-kpi-value { font-size:1.5rem;font-weight:700;color:#38bdf8 }
+.sc-kpi-card .sc-kpi-label { font-size:0.8rem;color:#94a3b8;margin-top:0.25rem }
+.sc-toolbar { display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap }
+.sc-toolbar button { padding:0.5rem 1.2rem;border-radius:6px;border:none;background:#334155;color:#e2e8f0;cursor:pointer;font-size:0.85rem;transition:all 0.2s }
+.sc-toolbar button.active { background:#2563eb;color:#fff }
+.sc-toolbar button:hover { background:#475569 }
+.sc-content { background:#1e293b;border-radius:10px;padding:1.25rem;border:1px solid #334155;min-height:300px }
+.sc-table { width:100%;border-collapse:collapse;margin-top:1rem }
+.sc-table th { background:#0f172a;color:#94a3b8;padding:0.6rem 0.8rem;text-align:right;font-size:0.8rem;font-weight:600;border-bottom:2px solid #334155 }
+.sc-table td { padding:0.6rem 0.8rem;border-bottom:1px solid #1e293b;font-size:0.85rem }
+.sc-table tr:hover td { background:#1a2332 }
+.sc-badge { display:inline-block;padding:0.2rem 0.6rem;border-radius:999px;font-size:0.75rem;font-weight:600 }
+.sc-badge-active { background:#166534;color:#86efac }
+.sc-badge-inactive { background:#7f1d1d;color:#fca5a5 }
+.sc-badge-pending { background:#713f12;color:#fde68a }
+.sc-badge-approved { background:#1e40af;color:#93c5fd }
+.sc-badge-paid { background:#14532d;color:#86efac }
+.sc-btn { padding:0.4rem 1rem;border-radius:6px;border:none;cursor:pointer;font-size:0.8rem;font-family:'Tajawal',sans-serif }
+.sc-btn-primary { background:#2563eb;color:#fff }
+.sc-btn-primary:hover { background:#1d4ed8 }
+.sc-btn-success { background:#16a34a;color:#fff }
+.sc-btn-success:hover { background:#15803d }
+.sc-btn-danger { background:#dc2626;color:#fff }
+.sc-btn-danger:hover { background:#b91c1c }
+.sc-btn-sm { padding:0.25rem 0.6rem;font-size:0.75rem }
+.sc-form-group { margin-bottom:0.75rem }
+.sc-form-group label { display:block;font-size:0.8rem;color:#94a3b8;margin-bottom:0.25rem }
+.sc-form-group input,.sc-form-group select,.sc-form-group textarea { width:100%;padding:0.5rem;border-radius:6px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:0.85rem;font-family:'Tajawal',sans-serif;box-sizing:border-box }
+.sc-form-group textarea { min-height:60px;resize:vertical }
+.sc-form-row { display:grid;grid-template-columns:1fr 1fr;gap:0.75rem }
+.sc-inline-form { display:flex;gap:0.5rem;align-items:flex-end;flex-wrap:wrap }
+.sc-inline-form .sc-form-group { flex:1;min-width:120px }
+.sc-empty { text-align:center;padding:2rem;color:#64748b;font-size:0.9rem }
+.sc-rule-card { background:#0f172a;border-radius:8px;padding:1rem;margin-bottom:0.75rem;border:1px solid #334155 }
+.sc-rule-card .sc-rule-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem }
+.sc-rule-card .sc-rule-name { font-weight:700;font-size:0.95rem }
+.sc-rule-card .sc-rule-detail { font-size:0.8rem;color:#94a3b8 }
+.sc-payout-form { background:#0f172a;border-radius:8px;padding:1rem;margin-bottom:1rem;border:1px solid #334155 }
+select[multiple] { height:100px }

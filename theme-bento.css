@@ -1,0 +1,148 @@
+/* OCTAGON ERP — Bento skin (typeui.sh)
+ * Additive, opt-in. Active only under body.theme-bento (no leak).
+ * Warm cream surfaces, white modular blocks, generous radii, terracotta accent.
+ */
+
+body.theme-bento {
+  --bn-border: #f0e0c8;
+  --bn-shadow-sm: 0 1px 2px rgba(120, 80, 40, 0.08);
+  --bn-shadow-md: 0 2px 8px rgba(120, 80, 40, 0.10);
+  --bn-shadow-lg: 0 6px 18px rgba(120, 80, 40, 0.12);
+
+  --bg-primary: #fff5e6;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-solid: #ffffff;
+  --bg-glass: #ffffff;
+  --bg-glass-hover: #fdeeda;
+  --border-glass: #f0e0c8;
+  --border-focus: rgba(194, 96, 63, 0.5);
+
+  --text-primary: #111827;
+  --text-secondary: #5b5246;
+  --text-muted: #8a7e6d;
+  --text-heading: #1a1407;
+
+  --accent-blue: #80a1c1;
+  --accent-purple: #8b5cf6;
+  --accent-green: #16a34a;
+  --accent-red: #dc2626;
+  --accent-yellow: #d97706;
+  --accent-cyan: #0891b2;
+
+  --gradient-primary: linear-gradient(135deg, #e89a7d, #c2603f);
+  --gradient-dark: #fff5e6;
+  --gradient-card: #ffffff;
+  --gradient-success: linear-gradient(135deg, #16a34a, #0891b2);
+  --gradient-danger: linear-gradient(135deg, #dc2626, #d97706);
+
+  --shadow-sm: var(--bn-shadow-sm);
+  --shadow-md: var(--bn-shadow-md);
+  --shadow-lg: var(--bn-shadow-lg);
+  --shadow-glow-blue: var(--bn-shadow-md);
+  --shadow-glow-purple: var(--bn-shadow-md);
+
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  --primary: #c2603f;
+  --text: #111827;
+  --bg: #fff5e6;
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+body.theme-bento .glass-card,
+body.theme-bento .card,
+body.theme-bento .stat-card,
+body.theme-bento .panel,
+body.theme-bento .table-container {
+  background: #ffffff;
+  border: 1px solid var(--bn-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bn-shadow-sm);
+}
+body.theme-bento .glass-card:hover,
+body.theme-bento .card:hover { box-shadow: var(--bn-shadow-md); transform: none; }
+
+body.theme-bento .btn-primary {
+  background: var(--primary); color: #ffffff; border: none; box-shadow: none;
+}
+body.theme-bento .btn-primary:hover { background: #a84e30; }
+body.theme-bento .btn-small,
+body.theme-bento .btn-theme-switcher {
+  background: #ffffff; color: var(--text-primary);
+  border: 1px solid var(--bn-border); box-shadow: none;
+}
+body.theme-bento .btn-small:hover,
+body.theme-bento .btn-theme-switcher:hover { background: var(--bg-glass-hover); }
+
+body.theme-bento .form-input,
+body.theme-bento .config-input,
+body.theme-bento input,
+body.theme-bento select,
+body.theme-bento textarea {
+  background: #ffffff; color: var(--text-primary);
+  border: 1px solid var(--bn-border); box-shadow: none;
+}
+body.theme-bento .form-input:focus,
+body.theme-bento .config-input:focus {
+  border-color: var(--primary); box-shadow: 0 0 0 3px var(--border-focus);
+}
+
+body.theme-bento .sidebar {
+  background: #fffaf2; border-inline-start: 1px solid var(--bn-border); box-shadow: none;
+}
+body.theme-bento .nav-label,
+body.theme-bento .nav-group-toggle,
+body.theme-bento .sidebar-header,
+body.theme-bento .page-title { color: var(--text-heading); }
+body.theme-bento .page-subtitle { color: var(--text-secondary); }
+body.theme-bento .nav-btn {
+  background: transparent; border: none; border-radius: var(--radius-md); color: var(--text-primary);
+}
+body.theme-bento .nav-btn:hover { background: var(--bg-glass-hover); }
+body.theme-bento .nav-btn.active { background: #fbe6d6; color: var(--primary); }
+
+body.theme-bento .data-table { background: #ffffff; }
+body.theme-bento .data-table thead,
+body.theme-bento .data-table th {
+  background: #fff5e6; color: var(--text-heading); border-bottom: 1px solid var(--bn-border);
+}
+body.theme-bento .data-table td { color: var(--text-primary); border-bottom: 1px solid #f5ead8; }
+body.theme-bento .data-table tbody tr:hover { background: #fdeeda; }
+
+/* hardcoded-dark overrides */
+body.theme-bento .page-header {
+  background: #ffffff; background-image: none;
+  border: 1px solid var(--bn-border); box-shadow: var(--bn-shadow-sm); color: var(--text-primary);
+}
+body.theme-bento .page-header .page-title,
+body.theme-bento .page-header .page-subtitle,
+body.theme-bento .page-header h1,
+body.theme-bento .page-header h2 { color: var(--text-heading); }
+body.theme-bento .nav-group-toggle { background: transparent; background-image: none; color: var(--text-secondary); box-shadow: none; border: none; }
+body.theme-bento #authUserSwitcher,
+body.theme-bento .config-select,
+body.theme-bento .config-input.config-select,
+body.theme-bento .emp-dropdown,
+body.theme-bento select.config-select,
+body.theme-bento input.form-input,
+body.theme-bento .form-input.day-input,
+body.theme-bento .day-input {
+  background: #ffffff !important; background-image: none !important;
+  color: var(--text-primary) !important; border: 1px solid var(--bn-border) !important; box-shadow: none;
+}
+body.theme-bento .result-card,
+body.theme-bento .result-card.earn-card,
+body.theme-bento .result-card.deduct-card {
+  background: #ffffff; background-image: none; border: 1px solid var(--bn-border);
+  box-shadow: var(--bn-shadow-sm); color: var(--text-primary);
+}
+body.theme-bento .omni-language-toggle,
+body.theme-bento .omni-notification-bell {
+  background: #ffffff !important; background-image: none !important;
+  color: var(--text-primary) !important; border: 1px solid var(--bn-border) !important; box-shadow: none;
+}

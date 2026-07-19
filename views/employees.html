@@ -1,0 +1,45 @@
+<section class="page" id="pageEmployees">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">👥</span> الموظفين والأرصدة</h1>
+        <p class="page-subtitle">إدارة سجلات الموظفين والحالات المالية</p>
+      </div>
+    </div>
+    <div class="emp-tabs-container page-tabs-toolbar employees-toolbar" style="margin-bottom: 20px;">
+      <div class="emp-tabs">
+        <span class="employees-section-heading">قائمة الموظفين</span>
+      </div>
+      <div class="page-tabs-actions">
+        <button class="btn-primary" onclick="addEmployee()">
+          <i class="fa-solid fa-user-plus"></i> إضافة موظف
+        </button>
+        <button class="btn-primary" onclick="renderEmployeesTable()">
+          <i class="fa-solid fa-rotate"></i> تحديث
+        </button>
+        <button class="btn-primary" onclick="exportData()">
+          <i class="fa-solid fa-download"></i> تصدير البيانات
+        </button>
+      </div>
+    </div>
+    <div class="table-container glass-card" id="employeesTableContainer">
+      <table class="employees-table">
+        <thead>
+          <tr>
+            <th onclick="sortEmployeesTable('name')" class="employee-sortable">اسم الموظف <span class="sort-arrow" id="sortArrowName"></span></th>
+            <th onclick="sortEmployeesTable('salary')" class="employee-sortable">الراتب الاسمي <span class="sort-arrow" id="sortArrowSalary"></span></th>
+            <th>الشفت</th>
+            <th onclick="sortEmployeesTable('lastActivity')" class="employee-sortable">آخر نشاط <span class="sort-arrow" id="sortArrowLastActivity"></span></th>
+            <th onclick="sortEmployeesTable('status')" class="employee-sortable employee-status-head">الحالة <span class="sort-arrow" id="sortArrowStatus"></span><input class="employee-active-only-check" type="checkbox" title="عرض الفعالين فقط" onchange="event.stopPropagation(); toggleActiveEmployeesOnly(this.checked)"></th>
+            <th onclick="sortEmployeesTable('balance')" class="employee-sortable">الرصيد الحالي <span class="sort-arrow" id="sortArrowBalance"></span></th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="employeesTableBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="employeesEmpty">
+       <div class="empty-icon">👥</div>
+       <h3>قائمة الموظفين فارغة</h3>
+       <p>سيتم ظهور الموظفين هنا تلقائياً عند استيراد البيانات</p>
+    </div>
+  </section>

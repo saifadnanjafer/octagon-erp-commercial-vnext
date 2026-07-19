@@ -1,0 +1,57 @@
+/* OCTAGON POS — point-of-sale screen (Phase 5 vertical foundation) */
+.pos-bizbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.pos-bizbar-label { color:#94a3b8; font-size:13px; }
+.pos-biz-chip { background:rgba(148,163,184,0.12); border:1px solid rgba(148,163,184,0.25); color:#cbd5e1; padding:6px 12px; border-radius:20px; cursor:pointer; font-size:13px; transition:all .15s; }
+.pos-biz-chip:hover { background:rgba(129,140,248,0.18); }
+.pos-biz-chip.active { background:rgba(129,140,248,0.25); border-color:#818cf8; color:#fff; font-weight:700; }
+
+.pos-layout { display:grid; grid-template-columns:1fr 360px; gap:16px; align-items:start; }
+@media (max-width:1100px){ .pos-layout { grid-template-columns:1fr; } }
+
+.pos-products-pane { min-width:0; }
+.pos-input-row { display:flex; gap:8px; margin-bottom:12px; }
+.pos-barcode { flex:0 0 42%; padding:10px 14px; border-radius:10px; border:1px solid rgba(52,211,153,0.4); background:rgba(16,185,129,0.08); color:inherit; font-size:14px; }
+.pos-barcode:focus { outline:none; border-color:#10b981; box-shadow:0 0 0 2px rgba(16,185,129,0.2); }
+.pos-search { flex:1; width:100%; padding:10px 14px; border-radius:10px; border:1px solid rgba(148,163,184,0.3); background:rgba(15,23,42,0.4); color:inherit; font-size:14px; }
+.pos-product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; }
+.pos-product { text-align:right; background:rgba(30,41,59,0.55); border:1px solid rgba(148,163,184,0.18); border-radius:12px; padding:12px; cursor:pointer; transition:all .12s; color:inherit; display:flex; flex-direction:column; gap:8px; min-height:84px; }
+.pos-product:hover { border-color:#34d399; transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.25); }
+.pos-product-name { font-weight:700; font-size:13px; line-height:1.3; }
+.pos-product-meta { display:flex; justify-content:space-between; align-items:center; margin-top:auto; }
+.pos-product-price { color:#34d399; font-weight:800; font-size:13px; }
+.pos-product-stock { font-size:11px; color:#94a3b8; }
+.pos-product-stock.low { color:#f87171; font-weight:700; }
+.pos-empty, .pos-cart-empty { padding:24px; text-align:center; color:#94a3b8; font-size:13px; }
+
+.pos-cart-pane { background:rgba(15,23,42,0.55); border:1px solid rgba(148,163,184,0.18); border-radius:14px; padding:14px; position:sticky; top:12px; display:flex; flex-direction:column; }
+.pos-cart-head { font-weight:800; font-size:15px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid rgba(148,163,184,0.18); display:flex; justify-content:space-between; align-items:center; }
+.pos-z-btn { width:28px; height:28px; border-radius:8px; border:1px solid rgba(148,163,184,0.3); background:rgba(148,163,184,0.12); color:inherit; cursor:pointer; font-weight:800; font-size:13px; }
+.pos-z-btn:hover { background:rgba(129,140,248,0.2); border-color:#818cf8; }
+.pos-sale-options { display:flex; gap:8px; margin-bottom:10px; }
+.pos-customer-select { flex:1; padding:8px 10px; border-radius:8px; border:1px solid rgba(148,163,184,0.3); background:rgba(15,23,42,0.5); color:inherit; font-size:13px; }
+.pos-paymode { display:flex; border:1px solid rgba(148,163,184,0.3); border-radius:8px; overflow:hidden; }
+.pos-paymode button { padding:8px 14px; border:none; background:transparent; color:#94a3b8; cursor:pointer; font-size:13px; }
+.pos-paymode button.active { background:rgba(129,140,248,0.25); color:#fff; font-weight:700; }
+.pos-cart-lines { max-height:46vh; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+.pos-cart-line { background:rgba(30,41,59,0.6); border-radius:10px; padding:8px 10px; }
+.pos-cart-line.over { border:1px solid #f87171; }
+.pos-cart-line-top { display:flex; justify-content:space-between; align-items:center; }
+.pos-cart-name { font-weight:600; font-size:13px; }
+.pos-cart-x { background:none; border:none; color:#f87171; cursor:pointer; font-size:14px; }
+.pos-cart-line-bot { display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
+.pos-qty { display:flex; align-items:center; gap:6px; }
+.pos-qty button { width:26px; height:26px; border-radius:6px; border:1px solid rgba(148,163,184,0.3); background:rgba(148,163,184,0.12); color:inherit; cursor:pointer; font-size:15px; }
+.pos-qty input { width:46px; text-align:center; padding:4px; border-radius:6px; border:1px solid rgba(148,163,184,0.3); background:rgba(15,23,42,0.5); color:inherit; }
+.pos-line-total { font-weight:700; color:#34d399; font-size:13px; }
+
+.pos-cart-foot { margin-top:12px; padding-top:10px; border-top:1px solid rgba(148,163,184,0.18); }
+.pos-cart-total-row { display:flex; justify-content:space-between; font-size:18px; font-weight:900; margin-bottom:10px; }
+.pos-cart-actions { display:flex; gap:8px; }
+.pos-btn-clear { flex:0 0 auto; padding:12px 16px; border-radius:10px; border:1px solid rgba(148,163,184,0.3); background:rgba(148,163,184,0.12); color:inherit; cursor:pointer; }
+.pos-btn-pay { flex:1; padding:12px; border-radius:10px; border:none; background:linear-gradient(135deg,#10b981,#059669); color:#fff; font-weight:800; font-size:15px; cursor:pointer; }
+.pos-btn-pay:hover { filter:brightness(1.08); }
+
+.pos-recent { margin-top:14px; padding-top:10px; border-top:1px dashed rgba(148,163,184,0.2); }
+.pos-recent-title { font-size:12px; color:#94a3b8; margin-bottom:6px; }
+.pos-recent-row { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; padding:3px 0; }
+.pos-recent-row button { background:none; border:none; cursor:pointer; font-size:13px; }

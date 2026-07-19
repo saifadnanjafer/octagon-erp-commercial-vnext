@@ -1,0 +1,45 @@
+/* GO 26 - Tax and e-invoicing compliance */
+.taxc-wrap { direction: rtl; display: flex; flex-direction: column; gap: 14px; padding: 4px 2px 42px; }
+.taxc-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 12px; }
+.taxc-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.taxc-tabs button, .taxc-toolbar select { background: rgba(15,23,42,.62); color: #cbd5e1; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; padding: 8px 12px; font-family: inherit; cursor: pointer; }
+.taxc-tabs button.active { background: linear-gradient(135deg,#0f766e,#2563eb); color: #fff; border-color: transparent; }
+.taxc-toolbar label { color: #94a3b8; font-size: 12px; display: flex; gap: 8px; align-items: center; }
+.taxc-kpis { display: grid; grid-template-columns: repeat(4, minmax(130px, 1fr)); gap: 10px; }
+.taxc-kpi, .taxc-card { background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 14px; }
+.taxc-kpi.warn { border-color: rgba(248,113,113,.3); background: rgba(248,113,113,.07); }
+.taxc-kpi .v { color: #5eead4; font-size: 20px; font-weight: 900; }
+.taxc-kpi .l { color: #94a3b8; font-size: 12px; margin-top: 3px; }
+.taxc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.taxc-card h4 { margin: 0 0 10px; color: #dbeafe; font-size: 15px; display: flex; gap: 8px; align-items: center; }
+.taxc-card p, .taxc-note { color: #94a3b8; font-size: 12px; line-height: 1.7; margin: 8px 0 0; }
+.taxc-big { font-size: 28px; color: #5eead4; font-weight: 900; }
+.taxc-big.credit { color: #fbbf24; }
+.taxc-chain { display: flex; align-items: baseline; gap: 10px; }
+.taxc-chain b { font-size: 24px; color: #93c5fd; }
+.taxc-chain span { color: #94a3b8; font-size: 12px; }
+.taxc-issues { display: flex; flex-direction: column; gap: 8px; }
+.taxc-issue { border: 1px solid rgba(255,255,255,.08); border-inline-start: 4px solid #fbbf24; border-radius: 10px; padding: 10px 12px; background: rgba(15,23,42,.35); }
+.taxc-issue.high { border-inline-start-color: #f87171; }
+.taxc-issue.medium { border-inline-start-color: #fbbf24; }
+.taxc-issue b { color: #f8fafc; font-size: 13px; }
+.taxc-issue p { margin: 4px 0 8px; }
+.taxc-issue button, .taxc-mini { background: rgba(56,189,248,.11); color: #7dd3fc; border: 1px solid rgba(56,189,248,.18); border-radius: 999px; padding: 4px 9px; font-size: 11px; cursor: pointer; margin: 0 2px; }
+.taxc-card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.taxc-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; background: linear-gradient(135deg,#0f766e,#2563eb); color: #fff; border: none; border-radius: 9px; padding: 8px 13px; font-weight: 700; cursor: pointer; font-size: 12px; }
+.taxc-btn.ghost { background: rgba(255,255,255,.05); color: #cbd5e1; border: 1px solid rgba(255,255,255,.1); }
+.taxc-table-wrap { overflow: auto; border: 1px solid rgba(255,255,255,.07); border-radius: 10px; }
+.taxc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.taxc-table th { text-align: right; color: #93c5fd; background: rgba(15,23,42,.5); border-bottom: 1px solid rgba(255,255,255,.07); padding: 9px 8px; white-space: nowrap; }
+.taxc-table td { color: #e2e8f0; padding: 8px; border-bottom: 1px solid rgba(255,255,255,.045); vertical-align: top; }
+.taxc-table tr.selected td { background: rgba(56,189,248,.08); }
+.taxc-table small { color: #94a3b8; }
+.taxc-badge { display: inline-flex; align-items: center; justify-content: center; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); background: color-mix(in srgb, var(--c) 13%, transparent); border-radius: 999px; padding: 3px 9px; font-size: 11px; white-space: nowrap; }
+.taxc-form { display: grid; grid-template-columns: repeat(3, minmax(180px, 1fr)); gap: 10px; }
+.taxc-form label { display: flex; flex-direction: column; gap: 6px; color: #cbd5e1; font-size: 12px; font-weight: 700; }
+.taxc-form input, .taxc-form select { background: rgba(15,23,42,.65); color: #e2e8f0; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; padding: 8px 10px; font-family: inherit; }
+.taxc-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.taxc-empty { color: #94a3b8; font-size: 12px; padding: 12px; background: rgba(15,23,42,.28); border-radius: 9px; }
+@media (max-width: 980px) {
+  .taxc-kpis, .taxc-grid, .taxc-form { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,208 @@
+/* OCTAGON ERP — Neumorphism skin (typeui.sh, top-rated)
+ * Additive, opt-in skin. Active only under body.theme-neumorphism so it
+ * never leaks into other themes (see ui-contrast-fix lesson).
+ * Soft monochrome surfaces + dual extruded shadows. RTL/Arabic preserved.
+ */
+
+body.theme-neumorphism {
+  /* ── soft light source helpers ── */
+  --neu-bg: #e7e5e4;
+  --neu-dark: #c5c3c1;
+  --neu-light: #ffffff;
+  --neu-raised: 6px 6px 12px var(--neu-dark), -6px -6px 12px var(--neu-light);
+  --neu-raised-sm: 4px 4px 8px var(--neu-dark), -4px -4px 8px var(--neu-light);
+  --neu-pressed: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+
+  /* ── re-map the core tokens to a monochrome light palette ── */
+  --bg-primary: #e7e5e4;
+  --bg-secondary: #e2e0df;
+  --bg-card: #e7e5e4;
+  --bg-card-solid: #e7e5e4;
+  --bg-glass: #e7e5e4;
+  --bg-glass-hover: #e0deDc;
+  --border-glass: rgba(0, 0, 0, 0.05);
+  --border-focus: rgba(0, 102, 102, 0.45);
+
+  --text-primary: #1e2938;
+  --text-secondary: #51606b;
+  --text-muted: #6b7682;
+  --text-heading: #111827;
+
+  --accent-blue: #006666;
+  --accent-purple: #0a4a8a;
+  --accent-green: #00a63d;
+  --accent-red: #ff2157;
+  --accent-yellow: #fe9900;
+  --accent-cyan: #008b8b;
+
+  --gradient-primary: linear-gradient(135deg, #008080, #006666);
+  --gradient-dark: #e7e5e4;
+  --gradient-card: #e7e5e4;
+  --gradient-success: linear-gradient(135deg, #00a63d, #008b8b);
+  --gradient-danger: linear-gradient(135deg, #ff2157, #fe9900);
+
+  --shadow-sm: var(--neu-raised-sm);
+  --shadow-md: var(--neu-raised);
+  --shadow-lg: var(--neu-raised);
+  --shadow-glow-blue: var(--neu-raised);
+  --shadow-glow-purple: var(--neu-raised);
+
+  --primary: #006666;
+  --text: #1e2938;
+  --bg: #e7e5e4;
+
+  background: var(--neu-bg);
+  color: var(--text-primary);
+}
+
+/* ── shared surfaces: cards & panels (extruded) ── */
+body.theme-neumorphism .glass-card,
+body.theme-neumorphism .card,
+body.theme-neumorphism .stat-card,
+body.theme-neumorphism .panel,
+body.theme-neumorphism .table-container {
+  background: var(--neu-bg);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--neu-raised);
+}
+body.theme-neumorphism .glass-card:hover,
+body.theme-neumorphism .card:hover {
+  box-shadow: 8px 8px 16px var(--neu-dark), -8px -8px 16px var(--neu-light);
+  transform: none;
+}
+
+/* ── buttons (extruded → press inset) ── */
+body.theme-neumorphism .btn-primary,
+body.theme-neumorphism .btn-small,
+body.theme-neumorphism .btn-theme-switcher {
+  background: var(--neu-bg);
+  color: var(--primary);
+  border: none;
+  box-shadow: var(--neu-raised-sm);
+}
+body.theme-neumorphism .btn-primary {
+  color: #ffffff;
+  background: var(--primary);
+  box-shadow: var(--neu-raised-sm);
+}
+body.theme-neumorphism .btn-primary:active,
+body.theme-neumorphism .btn-small:active,
+body.theme-neumorphism .btn-theme-switcher:active {
+  box-shadow: var(--neu-pressed);
+}
+
+/* ── inputs: carved-in (inset) ── */
+body.theme-neumorphism .form-input,
+body.theme-neumorphism .config-input,
+body.theme-neumorphism input,
+body.theme-neumorphism select,
+body.theme-neumorphism textarea {
+  background: var(--neu-bg);
+  color: var(--text-primary);
+  border: none;
+  box-shadow: var(--neu-pressed);
+}
+body.theme-neumorphism .form-input:focus,
+body.theme-neumorphism .config-input:focus {
+  box-shadow: var(--neu-pressed), 0 0 0 2px var(--border-focus);
+}
+
+/* ── sidebar chrome ── */
+body.theme-neumorphism .sidebar {
+  background: var(--neu-bg);
+  box-shadow: var(--neu-raised);
+}
+body.theme-neumorphism .nav-label,
+body.theme-neumorphism .nav-group-toggle,
+body.theme-neumorphism .sidebar-header,
+body.theme-neumorphism .page-title { color: var(--text-heading); }
+body.theme-neumorphism .page-subtitle { color: var(--text-secondary); }
+
+body.theme-neumorphism .nav-btn {
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+body.theme-neumorphism .nav-btn:hover { box-shadow: var(--neu-raised-sm); }
+body.theme-neumorphism .nav-btn.active {
+  box-shadow: var(--neu-pressed);
+  color: var(--primary);
+}
+
+/* ── tables ── */
+body.theme-neumorphism .data-table { background: var(--neu-bg); }
+body.theme-neumorphism .data-table thead,
+body.theme-neumorphism .data-table th {
+  background: var(--neu-bg);
+  color: var(--text-heading);
+}
+body.theme-neumorphism .data-table td { color: var(--text-primary); }
+body.theme-neumorphism .data-table tbody tr:nth-child(even) { background: #e2e0df; }
+body.theme-neumorphism .data-table tbody tr:hover { background: #ddffff33; }
+
+/* ── catch hardcoded-dark elements (kill dark gradients/solids) ── */
+body.theme-neumorphism .page-header {
+  background: var(--neu-bg);
+  background-image: none;
+  box-shadow: var(--neu-raised);
+  border: none;
+  color: var(--text-primary);
+}
+body.theme-neumorphism .page-header .page-title,
+body.theme-neumorphism .page-header .page-subtitle,
+body.theme-neumorphism .page-header h1,
+body.theme-neumorphism .page-header h2 { color: var(--text-heading); }
+
+body.theme-neumorphism .nav-group-toggle {
+  background: var(--neu-bg);
+  background-image: none;
+  color: var(--text-primary);
+  box-shadow: var(--neu-raised-sm);
+  border: none;
+}
+
+body.theme-neumorphism .config-select,
+body.theme-neumorphism .config-input.config-select,
+body.theme-neumorphism .emp-dropdown,
+body.theme-neumorphism select.config-select {
+  background: var(--neu-bg) !important;
+  background-image: none !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--neu-pressed);
+  border: none;
+}
+
+body.theme-neumorphism .result-card,
+body.theme-neumorphism .result-card.earn-card,
+body.theme-neumorphism .result-card.deduct-card {
+  background: var(--neu-bg);
+  background-image: none;
+  box-shadow: var(--neu-raised);
+  border: none;
+  color: var(--text-primary);
+}
+
+/* ── inputs with high-specificity / inline dark fills (day-inputs etc.) ── */
+body.theme-neumorphism input.form-input,
+body.theme-neumorphism .form-input.day-input,
+body.theme-neumorphism .day-input,
+body.theme-neumorphism select,
+body.theme-neumorphism select.config-input {
+  background: var(--neu-bg) !important;
+  background-image: none !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--neu-pressed);
+  border: none !important;
+}
+
+/* ── top-bar chrome toggles ── */
+body.theme-neumorphism .omni-language-toggle,
+body.theme-neumorphism .omni-notification-bell {
+  background: var(--neu-bg) !important;
+  background-image: none !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--neu-raised-sm);
+  border: none !important;
+}

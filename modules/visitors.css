@@ -1,0 +1,60 @@
+/* OCTAGON ERP — Visitor Management styles (RTL, dark glass) */
+#visitorsBody { direction: rtl; }
+
+.vis-kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.vis-kpi { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(8px); }
+.vis-kpi-icon { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex: 0 0 auto; }
+.vis-kpi-info { display: flex; flex-direction: column; line-height: 1.2; }
+.vis-kpi-value { font-size: 21px; font-weight: 800; color: #f1f5f9; }
+.vis-kpi-label { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+
+.vis-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.vis-tab { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 11px; cursor: pointer;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #cbd5e1; font-size: 14px; font-weight: 600; transition: all .15s; }
+.vis-tab:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.vis-tab.active { background: linear-gradient(135deg,#0891b2,#0ea5e9); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(8,145,178,0.32); }
+
+.vis-btn { padding: 9px 15px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); color: #e2e8f0; transition: all .15s; }
+.vis-btn:hover { background: rgba(255,255,255,0.12); }
+.vis-btn.primary { background: linear-gradient(135deg,#0891b2,#0ea5e9); border-color: transparent; color: #fff; }
+.vis-btn.primary:hover { filter: brightness(1.08); }
+.vis-mini { padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: #e2e8f0; }
+.vis-mini:hover { background: rgba(8,145,178,0.22); }
+.vis-mini.primary { background: rgba(8,145,178,0.22); border-color: rgba(8,145,178,0.4); color: #a5f3fc; }
+.vis-mini.accent { background: rgba(168,85,247,0.2); border-color: rgba(168,85,247,0.4); color: #d8b4fe; }
+.vis-mini.danger:hover { background: rgba(248,113,113,0.25); }
+.vis-mini-row { display: flex; gap: 5px; flex-wrap: wrap; }
+
+.vis-content { margin-top: 4px; }
+.vis-panel { background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+.vis-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.vis-panel h3 { margin: 0; font-size: 15px; color: #f1f5f9; display: flex; align-items: center; gap: 8px; }
+.vis-count { background: rgba(8,145,178,0.25); color: #a5f3fc; border-radius: 999px; padding: 1px 10px; font-size: 12px; }
+.vis-add { border: 1px dashed rgba(8,145,178,0.4); }
+.vis-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 850px) { .vis-two-col { grid-template-columns: 1fr; } }
+
+.vis-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.vis-form-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #94a3b8; font-weight: 600; }
+.vis-form-grid input { padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #f1f5f9; font-size: 13px; }
+
+.vis-list-filters { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 12px; }
+.vis-list-filters label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #94a3b8; font-weight: 600; }
+.vis-list-filters input, .vis-list-filters select { padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #f1f5f9; }
+.vis-list-count { margin-inline-start: auto; color: #a5f3fc; font-weight: 700; align-self: center; }
+
+.vis-table { width: 100%; border-collapse: collapse; }
+.vis-table th { text-align: start; padding: 10px 12px; font-size: 12px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.08); font-weight: 700; }
+.vis-table td { padding: 11px 12px; font-size: 13px; color: #e2e8f0; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
+.vis-table tr:hover td { background: rgba(255,255,255,0.02); }
+.vis-sub { display: block; font-size: 11px; color: #64748b; margin-top: 2px; }
+.vis-empty-row { color: #64748b; text-align: center; padding: 18px 0; }
+.vis-badge-no { font-weight: 800; color: #a5f3fc; background: rgba(8,145,178,0.18); padding: 2px 9px; border-radius: 7px; font-size: 12px; }
+
+.vis-badge { padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; display: inline-block; }
+.vis-badge.expected { background: rgba(250,204,21,0.18); color: #facc15; }
+.vis-badge.in { background: rgba(52,211,153,0.18); color: #34d399; }
+.vis-badge.out { background: rgba(168,85,247,0.18); color: #c084fc; }

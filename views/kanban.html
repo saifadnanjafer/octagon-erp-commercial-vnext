@@ -1,0 +1,14 @@
+<section class="page" id="pageKanban" style="padding:10px;">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">📋</span> اللوحة التنفيذية</h1>
+        <p class="page-subtitle">لوحة بصرية: أعمدة قابلة للإضافة، بطاقات بالسحب والإفلات، أولوية، مسؤول، موعد، وسوم وقوائم مراجعة</p>
+      </div>
+      <div class="page-header-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn-secondary" onclick="toggleKanbanView()"><i class="fa-solid fa-list"></i> تغيير العرض</button>
+        <button class="btn-primary" onclick="addKanbanColumn()">إضافة عمود</button>
+        <button class="btn-primary" onclick="addKanbanCard()">إضافة بطاقة</button>
+      </div>
+    </div>
+    <div class="omni-kanban-board" id="omniKanbanBoard"></div>
+  </section>

@@ -1,0 +1,756 @@
+/* Global date-input ISO hint — every <input type="date"> gets one of these
+   injected right after it (see app.js: ensureDateIsoHint). The native picker
+   displays per OS/browser locale (day-before-month on this box), so this
+   small monospace line always shows the field's real "YYYY-MM-DD" value,
+   unambiguous regardless of how the widget itself renders. Forced ltr so the
+   digit/dash order can't get bidi-flipped inside the app's RTL layout. */
+.date-iso-hint {
+  display: block;
+  margin-top: 3px;
+  font-size: 10.5px;
+  font-family: 'Courier New', monospace;
+  color: var(--text-muted, #94a3b8);
+  direction: ltr;
+  text-align: left;
+  letter-spacing: 0.3px;
+  user-select: all;
+}
+
+/* Payroll forecast card (Timesheet page) — deliberately a DIFFERENT visual
+   language from every other card on the page: a violet/gold gradient border
+   with a subtle animated shimmer, dashed accents on the "projected" figures,
+   so a forecasted number can never be mistaken for an already-recorded one
+   at a glance. Never shows advances — see the note text baked into the
+   card's HTML in app.js (buildPayrollForecastCardHtml). */
+
+.ts-forecast-card {
+  position: relative;
+  margin-bottom: 18px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(129, 140, 248, 0.10), rgba(56, 189, 248, 0.06) 45%, rgba(251, 191, 36, 0.08));
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  overflow: hidden;
+}
+
+.ts-forecast-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 16px;
+  background: linear-gradient(120deg, #818cf8, #38bdf8, #fbbf24, #818cf8);
+  background-size: 300% 300%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: tsForecastBorderShift 6s ease infinite;
+  pointer-events: none;
+}
+
+@keyframes tsForecastBorderShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.ts-forecast-card.ts-forecast-closed {
+  padding: 12px 18px;
+  background: rgba(52, 211, 153, 0.06);
+}
+
+.ts-forecast-card.ts-forecast-closed::before {
+  background: linear-gradient(120deg, rgba(52,211,153,0.6), rgba(52,211,153,0.2));
+  animation: none;
+}
+
+.ts-forecast-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #e0e7ff;
+  margin-bottom: 14px;
+}
+
+.ts-forecast-closed .ts-forecast-header {
+  margin-bottom: 0;
+  color: var(--accent-green, #34d399);
+  font-size: 13px;
+}
+
+.ts-forecast-header i {
+  color: #a5b4fc;
+}
+
+.ts-forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ts-forecast-stat {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ts-forecast-stat span {
+  display: block;
+  color: var(--text-muted, #64748b);
+  font-size: 10.5px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.ts-forecast-stat strong {
+  color: #e0f2fe;
+  font-size: 18px;
+}
+
+/* Projected/forecasted figures get a dashed border + distinct tint — never
+   mistaken for a solid, already-recorded actual figure. */
+.ts-forecast-stat.ts-forecast-projected,
+.ts-forecast-stat.ts-forecast-total {
+  background: rgba(129, 140, 248, 0.10);
+  border: 1px dashed rgba(129, 140, 248, 0.5);
+}
+
+.ts-forecast-stat.ts-forecast-projected span,
+.ts-forecast-stat.ts-forecast-total span {
+  color: #a5b4fc;
+}
+
+.ts-forecast-stat.ts-forecast-projected strong,
+.ts-forecast-stat.ts-forecast-total strong {
+  color: #c7d2fe;
+}
+
+.ts-forecast-stat.ts-forecast-total {
+  grid-column: span 2;
+}
+
+.ts-forecast-stat.ts-forecast-total strong {
+  font-size: 22px;
+}
+
+.ts-forecast-note {
+  display: block;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text-muted, #64748b);
+  line-height: 1.6;
+}
+
+/* Per-employee inline forecast line, appended after the existing month
+   summary block inside the timesheet table. */
+.ts-forecast-inline {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(129, 140, 248, 0.08);
+  border: 1px dashed rgba(129, 140, 248, 0.4);
+  font-size: 12px;
+  color: #c7d2fe;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ts-forecast-inline i {
+  color: #a5b4fc;
+}
+
+.ts-forecast-inline b {
+  font-size: 14px;
+  color: #e0e7ff;
+}
+
+.ts-forecast-inline small {
+  color: var(--text-muted, #64748b);
+  font-size: 10.5px;
+}
+
+@media (max-width: 900px) {
+  .ts-forecast-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ts-forecast-stat.ts-forecast-total {
+    grid-column: span 2;
+  }
+}
+
+/* Attendance calendar forecast layer. Forecasted cells intentionally use a
+   different tint, dashed border, and softer text so they cannot be confused
+   with imported/approved attendance records. */
+.cal-day-box.cal-day-forecast {
+  background: linear-gradient(145deg, rgba(129, 140, 248, 0.12), rgba(14, 165, 233, 0.08));
+  border: 1px dashed rgba(129, 140, 248, 0.62);
+  box-shadow: inset 0 0 0 1px rgba(199, 210, 254, 0.06);
+}
+
+.cal-day-box.cal-day-forecast .cal-day-summary strong,
+.cal-day-box.cal-day-forecast .cal-day-summary span,
+.cal-day-box.cal-day-forecast .cal-day-summary em {
+  color: #c7d2fe;
+  font-style: italic;
+}
+
+.calendar-finance-mini.calendar-finance-mini-forecast {
+  color: #c4b5fd;
+  border-top: 1px dashed rgba(167, 139, 250, 0.26);
+  padding-top: 6px;
+}
+
+.calendar-finance-mini.calendar-finance-mini-forecast small {
+  color: #a5b4fc;
+}
+
+.cal-emp-badge.cal-emp-badge-forecast {
+  background: rgba(129, 140, 248, 0.18);
+  color: #e0e7ff;
+  border-style: dashed;
+  font-style: italic;
+}
+
+.cal-forecast-stat {
+  background: rgba(129, 140, 248, 0.10) !important;
+  border: 1px dashed rgba(129, 140, 248, 0.45) !important;
+}
+
+.cal-forecast-stat span,
+.cal-forecast-stat strong {
+  color: #c7d2fe !important;
+}
+
+.cal-forecast-workers-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 8px;
+  color: #c7d2fe;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.cal-worker-row.cal-worker-forecast {
+  border: 1px dashed rgba(129, 140, 248, 0.42);
+  background: rgba(129, 140, 248, 0.08);
+}
+
+.cal-worker-row.cal-worker-forecast strong,
+.calendar-forecast-line {
+  color: #c7d2fe;
+}
+
+.cal-month-forecast-box {
+  min-height: 180px;
+  border-radius: 10px;
+  padding: 14px;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(49, 46, 129, 0.42));
+  border: 1px solid rgba(129, 140, 248, 0.48);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  color: #e0e7ff;
+}
+
+.cal-month-forecast-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cal-month-forecast-head i {
+  color: #a5b4fc;
+}
+
+.cal-month-forecast-head strong,
+.cal-month-forecast-head small {
+  display: block;
+}
+
+.cal-month-forecast-head small {
+  margin-top: 2px;
+  color: #93c5fd;
+  font-size: 11px;
+}
+
+.cal-month-forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cal-month-forecast-grid div {
+  min-width: 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.cal-month-forecast-grid span,
+.cal-month-forecast-grid strong {
+  display: block;
+}
+
+.cal-month-forecast-grid span {
+  color: #94a3b8;
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+
+.cal-month-forecast-grid strong {
+  color: #e0f2fe;
+  font-size: 12px;
+}
+
+.cal-month-forecast-grid .cal-month-forecast-total {
+  grid-column: span 2;
+  border-color: rgba(251, 191, 36, 0.38);
+  background: rgba(251, 191, 36, 0.10);
+}
+
+.cal-month-forecast-total strong {
+  color: #fde68a;
+  font-size: 15px;
+}
+
+/* ─── Day-mode badges (actual / forecast / closed / weekly_off / missing) ───
+   Every calendar day card gets one of these — a forecast day must never be
+   visually mistaken for a confirmed actual day, and a data gap must never
+   look like a confirmed zero. */
+.cal-day-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.cal-day-mode-badge-actual {
+  background: rgba(52, 211, 153, 0.16);
+  color: #6ee7b7;
+  border: 1px solid rgba(52, 211, 153, 0.32);
+}
+
+.cal-day-mode-badge-forecast {
+  background: rgba(129, 140, 248, 0.18);
+  color: #c7d2fe;
+  border: 1px dashed rgba(129, 140, 248, 0.55);
+}
+
+.cal-day-mode-badge-closed {
+  background: rgba(251, 191, 36, 0.16);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.34);
+}
+
+.cal-day-mode-badge-weekly_off {
+  background: rgba(244, 63, 94, 0.14);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.cal-day-mode-badge-missing {
+  background: rgba(248, 113, 113, 0.16);
+  color: #fca5a5;
+  border: 1px dashed rgba(248, 113, 113, 0.5);
+}
+
+.cal-day-box.cal-day-mode-missing {
+  border: 1px dashed rgba(248, 113, 113, 0.45) !important;
+  background: linear-gradient(145deg, rgba(248, 113, 113, 0.08), rgba(15, 23, 42, 0.88)) !important;
+}
+
+.cal-day-box.cal-day-mode-closed {
+  border: 1px solid rgba(251, 191, 36, 0.32) !important;
+  background: linear-gradient(145deg, rgba(251, 191, 36, 0.08), rgba(15, 23, 42, 0.88)) !important;
+  opacity: 0.85;
+}
+
+/* Detail panel header badge + notes */
+.cal-detail-badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cal-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.cal-mode-badge-actual { background: rgba(52, 211, 153, 0.14); color: #6ee7b7; border: 1px solid rgba(52, 211, 153, 0.3); }
+.cal-mode-badge-forecast { background: rgba(129, 140, 248, 0.14); color: #c7d2fe; border: 1px dashed rgba(129, 140, 248, 0.5); }
+.cal-mode-badge-closed { background: rgba(251, 191, 36, 0.14); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+.cal-mode-badge-weekly_off { background: rgba(244, 63, 94, 0.12); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.28); }
+.cal-mode-badge-missing { background: rgba(248, 113, 113, 0.14); color: #fca5a5; border: 1px dashed rgba(248, 113, 113, 0.45); }
+
+.cal-forecast-basis-note,
+.cal-missing-note,
+.cal-closed-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.cal-forecast-basis-note {
+  background: rgba(129, 140, 248, 0.08);
+  border: 1px dashed rgba(129, 140, 248, 0.4);
+  color: #c7d2fe;
+}
+
+.cal-missing-note {
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px dashed rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+}
+
+.cal-closed-note {
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.32);
+  color: #fbbf24;
+}
+
+.cal-empty-missing {
+  color: #fca5a5 !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cal-month-forecast-missing {
+  border-color: rgba(248, 113, 113, 0.32) !important;
+  background: rgba(248, 113, 113, 0.08) !important;
+}
+
+.cal-month-forecast-missing span,
+.cal-month-forecast-missing strong {
+  color: #fca5a5 !important;
+}
+
+.cal-month-forecast-box-closed {
+  border-color: rgba(251, 191, 36, 0.42) !important;
+}
+
+.calendar-close-month-btn.calendar-month-closed-active {
+  background: rgba(251, 191, 36, 0.32) !important;
+  color: #fde68a !important;
+}
+
+.employee-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.employee-details-btn {
+  background: rgba(56, 189, 248, 0.16);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.34);
+}
+
+.employee-detail-modal {
+  direction: rtl;
+  text-align: right;
+}
+
+.employee-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.employee-status-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.employee-status-toggle:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.employee-status-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.employee-status-toggle.is-active {
+  background: rgba(52, 211, 153, 0.16);
+  border-color: rgba(52, 211, 153, 0.4);
+  color: #6ee7b7;
+}
+
+.employee-status-toggle.is-inactive {
+  background: rgba(248, 113, 113, 0.16);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+}
+
+.employee-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.employee-status-activity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.employee-status-activity strong {
+  color: var(--text-primary, #e2e8f0);
+}
+
+.employee-status-stale-hint {
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.08);
+  border-radius: 8px;
+  color: #fbbf24;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.employee-status-confirm-banner {
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.employee-status-confirm-banner p {
+  margin: 0;
+  font-size: 12.5px;
+  color: #fde68a;
+  font-weight: 700;
+}
+
+.employee-status-confirm-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.employee-detail-grid label {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.38);
+  padding: 10px;
+  color: var(--text-muted, #94a3b8);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.employee-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.employee-shift-panel {
+  grid-column: 1 / -1;
+  border: 1px dashed rgba(125, 211, 252, 0.3);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: -2px;
+}
+
+.employee-shift-info {
+  color: #7dd3fc;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.employee-shift-custom-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted, #94a3b8);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.employee-shift-custom-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.employee-shift-custom-fields label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted, #94a3b8);
+}
+
+.employee-continuity-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.16);
+  color: #6ee7b7;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.employee-continuity-chip::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.employee-duration-note {
+  grid-column: 1 / -1;
+  color: #a5b4fc;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.employee-detail-grid .form-input {
+  margin-top: 6px;
+}
+
+.employee-detail-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.employee-detail-notes,
+.employee-detail-hint {
+  grid-column: 1 / -1;
+}
+
+.employee-periods-panel {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid rgba(129, 140, 248, 0.25);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.32);
+}
+
+.employee-periods-head,
+.employee-periods-labels,
+.employee-period-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr 42px;
+  gap: 8px;
+  align-items: center;
+}
+
+.employee-periods-head {
+  grid-template-columns: 1fr 34px;
+  margin-bottom: 10px;
+}
+
+.employee-periods-head strong {
+  color: #e0e7ff;
+  font-size: 13px;
+}
+
+.employee-period-add,
+.employee-period-remove {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.employee-periods-labels {
+  margin-bottom: 6px;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.employee-periods-list {
+  display: grid;
+  gap: 7px;
+}
+
+.employee-period-row-readonly .form-input {
+  border-style: dashed;
+  color: #a5b4fc;
+}
+
+.employee-period-lock {
+  color: #a5b4fc;
+  font-size: 10px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.employee-detail-hint {
+  margin: 12px 0 0;
+  color: #a5b4fc;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+@media (max-width: 720px) {
+  .employee-detail-grid,
+  .employee-shift-custom-fields,
+  .employee-period-row,
+  .employee-periods-labels,
+  .cal-month-forecast-grid {
+    grid-template-columns: 1fr;
+  }
+  .employee-status-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .cal-month-forecast-grid .cal-month-forecast-total {
+    grid-column: auto;
+  }
+}

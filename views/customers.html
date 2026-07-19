@@ -1,0 +1,40 @@
+<section class="page" id="pageCustomers">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">🧾</span> أرصدة العملاء</h1>
+        <p class="page-subtitle">رصيد افتتاحي، مطالبات، وتسديدات من صفحة الواردات</p>
+      </div>
+      <div class="page-header-actions"><button class="btn-primary finance-demo-action" onclick="addFinanceDemoData('customers')">إضافة أمثلة تجريبية</button></div>
+    </div>
+    <div class="finance-entry-grid">
+      <div class="glass-card finance-form-card">
+        <h3 class="section-title">إضافة عميل</h3>
+        <div class="form-grid">
+          <input id="customerName" class="form-input" placeholder="اسم العميل">
+          <input id="customerCompany" class="form-input" placeholder="اسم الشركة">
+          <input id="customerShop" class="form-input" placeholder="اسم المحل">
+          <input id="customerPhone" class="form-input" placeholder="هاتف">
+          <input id="customerOpening" type="number" class="form-input" placeholder="رصيد افتتاحي بذمته">
+          <input id="customerNotes" class="form-input" placeholder="ملاحظات">
+        </div>
+        <button class="btn-primary" onclick="addCustomerFromForm()">إضافة العميل</button>
+      </div>
+      <div class="glass-card finance-form-card">
+        <h3 class="section-title">إضافة مطالبة على عميل</h3>
+        <div class="form-grid">
+          <input type="date" id="customerChargeDate" class="form-input">
+          <select id="customerChargeSelect" class="form-input"></select>
+          <select id="customerChargeDepartment" class="form-input"></select>
+          <input id="customerChargeAmount" type="number" class="form-input" placeholder="المبلغ">
+          <input id="customerChargeDescription" class="form-input" placeholder="سبب المطالبة">
+        </div>
+        <button class="btn-primary" onclick="addCustomerCharge()">إضافة على الرصيد</button>
+      </div>
+    </div>
+    <div class="table-container glass-card">
+      <table class="data-table finance-table">
+        <thead><tr><th>العميل</th><th>الشركة</th><th>المحل</th><th>الهاتف</th><th>الافتتاحي</th><th>الحالي</th><th>الاتجاه</th><th>ملاحظات</th></tr></thead>
+        <tbody id="customersBody"></tbody>
+      </table>
+    </div>
+  </section>

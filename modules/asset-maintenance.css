@@ -1,0 +1,52 @@
+/* OCTAGON ERP — Fixed Assets & Preventive Maintenance (الأصول والصيانة الوقائية). Add-only. RTL. */
+#pageAssets { direction: rtl; }
+.asm-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; border-bottom: 2px solid var(--border-color, #e2e8f0); padding-bottom: 4px; }
+.asm-tab-btn { background: transparent; border: none; padding: 10px 18px; font-size: 15px; font-weight: 600; color: var(--text-secondary, #64748b); cursor: pointer; border-radius: 8px 8px 0 0; transition: all .15s; }
+.asm-tab-btn:hover { background: var(--hover-bg, #f1f5f9); }
+.asm-tab-btn.active { color: var(--accent-color, #2563eb); border-bottom: 3px solid var(--accent-color, #2563eb); }
+
+.asm-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.asm-kpi { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.asm-kpi-val { font-size: 26px; font-weight: 800; color: var(--text-primary, #0f172a); line-height: 1.1; }
+.asm-kpi-label { font-size: 13px; color: var(--text-secondary, #64748b); margin-top: 6px; font-weight: 600; }
+.asm-kpi-sub { font-size: 11px; color: var(--text-muted, #94a3b8); margin-top: 2px; }
+.asm-kpi-accent { border-color: var(--accent-color, #2563eb); }
+.asm-kpi-accent .asm-kpi-val { color: var(--accent-color, #2563eb); }
+.asm-kpi-warn { border-color: #f59e0b; background: #fffbeb; }
+.asm-kpi-warn .asm-kpi-val { color: #d97706; }
+
+.asm-panel { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
+.asm-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.asm-panel-head h3 { margin: 0; font-size: 16px; font-weight: 700; }
+
+.asm-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.asm-input { padding: 8px 12px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); width: 100%; box-sizing: border-box; }
+.asm-input:focus { outline: none; border-color: var(--accent-color, #2563eb); }
+
+.asm-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.asm-table th { text-align: right; padding: 10px 12px; background: var(--table-head-bg, #f8fafc); color: var(--text-secondary, #475569); font-weight: 700; font-size: 13px; border-bottom: 2px solid var(--border-color, #e2e8f0); white-space: nowrap; }
+.asm-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color, #eef2f7); vertical-align: middle; }
+.asm-table tbody tr:hover { background: var(--hover-bg, #f8fafc); }
+.asm-empty { text-align: center; color: var(--text-muted, #94a3b8); padding: 24px !important; font-style: italic; }
+.asm-muted { color: var(--text-muted, #94a3b8); font-size: 12px; }
+.asm-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.asm-row-warn { background: #fffbeb !important; }
+.asm-row-danger { background: #fef2f2 !important; }
+
+.asm-mini-btn { background: var(--hover-bg, #f1f5f9); border: 1px solid var(--border-color, #e2e8f0); border-radius: 7px; padding: 5px 11px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-primary, #334155); transition: all .12s; }
+.asm-mini-btn:hover { background: var(--accent-color, #2563eb); color: #fff; border-color: var(--accent-color, #2563eb); }
+.asm-mini-btn.asm-danger:hover { background: #dc2626; border-color: #dc2626; }
+
+.asm-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.asm-st-ok { background: #dcfce7; color: #15803d; }
+.asm-st-maint { background: #fef3c7; color: #b45309; }
+.asm-st-retired { background: #fee2e2; color: #b91c1c; }
+.asm-badge-done { background: #e0e7ff; color: #4338ca; }
+
+.asm-bar { background: var(--border-color, #e2e8f0); border-radius: 999px; height: 7px; overflow: hidden; margin-bottom: 3px; }
+.asm-bar-fill { background: linear-gradient(90deg, #2563eb, #60a5fa); height: 100%; border-radius: 999px; }
+
+.asm-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.asm-form-grid label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary, #475569); margin-bottom: 5px; }
+.asm-form-full { grid-column: 1 / -1; }
+.asm-form-actions { display: flex; gap: 10px; margin-top: 16px; }

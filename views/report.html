@@ -1,0 +1,44 @@
+<section class="page" id="pageReport">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">📊</span> التقرير النهائي</h1>
+        <p class="page-subtitle">عرض تفصيلي لراتب كل موظف مع إمكانية تصدير PDF</p>
+      </div>
+    </div>
+    <div class="emp-tabs-container page-tabs-toolbar" id="reportEmpTabsContainer" style="margin-bottom: 20px;">
+      <div class="emp-tabs" id="reportEmpTabs"></div>
+      <div class="page-tabs-actions">
+        <button class="btn-primary" onclick="prepareSmartReportSummary()">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> إعداد ملخص ذكي للتقرير
+        </button>
+        <button class="btn-primary" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> طباعة
+        </button>
+        <button class="btn-primary" onclick="exportPayrollPdf()">
+          <i class="fa-solid fa-file-pdf"></i> تصدير التقرير
+        </button>
+      </div>
+    </div>
+    <div class="report-period-bar glass-card" id="reportPeriodBar">
+      <label>الفترة المعروضة</label>
+      <select id="reportPeriodMode" class="form-input" onchange="renderReport()">
+        <option value="current_month">الشهر الحالي / المحدد</option>
+        <option value="last_30">آخر 30 يوم</option>
+        <option value="all">كل البيانات</option>
+      </select>
+      <span id="reportPeriodLabel">-</span>
+    </div>
+    <div class="report-smart-summary glass-card" id="reportSmartSummary" style="display:none;"></div>
+    <div class="report-content" id="reportContent" style="display:none;">
+      <div class="report-table-card glass-card">
+        <table class="report-table">
+          <tbody id="reportTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="empty-state" id="reportEmpty">
+      <div class="empty-icon">📊</div>
+      <h3>لا توجد بيانات حضور</h3>
+      <p>قم باستيراد ملف الإكسل لتوليد التقرير</p>
+    </div>
+  </section>

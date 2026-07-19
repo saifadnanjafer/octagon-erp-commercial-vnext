@@ -1,0 +1,148 @@
+/* OCTAGON ERP — Glassmorphism skin (typeui.sh)
+ * Additive, opt-in. Active only under body.theme-glassmorphism (no leak).
+ * Frosted translucent panels + backdrop blur + luminous borders on a deep
+ * gradient backdrop. Light text. RTL preserved.
+ */
+
+body.theme-glassmorphism {
+  --gl-blur: blur(14px);
+  --gl-border: rgba(255, 255, 255, 0.18);
+
+  --bg-primary: rgba(255, 255, 255, 0.06);
+  --bg-secondary: rgba(255, 255, 255, 0.08);
+  --bg-card: rgba(255, 255, 255, 0.10);
+  --bg-card-solid: rgba(30, 27, 75, 0.72);
+  --bg-glass: rgba(255, 255, 255, 0.08);
+  --bg-glass-hover: rgba(255, 255, 255, 0.16);
+  --border-glass: rgba(255, 255, 255, 0.18);
+  --border-focus: rgba(79, 139, 255, 0.6);
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-heading: #ffffff;
+
+  --accent-blue: #4f8bff;
+  --accent-purple: #a78bfa;
+  --accent-green: #07ca6b;
+  --accent-red: #ea2143;
+  --accent-yellow: #e89558;
+  --accent-cyan: #22d3ee;
+
+  --gradient-primary: linear-gradient(135deg, #4f8bff, #1856ff);
+  --gradient-dark: transparent;
+  --gradient-card: rgba(255, 255, 255, 0.10);
+  --gradient-success: linear-gradient(135deg, #07ca6b, #22d3ee);
+  --gradient-danger: linear-gradient(135deg, #ea2143, #e89558);
+
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.20);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.35);
+  --shadow-glow-blue: 0 8px 32px rgba(24, 86, 255, 0.25);
+  --shadow-glow-purple: 0 8px 32px rgba(167, 139, 250, 0.25);
+
+  --primary: #1856ff;
+  --text: #f1f5f9;
+  --bg: #1e1b4b;
+
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #1e3a5f 100%) fixed;
+  color: var(--text-primary);
+}
+
+body.theme-glassmorphism .glass-card,
+body.theme-glassmorphism .card,
+body.theme-glassmorphism .stat-card,
+body.theme-glassmorphism .panel,
+body.theme-glassmorphism .table-container {
+  background: var(--bg-card);
+  border: 1px solid var(--gl-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  -webkit-backdrop-filter: var(--gl-blur);
+  backdrop-filter: var(--gl-blur);
+}
+body.theme-glassmorphism .glass-card:hover,
+body.theme-glassmorphism .card:hover { background: var(--bg-glass-hover); transform: none; }
+
+body.theme-glassmorphism .btn-primary {
+  background: var(--gradient-primary); color: #ffffff; border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: var(--shadow-glow-blue);
+}
+body.theme-glassmorphism .btn-small,
+body.theme-glassmorphism .btn-theme-switcher {
+  background: var(--bg-glass); color: var(--text-primary); border: 1px solid var(--gl-border);
+  -webkit-backdrop-filter: var(--gl-blur); backdrop-filter: var(--gl-blur);
+}
+body.theme-glassmorphism .btn-small:hover,
+body.theme-glassmorphism .btn-theme-switcher:hover { background: var(--bg-glass-hover); }
+
+body.theme-glassmorphism .form-input,
+body.theme-glassmorphism .config-input,
+body.theme-glassmorphism input,
+body.theme-glassmorphism select,
+body.theme-glassmorphism textarea {
+  background: rgba(255, 255, 255, 0.08); color: var(--text-primary);
+  border: 1px solid var(--gl-border); box-shadow: none;
+}
+body.theme-glassmorphism .form-input:focus,
+body.theme-glassmorphism .config-input:focus {
+  border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--border-focus);
+}
+
+body.theme-glassmorphism .sidebar {
+  background: rgba(20, 18, 50, 0.55);
+  border-inline-start: 1px solid var(--gl-border);
+  -webkit-backdrop-filter: var(--gl-blur); backdrop-filter: var(--gl-blur);
+  box-shadow: var(--shadow-md);
+}
+body.theme-glassmorphism .nav-label,
+body.theme-glassmorphism .nav-group-toggle,
+body.theme-glassmorphism .sidebar-header,
+body.theme-glassmorphism .page-title { color: var(--text-heading); }
+body.theme-glassmorphism .page-subtitle { color: var(--text-secondary); }
+body.theme-glassmorphism .nav-btn {
+  background: transparent; border: none; border-radius: var(--radius-md); color: var(--text-primary);
+}
+body.theme-glassmorphism .nav-btn:hover { background: var(--bg-glass-hover); }
+body.theme-glassmorphism .nav-btn.active { background: rgba(79, 139, 255, 0.22); color: #ffffff; }
+
+body.theme-glassmorphism .data-table { background: transparent; }
+body.theme-glassmorphism .data-table thead,
+body.theme-glassmorphism .data-table th {
+  background: rgba(255, 255, 255, 0.06); color: var(--text-heading); border-bottom: 1px solid var(--gl-border);
+}
+body.theme-glassmorphism .data-table td { color: var(--text-primary); border-bottom: 1px solid rgba(255,255,255,0.08); }
+body.theme-glassmorphism .data-table tbody tr:hover { background: rgba(255, 255, 255, 0.06); }
+
+/* hardcoded-dark elements → translucent frosted (text already light) */
+body.theme-glassmorphism .page-header {
+  background: rgba(255, 255, 255, 0.08); background-image: none;
+  border: 1px solid var(--gl-border); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md); color: var(--text-primary);
+  -webkit-backdrop-filter: var(--gl-blur); backdrop-filter: var(--gl-blur);
+}
+body.theme-glassmorphism .nav-group-toggle { background: transparent; background-image: none; color: var(--text-secondary); box-shadow: none; border: none; }
+body.theme-glassmorphism #authUserSwitcher,
+body.theme-glassmorphism .config-select,
+body.theme-glassmorphism .config-input.config-select,
+body.theme-glassmorphism .emp-dropdown,
+body.theme-glassmorphism select.config-select,
+body.theme-glassmorphism input.form-input,
+body.theme-glassmorphism .form-input.day-input,
+body.theme-glassmorphism .day-input {
+  background: rgba(255, 255, 255, 0.08) !important; background-image: none !important;
+  color: var(--text-primary) !important; border: 1px solid var(--gl-border) !important;
+}
+body.theme-glassmorphism .result-card,
+body.theme-glassmorphism .result-card.earn-card,
+body.theme-glassmorphism .result-card.deduct-card {
+  background: rgba(255, 255, 255, 0.10); background-image: none;
+  border: 1px solid var(--gl-border); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md); color: var(--text-primary);
+  -webkit-backdrop-filter: var(--gl-blur); backdrop-filter: var(--gl-blur);
+}
+body.theme-glassmorphism .omni-language-toggle,
+body.theme-glassmorphism .omni-notification-bell {
+  background: rgba(255, 255, 255, 0.10) !important; background-image: none !important;
+  color: var(--text-primary) !important; border: 1px solid var(--gl-border) !important;
+}

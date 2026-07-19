@@ -1,0 +1,129 @@
+.admin-crud-shell {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-crud-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-crud-head h3,
+.admin-crud-head h4 {
+  margin: 0;
+}
+
+.admin-crud-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.admin-crud-card {
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(15,23,42,0.44);
+  border-radius: 8px;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.admin-crud-card.is-inactive {
+  opacity: .58;
+  border-style: dashed;
+}
+
+.admin-crud-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-crud-title {
+  display: grid;
+  gap: 3px;
+}
+
+.admin-crud-title b {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.admin-crud-title small,
+.admin-crud-meta {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.admin-crud-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-crud-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-crud-chip {
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  padding: 3px 8px;
+}
+
+.admin-crud-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-crud-form-grid label {
+  display: grid;
+  gap: 5px;
+  font-size: 12px;
+}
+
+.admin-crud-form-grid .full {
+  grid-column: 1 / -1;
+}
+
+.admin-crud-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.admin-crud-table th,
+.admin-crud-table td {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 8px 10px;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.admin-crud-table th {
+  color: var(--text-muted);
+  font-weight: 700;
+  background: rgba(255,255,255,0.03);
+}
+
+.admin-crud-danger {
+  color: #f87171 !important;
+}
+
+@media (max-width: 760px) {
+  .admin-crud-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

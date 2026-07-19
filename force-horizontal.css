@@ -1,0 +1,166 @@
+/* ═══════════════════════════════════════════════════
+   FORCE HORIZONTAL - Nuclear Option
+   Override everything - no compromises
+   ═══════════════════════════════════════════════════ */
+
+/* KILL any vertical layout */
+.config-bar {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 40px !important;
+  padding: 16px 20px !important;
+  margin: 0 0 20px 0 !important;
+  align-items: flex-end !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 70px !important;
+  max-height: 80px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+.config-group {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  align-items: flex-start !important;
+  justify-content: flex-end !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  width: 130px !important;
+  min-width: 130px !important;
+  max-width: 130px !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  margin-right: 30px !important;
+  margin-left: 0 !important;
+}
+
+.config-label {
+  display: block !important;
+  width: 130px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  line-height: 1.2 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.config-input,
+.config-select {
+  display: block !important;
+  width: 130px !important;
+  min-width: 130px !important;
+  max-width: 130px !important;
+  height: 38px !important;
+  padding: 8px 10px !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+}
+
+.input-with-unit {
+  position: relative !important;
+  display: block !important;
+  width: 130px !important;
+  min-width: 130px !important;
+  max-width: 130px !important;
+  height: 38px !important;
+  box-sizing: border-box !important;
+}
+
+.input-with-unit input {
+  display: block !important;
+  width: 130px !important;
+  min-width: 130px !important;
+  max-width: 130px !important;
+  height: 38px !important;
+  padding: 8px 40px 8px 10px !important;
+  box-sizing: border-box !important;
+}
+
+.input-unit {
+  position: absolute !important;
+  right: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+/* Override any parent flex-direction column */
+.config-bar > * {
+  flex-direction: row !important;
+}
+
+/* Media queries - KEEP HORIZONTAL EVERYWHERE */
+@media (max-width: 1920px) {
+  .config-bar {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+}
+
+@media (max-width: 1600px) {
+  .config-bar {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+}
+
+@media (max-width: 1400px) {
+  .config-bar {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .config-bar {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .config-bar {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .config-bar {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .config-bar {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+}
+
+/* Scrollbar */
+.config-bar::-webkit-scrollbar {
+  height: 4px !important;
+}
+
+.config-bar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.config-bar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 2px !important;
+}

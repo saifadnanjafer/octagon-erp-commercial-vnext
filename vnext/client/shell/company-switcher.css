@@ -1,0 +1,54 @@
+/* clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md R1.13 company switcher (proprietary self, not copied) */
+/* ==========================================================================
+   Octagon Commercial — Company switcher (T1.13.1)
+   Prefix: .ox-cs- only. Colors/radii/shadows come exclusively from the app's
+   CSS variables (style.css :root + skin overrides), matching chatter.css's
+   theme-safety convention so every skin renders correctly.
+   ========================================================================== */
+
+.ox-company-switcher {
+  direction: rtl;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ar, 'Tajawal', Arial, sans-serif);
+  color: var(--text-primary, inherit);
+}
+
+.ox-cs-label {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.ox-cs-select {
+  background: var(--bg-glass, rgba(127, 127, 127, 0.06));
+  color: var(--text-primary, inherit);
+  border: 1px solid var(--border-glass, rgba(127, 127, 127, 0.2));
+  border-radius: var(--radius-sm, 8px);
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 160px;
+}
+
+.ox-cs-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ox-cs-select:focus-visible {
+  outline: 2px solid var(--primary, #2563eb);
+  outline-offset: 2px;
+}
+
+.ox-cs-status {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.ox-cs-status-error {
+  color: var(--danger, #b91c1c);
+  opacity: 1;
+}

@@ -1,0 +1,283 @@
+/* OCTAGON ERP — Perspective Skin (typeui.sh)
+ * Additive, opt-in. Active only under body.theme-perspective (no leak).
+ * Spatial depth design with layered shadows, isometric elements, Poppins + Oswald typography, and vivid green accents.
+ */
+
+body.theme-perspective {
+  --ps-border: rgba(0, 189, 125, 0.15);
+  --ps-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 2px 2px 0px rgba(0, 189, 125, 0.05);
+  --ps-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06), 4px 4px 0px rgba(0, 189, 125, 0.08);
+  --ps-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08), 8px 8px 0px rgba(0, 189, 125, 0.12);
+
+  --bg-primary: #f3f5f8;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-solid: #ffffff;
+  --bg-glass: #ffffff;
+  --bg-glass-hover: #eef2f5;
+  --border-glass: rgba(0, 189, 125, 0.12);
+  --border-focus: rgba(0, 189, 125, 0.4);
+
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --text-heading: #111827;
+
+  --accent-blue: #00BD7D;
+  --accent-purple: #8b5cf6;
+  --accent-green: #16a34a;
+  --accent-red: #dc2626;
+  --accent-yellow: #d97706;
+  --accent-cyan: #0891b2;
+
+  --gradient-primary: linear-gradient(135deg, #00e599, #00BD7D);
+  --gradient-dark: #f3f5f8;
+  --gradient-card: #ffffff;
+  --gradient-success: linear-gradient(135deg, #16a34a, #0891b2);
+  --gradient-danger: linear-gradient(135deg, #dc2626, #d97706);
+
+  --shadow-sm: var(--ps-shadow-sm);
+  --shadow-md: var(--ps-shadow-md);
+  --shadow-lg: var(--ps-shadow-lg);
+  --shadow-glow-blue: 0 0 15px rgba(0, 189, 125, 0.25);
+  --shadow-glow-purple: 0 0 15px rgba(139, 92, 246, 0.25);
+
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --primary: #00BD7D;
+  --text: #111827;
+  --bg: #f3f5f8;
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Poppins', 'Tajawal', sans-serif !important;
+}
+
+body.theme-perspective h1,
+body.theme-perspective h2,
+body.theme-perspective h3,
+body.theme-perspective h4,
+body.theme-perspective .page-title,
+body.theme-perspective .sidebar-header h3 {
+  font-family: 'Oswald', 'Tajawal', sans-serif !important;
+}
+
+body.theme-perspective code,
+body.theme-perspective pre,
+body.theme-perspective .mono-text,
+body.theme-perspective .meta-time-group {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Layered & Angled Card Design */
+body.theme-perspective .glass-card,
+body.theme-perspective .card,
+body.theme-perspective .stat-card,
+body.theme-perspective .panel,
+body.theme-perspective .table-container {
+  background: #ffffff;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--ps-shadow-md);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  position: relative;
+}
+
+body.theme-perspective .glass-card:hover,
+body.theme-perspective .card:hover,
+body.theme-perspective .stat-card:hover,
+body.theme-perspective .panel:hover {
+  box-shadow: var(--ps-shadow-lg);
+  transform: perspective(800px) rotateX(1deg) rotateY(-1deg) translateY(-4px);
+  border-color: rgba(0, 189, 125, 0.25);
+}
+
+/* Buttons with Spatial Realism */
+body.theme-perspective .btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 0px #009663, 0 8px 16px rgba(0, 189, 125, 0.2);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  position: relative;
+  top: 0;
+}
+
+body.theme-perspective .btn-primary:hover {
+  background: #00d68f;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0px #009663, 0 10px 20px rgba(0, 189, 125, 0.25);
+}
+
+body.theme-perspective .btn-primary:active {
+  top: 4px;
+  box-shadow: 0 0px 0px #009663, 0 2px 4px rgba(0, 189, 125, 0.1);
+  transform: translateY(0);
+}
+
+body.theme-perspective .btn-small,
+body.theme-perspective .btn-theme-switcher {
+  background: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid var(--ps-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 0px rgba(0, 189, 125, 0.1), 0 4px 8px rgba(0, 0, 0, 0.03);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  top: 0;
+  position: relative;
+}
+
+body.theme-perspective .btn-small:hover,
+body.theme-perspective .btn-theme-switcher:hover {
+  background: var(--bg-glass-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0px rgba(0, 189, 125, 0.15), 0 6px 12px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-perspective .btn-small:active,
+body.theme-perspective .btn-theme-switcher:active {
+  top: 2px;
+  box-shadow: 0 0px 0px rgba(0, 189, 125, 0.15), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transform: translateY(0);
+}
+
+/* Inputs with Layered Focus */
+body.theme-perspective .form-input,
+body.theme-perspective .config-input,
+body.theme-perspective input,
+body.theme-perspective select,
+body.theme-perspective textarea {
+  background: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid var(--ps-border);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+body.theme-perspective .form-input:focus,
+body.theme-perspective .config-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--border-focus), inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* Sidebar Styling */
+body.theme-perspective .sidebar {
+  background: #ffffff;
+  border-inline-start: 1px solid var(--border-glass);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.03);
+}
+
+body.theme-perspective .nav-label,
+body.theme-perspective .nav-group-toggle,
+body.theme-perspective .sidebar-header,
+body.theme-perspective .page-title {
+  color: var(--text-heading);
+}
+
+body.theme-perspective .page-subtitle {
+  color: var(--text-secondary);
+}
+
+body.theme-perspective .nav-btn {
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+body.theme-perspective .nav-btn:hover {
+  background: var(--bg-glass-hover);
+  color: var(--text-primary);
+  transform: translateX(-3px); /* subtle RTL indentation on hover */
+}
+
+body.theme-perspective .nav-btn.active {
+  background: rgba(0, 189, 125, 0.1);
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: -3px 0px 0px var(--primary); /* indicator line on RTL */
+}
+
+/* Data Table with Spatial Alternation */
+body.theme-perspective .data-table {
+  background: #ffffff;
+}
+
+body.theme-perspective .data-table thead,
+body.theme-perspective .data-table th {
+  background: #f8fafc;
+  color: var(--text-heading);
+  border-bottom: 2px solid var(--ps-border);
+}
+
+body.theme-perspective .data-table td {
+  color: var(--text-primary);
+  border-bottom: 1px solid #f1f5f9;
+}
+
+body.theme-perspective .data-table tbody tr:hover {
+  background: rgba(0, 189, 125, 0.04);
+}
+
+/* Page Header */
+body.theme-perspective .page-header {
+  background: #ffffff;
+  background-image: none;
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--ps-shadow-md);
+  color: var(--text-primary);
+}
+
+body.theme-perspective .page-header .page-title,
+body.theme-perspective .page-header .page-subtitle,
+body.theme-perspective .page-header h1,
+body.theme-perspective .page-header h2 {
+  color: var(--text-heading);
+}
+
+body.theme-perspective .nav-group-toggle {
+  background: transparent;
+  background-image: none;
+  color: var(--text-secondary);
+  box-shadow: none;
+  border: none;
+}
+
+body.theme-perspective #authUserSwitcher,
+body.theme-perspective .config-select,
+body.theme-perspective .config-input.config-select,
+body.theme-perspective .emp-dropdown,
+body.theme-perspective select.config-select,
+body.theme-perspective input.form-input,
+body.theme-perspective .form-input.day-input,
+body.theme-perspective .day-input {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--ps-border) !important;
+  box-shadow: none;
+}
+
+body.theme-perspective .result-card,
+body.theme-perspective .result-card.earn-card,
+body.theme-perspective .result-card.deduct-card {
+  background: #ffffff;
+  background-image: none;
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--ps-shadow-md);
+  color: var(--text-primary);
+}
+
+body.theme-perspective .omni-language-toggle,
+body.theme-perspective .omni-notification-bell {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--ps-border) !important;
+  box-shadow: none;
+}

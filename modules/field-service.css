@@ -1,0 +1,47 @@
+/* OCTAGON ERP — Field Service (الخدمة الميدانية). Add-only. RTL. */
+#pageFieldService { direction: rtl; }
+.fs-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; border-bottom: 2px solid var(--border-color, #e2e8f0); padding-bottom: 4px; }
+.fs-tab-btn { background: transparent; border: none; padding: 10px 18px; font-size: 15px; font-weight: 600; color: var(--text-secondary, #64748b); cursor: pointer; border-radius: 8px 8px 0 0; transition: all .15s; }
+.fs-tab-btn:hover { background: var(--hover-bg, #f1f5f9); }
+.fs-tab-btn.active { color: #ea580c; border-bottom: 3px solid #ea580c; }
+
+.fs-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.fs-kpi { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.fs-kpi-val { font-size: 24px; font-weight: 800; color: var(--text-primary, #0f172a); line-height: 1.15; }
+.fs-kpi-label { font-size: 13px; color: var(--text-secondary, #64748b); margin-top: 6px; font-weight: 600; }
+.fs-kpi-sub { font-size: 11px; color: var(--text-muted, #94a3b8); margin-top: 2px; }
+.fs-kpi-accent { border-color: #ea580c; } .fs-kpi-accent .fs-kpi-val { color: #ea580c; }
+.fs-kpi-pos { border-color: #16a34a; } .fs-kpi-pos .fs-kpi-val { color: #16a34a; }
+.fs-kpi-neg { border-color: #dc2626; background: #fef2f2; } .fs-kpi-neg .fs-kpi-val { color: #dc2626; }
+
+.fs-panel { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
+.fs-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.fs-panel-head h3 { margin: 0; font-size: 16px; font-weight: 700; }
+.fs-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.fs-input { padding: 8px 12px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); width: 100%; box-sizing: border-box; }
+.fs-input:focus { outline: none; border-color: #ea580c; }
+.fs-mini-select { padding: 4px 8px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 6px; font-size: 12px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); }
+
+.fs-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.fs-table th { text-align: right; padding: 10px 12px; background: var(--table-head-bg, #f8fafc); color: var(--text-secondary, #475569); font-weight: 700; font-size: 13px; border-bottom: 2px solid var(--border-color, #e2e8f0); white-space: nowrap; }
+.fs-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color, #eef2f7); vertical-align: middle; }
+.fs-table tbody tr:hover { background: var(--hover-bg, #f8fafc); }
+.fs-empty { text-align: center; color: var(--text-muted, #94a3b8); padding: 24px !important; font-style: italic; }
+.fs-muted { color: var(--text-muted, #94a3b8); font-size: 12px; }
+.fs-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.fs-neg { color: #dc2626; font-weight: 600; }
+.fs-paid { color: #16a34a; font-weight: 700; font-size: 12px; }
+
+.fs-mini-btn { background: var(--hover-bg, #f1f5f9); border: 1px solid var(--border-color, #e2e8f0); border-radius: 7px; padding: 5px 11px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-primary, #334155); transition: all .12s; }
+.fs-mini-btn:hover { background: #ea580c; color: #fff; border-color: #ea580c; }
+.fs-mini-btn.fs-ok:hover { background: #16a34a; border-color: #16a34a; }
+.fs-mini-btn.fs-danger:hover { background: #dc2626; border-color: #dc2626; }
+.fs-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.fs-st-scheduled { background: #e0e7ff; color: #4338ca; } .fs-st-route { background: #fef9c3; color: #a16207; } .fs-st-progress { background: #cffafe; color: #0e7490; } .fs-st-done { background: #dcfce7; color: #15803d; } .fs-st-cancelled { background: #e5e7eb; color: #6b7280; }
+.fs-prio { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+.fs-prio-low { background: #f1f5f9; color: #64748b; } .fs-prio-normal { background: #e0f2fe; color: #0369a1; } .fs-prio-high { background: #ffedd5; color: #c2410c; } .fs-prio-urgent { background: #fee2e2; color: #b91c1c; }
+
+.fs-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+.fs-form-grid label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary, #475569); margin-bottom: 5px; }
+.fs-form-full { grid-column: 1 / -1; }
+.fs-form-actions { display: flex; gap: 10px; margin-top: 16px; }

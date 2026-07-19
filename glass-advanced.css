@@ -1,0 +1,265 @@
+/* ═══════════════════════════════════════════════════
+   ADVANCED GLASS EFFECT - Realistic Apple Style
+   ═══════════════════════════════════════════════════ */
+
+body.theme-glass {
+  --glass-blur: 40px;
+  --glass-opacity: 0.45;
+  --glass-brightness: 110%;
+  --glass-border-opacity: 0.125;
+}
+
+/* Glass Layer System - Multi-layer composition */
+body.theme-glass .glass-card,
+body.theme-glass .sidebar,
+body.theme-glass .page-header,
+body.theme-glass .config-bar,
+body.theme-glass .emp-selector-bar,
+body.theme-glass .table-container {
+  position: relative;
+}
+
+/* Base Glass Filter Layer */
+body.theme-glass .glass-card::before,
+body.theme-glass .sidebar::before,
+body.theme-glass .page-header::before,
+body.theme-glass .config-bar::before,
+body.theme-glass .emp-selector-bar::before,
+body.theme-glass .table-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(100%) brightness(var(--glass-brightness));
+  backdrop-filter: blur(var(--glass-blur)) saturate(100%) brightness(var(--glass-brightness));
+  border-radius: inherit;
+  pointer-events: none;
+  filter: url(#glass-distortion);
+}
+
+/* Glass Overlay Layer - Color tint */
+body.theme-glass .glass-card::after,
+body.theme-glass .sidebar::after,
+body.theme-glass .page-header::after,
+body.theme-glass .config-bar::after,
+body.theme-glass .emp-selector-bar::after,
+body.theme-glass .table-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(17, 24, 39, var(--glass-opacity));
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure content is on top */
+body.theme-glass .glass-card > *,
+body.theme-glass .sidebar > *,
+body.theme-glass .page-header > *,
+body.theme-glass .config-bar > *,
+body.theme-glass .emp-selector-bar > *,
+body.theme-glass .table-container > * {
+  position: relative;
+  z-index: 3;
+}
+
+/* Enhanced specular highlight for glass */
+body.theme-glass .glass-card,
+body.theme-glass .sidebar,
+body.theme-glass .page-header,
+body.theme-glass .config-bar,
+body.theme-glass .emp-selector-bar,
+body.theme-glass .table-container {
+  border: 1px solid rgba(255, 255, 255, 0.125);
+  background: transparent;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.15),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Floating distortion animation overlay */
+body.theme-glass .glass-card,
+body.theme-glass .sidebar {
+  animation: glass-float 6s ease-in-out infinite;
+}
+
+@keyframes glass-float {
+  0%, 100% { filter: brightness(100%); }
+  50% { filter: brightness(105%); }
+}
+
+/* Buttons in glass theme - Advanced */
+body.theme-glass .btn-primary,
+body.theme-glass .btn-secondary,
+body.theme-glass .btn-success {
+  position: relative;
+  -webkit-backdrop-filter: blur(30px) saturate(120%);
+  backdrop-filter: blur(30px) saturate(120%);
+  background: rgba(56, 189, 248, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 20px rgba(56, 189, 248, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  color: #ffffff;
+  font-weight: 600;
+  overflow: hidden;
+}
+
+/* Glass button glow effect */
+body.theme-glass .btn-primary::before,
+body.theme-glass .btn-secondary::before,
+body.theme-glass .btn-success::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 0%, transparent 80%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+body.theme-glass .btn-primary:hover::before,
+body.theme-glass .btn-secondary:hover::before,
+body.theme-glass .btn-success:hover::before {
+  opacity: 1;
+}
+
+body.theme-glass .btn-primary:hover,
+body.theme-glass .btn-secondary:hover,
+body.theme-glass .btn-success:hover {
+  -webkit-backdrop-filter: blur(30px) saturate(130%);
+  backdrop-filter: blur(30px) saturate(130%);
+  background: rgba(56, 189, 248, 0.45);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 12px 30px rgba(56, 189, 248, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Glass input fields with refined style */
+body.theme-glass .config-input,
+body.theme-glass input,
+body.theme-glass select,
+body.theme-glass textarea {
+  -webkit-backdrop-filter: blur(15px) saturate(100%);
+  backdrop-filter: blur(15px) saturate(100%);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), inset 1px 1px 0 rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+body.theme-glass .config-input:focus,
+body.theme-glass input:focus,
+body.theme-glass select:focus,
+body.theme-glass textarea:focus {
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  backdrop-filter: blur(20px) saturate(120%);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 3px rgba(56, 189, 248, 0.1);
+}
+
+/* Navigation buttons with glass depth */
+body.theme-glass .nav-btn {
+  position: relative;
+  -webkit-backdrop-filter: blur(20px) saturate(100%);
+  backdrop-filter: blur(20px) saturate(100%);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+body.theme-glass .nav-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+body.theme-glass .nav-btn:hover {
+  -webkit-backdrop-filter: blur(20px) saturate(110%);
+  backdrop-filter: blur(20px) saturate(110%);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
+}
+
+body.theme-glass .nav-btn:hover::before {
+  opacity: 1;
+}
+
+body.theme-glass .nav-btn.active {
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  backdrop-filter: blur(20px) saturate(120%);
+  background: rgba(56, 189, 248, 0.25);
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow:
+    0 4px 16px rgba(56, 189, 248, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Salary cards with glass vibrancy */
+body.theme-glass .salary-card {
+  -webkit-backdrop-filter: blur(35px) saturate(105%) brightness(108%);
+  backdrop-filter: blur(35px) saturate(105%) brightness(108%);
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  box-shadow:
+    0 8px 28px rgba(56, 189, 248, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Glass theme text enhancements */
+body.theme-glass .page-title,
+body.theme-glass .section-title,
+body.theme-glass h1,
+body.theme-glass h2,
+body.theme-glass h3 {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+}
+
+body.theme-glass .page-subtitle {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Theme indicator with glass vibrancy */
+body.theme-glass .theme-indicator {
+  background: rgba(56, 189, 248, 0.8);
+  box-shadow:
+    0 0 16px rgba(56, 189, 248, 0.6),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  animation: glass-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glass-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 16px rgba(56, 189, 248, 0.6),
+      inset 0 1px 2px rgba(255, 255, 255, 0.4),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 24px rgba(56, 189, 248, 0.8),
+      inset 0 1px 2px rgba(255, 255, 255, 0.5),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+  }
+}

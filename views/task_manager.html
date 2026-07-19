@@ -1,0 +1,17 @@
+<section class="page" id="pageTaskManager">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">✅</span> إدارة المهام</h1>
+        <p class="page-subtitle">هرمية متعددة المستويات: فضاء ← قسم ← مجموعة ← نوع المهمة ← مهمة ← مهمة فرعية، وكل طبقة قابلة للتعديل والإضافة</p>
+      </div>
+      <div class="page-header-actions">
+        <button class="btn-secondary" onclick="toggleTaskManagerView()"><i class="fa-solid fa-table-list"></i> تغيير العرض</button>
+        <button class="btn-primary" onclick="addTaskSpace()">إضافة فضاء</button>
+        <button class="btn-primary" onclick="addTaskDepartment()">إضافة قسم</button>
+      </div>
+    </div>
+    <div class="emp-tabs-container page-tabs-toolbar">
+      <div class="emp-tabs" id="taskSpaceTabs"></div>
+    </div>
+    <div id="taskHierarchyBody" class="task-manager-shell"></div>
+  </section>

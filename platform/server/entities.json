@@ -1,0 +1,60 @@
+{
+  "crm_lead": {
+    "label_ar": "عميل محتمل",
+    "label_ar_plural": "العملاء المحتملون",
+    "section": "sales",
+    "sequence": "LEAD-{YYYY}-{#####}",
+    "seq_field": "seq",
+    "chatter": true,
+    "acl": "sales:crm_lead",
+    "status_key": "status",
+    "fields": {
+      "name":    { "type": "text",     "label_ar": "الاسم", "required": true },
+      "company": { "type": "text",     "label_ar": "الشركة" },
+      "phone":   { "type": "text",     "label_ar": "الهاتف" },
+      "email":   { "type": "text",     "label_ar": "البريد الإلكتروني" },
+      "source":  { "type": "select",   "label_ar": "المصدر", "options": ["موقع", "إحالة", "اتصال بارد", "معرض", "أخرى"] },
+      "status":  { "type": "select",   "label_ar": "الحالة", "options": ["new", "contacted", "qualified", "won", "lost"], "default": "new" },
+      "owner":   { "type": "text",     "label_ar": "المسؤول" },
+      "value":   { "type": "number",   "label_ar": "القيمة المتوقعة" },
+      "notes":   { "type": "textarea", "label_ar": "ملاحظات" }
+    }
+  },
+  "helpdesk_ticket": {
+    "label_ar": "تذكرة دعم",
+    "label_ar_plural": "تذاكر الدعم",
+    "section": "sales",
+    "sequence": "TKT-{YYYY}{MM}-{####}",
+    "seq_field": "seq",
+    "chatter": true,
+    "acl": "support:helpdesk_ticket",
+    "status_key": "status",
+    "fields": {
+      "subject":  { "type": "text",     "label_ar": "الموضوع", "required": true },
+      "customer": { "type": "text",     "label_ar": "العميل" },
+      "priority": { "type": "select",   "label_ar": "الأولوية", "options": ["low", "medium", "high", "urgent"], "default": "medium" },
+      "status":   { "type": "select",   "label_ar": "الحالة", "options": ["open", "in_progress", "waiting", "resolved", "closed"], "default": "open" },
+      "assignee": { "type": "text",     "label_ar": "المكلَّف" },
+      "body":     { "type": "textarea", "label_ar": "الوصف" }
+    }
+  },
+  "product": {
+    "label_ar": "منتج",
+    "label_ar_plural": "المنتجات",
+    "section": "supply",
+    "sequence": "PRD-{#####}",
+    "seq_field": "seq",
+    "chatter": true,
+    "acl": "supply:product",
+    "status_key": "status",
+    "fields": {
+      "name":       { "type": "text",   "label_ar": "اسم المنتج", "required": true },
+      "sku":        { "type": "text",   "label_ar": "رمز المنتج" },
+      "category":   { "type": "text",   "label_ar": "الفئة" },
+      "uom":        { "type": "text",   "label_ar": "وحدة القياس", "default": "قطعة" },
+      "cost_price": { "type": "number", "label_ar": "سعر الكلفة" },
+      "sale_price": { "type": "number", "label_ar": "سعر البيع" },
+      "status":     { "type": "select", "label_ar": "الحالة", "options": ["active", "inactive"], "default": "active" }
+    }
+  }
+}

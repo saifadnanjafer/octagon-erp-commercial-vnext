@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>History panel demo — السجل التاريخي (T1.4.2)</title>
+<link rel="stylesheet" href="history-panel.css">
+<style>
+  /* Demo-only shell vars mimicking octagon-erp/style.css :root (same palette as chatter-demo.html) */
+  :root {
+    --bg-primary: #0a0e1a; --bg-secondary: #111827;
+    --bg-card: rgba(17, 24, 39, 0.7); --bg-glass: rgba(255,255,255,0.04);
+    --bg-glass-hover: rgba(255,255,255,0.08);
+    --border-glass: rgba(255,255,255,0.08); --border-focus: rgba(56,189,248,0.5);
+    --text-primary: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b;
+    --text-heading: #e2e8f0;
+    --accent-blue: #38bdf8; --accent-purple: #818cf8; --accent-green: #34d399;
+    --accent-red: #f87171; --accent-yellow: #fbbf24; --accent-cyan: #22d3ee;
+    --gradient-primary: linear-gradient(135deg, #38bdf8, #818cf8);
+    --radius-sm: 8px; --radius-md: 12px;
+    --font-ar: 'Tajawal', 'Noto Sans Arabic', Arial, sans-serif;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-ar); margin: 0; padding: 24px; }
+  .demo-wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.1rem; color: var(--text-heading); }
+  p.hint { color: var(--text-muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<div class="demo-wrap">
+  <h1>السجل التاريخي — أمر بيع تجريبي (sales_order / SO-001)</h1>
+  <p class="hint">هذه الصفحة تعمل بدون خادم: fetch مُحاكى بذاكرة محلية يقلّد GET /api/x/audit/:entity/:id (crud-engine.js).</p>
+  <div id="history-host"></div>
+</div>
+
+<script>
+// ---------------------------------------------------------------------------
+// Fetch stub: in-memory imitation of the already-live GET /api/x/audit/:entity/:id
+// response shape (crud-engine.js -> audit.getHistory). Real integration
+// replaces nothing — the widget calls the same URL.
+// ---------------------------------------------------------------------------
+(function () {
+  'use strict';
+  var iso = function (hoursAgo) { return new Date(Date.now() - hoursAgo * 3600000).toISOString(); };
+  var entries = [
+    {
+      id: 'aud_1', entity: 'sales_order', record_id: 'SO-001', user: 'سيف', action: 'create', at: iso(72),
+      before: null,
+      after: { customer: 'شركة الرافدين', product_id: 'prod1', status: 'draft' },
+      changes: { customer: { from: null, to: 'شركة الرافدين' }, product_id: { from: null, to: 'prod1' }, status: { from: null, to: 'draft' } },
+    },
+    {
+      id: 'aud_2', entity: 'sales_order', record_id: 'SO-001', user: 'زهراء', action: 'update', at: iso(50),
+      before: { status: 'draft' }, after: { status: 'submitted' },
+      changes: { status: { from: 'draft', to: 'submitted' } },
+    },
+    {
+      id: 'aud_3', entity: 'sales_order', record_id: 'SO-001', user: 'سيف', action: 'state_transition_post', at: iso(30),
+      before: { state: 'submitted', version: 1 }, after: { state: 'posted', version: 2, reason: '' },
+      changes: { state: { from: 'submitted', to: 'posted' }, version: { from: 1, to: 2 } },
+    },
+    {
+      id: 'aud_4', entity: 'sales_order', record_id: 'SO-001', user: 'system', action: 'snapshot_materialize', at: iso(30),
+      before: { price_snapshot: null }, after: { price_snapshot: 85000, _snapshot_of: { entity: 'product', field: 'price', ref_field: 'product_id', at_transition_to: 'posted' } },
+      changes: { price_snapshot: { from: null, to: 85000 } },
+    },
+    {
+      id: 'aud_5', entity: 'sales_order', record_id: 'SO-001', user: 'مستخدم آخر', action: 'snapshot_write_blocked', at: iso(2),
+      before: { price_snapshot: 99999 }, after: { price_snapshot: 85000 },
+      changes: { price_snapshot: { from: 99999, to: 85000 } },
+    },
+  ];
+
+  function envelope(data, meta) { return { success: true, data: data, error: null, meta: meta || null }; }
+  function json(obj) { return Promise.resolve({ ok: true, status: 200, json: function () { return Promise.resolve(obj); } }); }
+
+  var realFetch = window.fetch.bind(window);
+  window.fetch = function (url) {
+    var raw = String(url);
+    if (raw.indexOf('/api/x/audit/') !== 0) return realFetch(url);
+    // sorted desc by `at`, matching audit.getHistory()'s ORDER BY at DESC
+    var sorted = entries.slice().sort(function (a, b) { return new Date(b.at) - new Date(a.at); });
+    return json(envelope(sorted));
+  };
+})();
+</script>
+<script src="history-panel.js"></script>
+<script>
+  OX.historyPanel.mount(document.getElementById('history-host'), 'sales_order', 'SO-001', {
+    fieldLabels: { customer: 'العميل', product_id: 'المنتج', status: 'الحالة', state: 'الحالة', version: 'الإصدار', price_snapshot: 'السعر عند الترحيل' }
+  });
+</script>
+</body>
+</html>

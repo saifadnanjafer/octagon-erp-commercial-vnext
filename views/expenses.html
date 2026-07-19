@@ -1,0 +1,35 @@
+<section class="page" id="pageExpenses">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">📤</span> المصروفات</h1>
+        <p class="page-subtitle">حدد صنف الصادر ومصدر الدفع: قاصة الورشة أو شخص دفع من جيبه فينضاف لرصيده</p>
+      </div>
+      <div class="page-header-actions"><button class="btn-primary finance-demo-action" onclick="addFinanceDemoData('expenses')">إضافة أمثلة تجريبية</button></div>
+    </div>
+    <div class="finance-entry-grid">
+      <div class="glass-card finance-form-card">
+        <h3 class="section-title">تسجيل مصروف</h3>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">التاريخ</label><input type="date" id="expenseDate" class="form-input"></div>
+          <div class="form-group"><label class="form-label">المبلغ</label><input type="number" id="expenseAmount" class="form-input" min="0"></div>
+          <div class="form-group"><label class="form-label">الصنف</label><select id="expenseCategory" class="form-input"></select></div>
+          <div class="form-group"><label class="form-label">القسم</label><select id="expenseDepartment" class="form-input"></select></div>
+          <div class="form-group"><label class="form-label">مصدر الدفع</label><select id="expenseSource" class="form-input" onchange="onExpenseSourceChange()"><option value="cashbox">قاصة الورشة</option><option value="person_pocket">شخص دفع من جيبه</option></select></div>
+          <div class="form-group" id="expensePersonWrap" style="display:none;"><label class="form-label">الشخص</label><select id="expensePerson" class="form-input"></select></div>
+          <div class="form-group"><label class="form-label">الوصف</label><input type="text" id="expenseDescription" class="form-input" placeholder="مثال: شراء مواد، صيانة، نقل"></div>
+        </div>
+        <button class="btn-primary finance-submit-action" id="expenseSubmitBtn" onclick="addExpenseFromForm()">تسجيل المصروف</button>
+      </div>
+      <div class="glass-card finance-form-card finance-setup-note-card">
+        <h3 class="section-title">إعدادات المصروفات</h3>
+        <p>إدارة الأقسام والأشخاص والأصناف من لوحة الأدمن.</p>
+        <button class="btn-secondary" onclick="switchPage('admin_panel')">فتح لوحة الأدمن</button>
+      </div>
+    </div>
+    <div class="table-container glass-card">
+      <table class="data-table finance-table">
+        <thead><tr><th>التاريخ</th><th>الصنف</th><th>القسم</th><th>الوصف</th><th>الدفع</th><th>المبلغ</th></tr></thead>
+        <tbody id="expensesBody"></tbody>
+      </table>
+    </div>
+  </section>

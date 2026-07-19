@@ -1,0 +1,96 @@
+/* OCTAGON ERP — Appointments & Booking Center styles (RTL, dark glass) */
+#appointmentsBody { direction: rtl; }
+
+/* KPI strip */
+.appt-kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.appt-kpi { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(8px); }
+.appt-kpi-icon { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex: 0 0 auto; }
+.appt-kpi-info { display: flex; flex-direction: column; line-height: 1.2; }
+.appt-kpi-value { font-size: 22px; font-weight: 800; color: #f1f5f9; }
+.appt-kpi-label { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+
+/* Tabs */
+.appt-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.appt-tab { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 11px; cursor: pointer;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #cbd5e1; font-size: 14px; font-weight: 600; transition: all .15s; }
+.appt-tab:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.appt-tab.active { background: linear-gradient(135deg,#6366f1,#8b5cf6); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(99,102,241,0.35); }
+
+/* Buttons */
+.appt-btn { padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: #e2e8f0; transition: all .15s; }
+.appt-btn:hover { background: rgba(255,255,255,0.1); }
+.appt-btn.ghost { background: transparent; }
+.appt-btn.primary { background: linear-gradient(135deg,#6366f1,#8b5cf6); border-color: transparent; color: #fff; }
+.appt-btn.primary:hover { filter: brightness(1.08); }
+.appt-mini { padding: 4px 9px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: #e2e8f0; }
+.appt-mini:hover { background: rgba(99,102,241,0.25); }
+.appt-mini.danger:hover { background: rgba(248,113,113,0.25); }
+.appt-mini-row { display: flex; gap: 5px; flex-wrap: wrap; }
+
+/* Date nav */
+.appt-datenav { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.appt-date-input { padding: 7px 10px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #f1f5f9; }
+.appt-date-label { font-weight: 700; color: #c7d2fe; }
+
+/* Board (day schedule) */
+.appt-board { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.appt-res-col { background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; overflow: hidden; }
+.appt-res-head { display: flex; align-items: center; gap: 8px; padding: 11px 13px; font-weight: 700; color: #f1f5f9;
+  background: rgba(255,255,255,0.04); border-bottom: 2px solid #818cf8; }
+.appt-res-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
+.appt-res-count { margin-inline-start: auto; background: rgba(255,255,255,0.1); border-radius: 999px; padding: 1px 9px; font-size: 12px; }
+.appt-res-body { padding: 10px; display: flex; flex-direction: column; gap: 10px; min-height: 60px; }
+.appt-col-empty { color: #64748b; font-size: 13px; text-align: center; padding: 16px 0; }
+
+/* Booking chip */
+.appt-chip { border-radius: 11px; padding: 10px 11px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+  border-inline-start: 4px solid #818cf8; display: flex; flex-direction: column; gap: 6px; }
+.appt-chip.req { border-inline-start-color: #facc15; }
+.appt-chip.conf { border-inline-start-color: #34d399; }
+.appt-chip.in { border-inline-start-color: #38bdf8; }
+.appt-chip.done { border-inline-start-color: #a855f7; opacity: .8; }
+.appt-chip.noshow, .appt-chip.cancel { border-inline-start-color: #f87171; opacity: .65; }
+.appt-chip-time { font-size: 12px; font-weight: 700; color: #c7d2fe; }
+.appt-chip-main { display: flex; flex-direction: column; gap: 2px; }
+.appt-chip-title { font-weight: 700; color: #f1f5f9; font-size: 14px; }
+.appt-chip-cust { font-size: 12px; color: #94a3b8; }
+.appt-chip-note { font-size: 12px; color: #64748b; font-style: italic; }
+.appt-chip-foot { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* Badges */
+.appt-badge { padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+.appt-badge.req { background: rgba(250,204,21,0.18); color: #facc15; }
+.appt-badge.conf { background: rgba(52,211,153,0.18); color: #34d399; }
+.appt-badge.in { background: rgba(56,189,248,0.18); color: #38bdf8; }
+.appt-badge.done { background: rgba(168,85,247,0.18); color: #c084fc; }
+.appt-badge.noshow { background: rgba(248,113,113,0.18); color: #f87171; }
+.appt-badge.cancel { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+/* Panels / forms */
+.appt-content { margin-top: 4px; }
+.appt-panel { background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+.appt-panel h3 { margin: 0 0 12px; font-size: 15px; color: #f1f5f9; display: flex; align-items: center; gap: 8px; }
+.appt-add { border: 1px dashed rgba(129,140,248,0.4); }
+.appt-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.appt-form-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #94a3b8; font-weight: 600; }
+.appt-form-grid .appt-wide { grid-column: 1 / -1; }
+.appt-form-grid input, .appt-form-grid select {
+  padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #f1f5f9; font-size: 13px; }
+.appt-form-grid input[type="color"] { padding: 2px; height: 38px; }
+
+/* List filters + table */
+.appt-list-filters { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 12px; }
+.appt-list-filters label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #94a3b8; font-weight: 600; }
+.appt-list-filters select { padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #f1f5f9; }
+.appt-list-count { margin-inline-start: auto; color: #c7d2fe; font-weight: 700; align-self: center; }
+.appt-table { width: 100%; border-collapse: collapse; }
+.appt-table th { text-align: start; padding: 10px 12px; font-size: 12px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.08); font-weight: 700; }
+.appt-table td { padding: 11px 12px; font-size: 13px; color: #e2e8f0; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
+.appt-table tr:hover td { background: rgba(255,255,255,0.02); }
+.appt-sub { display: block; font-size: 11px; color: #64748b; margin-top: 2px; }
+.appt-res-off td { opacity: .55; }
+
+.appt-empty { color: #94a3b8; text-align: center; padding: 30px 0; font-size: 14px; }

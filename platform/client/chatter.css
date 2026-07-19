@@ -1,0 +1,345 @@
+/* ==========================================================================
+   Octagon Commercial — Chatter widget (P0.3)
+   Prefix: .oxch- only. Colors/radii/shadows come exclusively from the app's
+   CSS variables (style.css :root + skin overrides) so every skin — including
+   light skins and نيومورفيزم — renders correctly. Fallbacks are theme-neutral.
+   ========================================================================== */
+
+.oxch {
+  direction: rtl;
+  font-family: var(--font-ar, 'Tajawal', Arial, sans-serif);
+  color: var(--text-primary, inherit);
+  background: var(--bg-glass, rgba(127, 127, 127, 0.06));
+  border: 1px solid var(--border-glass, rgba(127, 127, 127, 0.15));
+  border-radius: var(--radius-md, 12px);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 100%;
+}
+
+/* ---- header: tabs + follow bell ---- */
+.oxch-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.oxch-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.oxch-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary, inherit);
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+  transition: var(--transition, all 0.2s ease);
+}
+
+.oxch-tab:hover {
+  background: var(--bg-glass-hover, rgba(127, 127, 127, 0.1));
+}
+
+.oxch-tab.active {
+  background: var(--bg-glass-hover, rgba(127, 127, 127, 0.12));
+  border-color: var(--border-focus, var(--accent-blue, #38bdf8));
+  color: var(--text-primary, inherit);
+  font-weight: 700;
+}
+
+.oxch-count {
+  display: inline-block;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  font-size: 0.72rem;
+  text-align: center;
+  background: var(--accent-blue, #38bdf8);
+  color: var(--bg-primary, #fff);
+}
+
+.oxch-bell {
+  background: transparent;
+  border: 1px solid var(--border-glass, rgba(127, 127, 127, 0.2));
+  color: var(--text-secondary, inherit);
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+  transition: var(--transition, all 0.2s ease);
+}
+
+.oxch-bell.active {
+  border-color: var(--accent-green, #34d399);
+  color: var(--accent-green, #34d399);
+}
+
+/* ---- composer ---- */
+.oxch-compose-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.oxch-input {
+  width: 100%;
+  background: var(--bg-glass, rgba(127, 127, 127, 0.06));
+  border: 1px solid var(--border-glass, rgba(127, 127, 127, 0.2));
+  border-radius: var(--radius-sm, 8px);
+  color: var(--text-primary, inherit);
+  font-family: inherit;
+  font-size: 0.88rem;
+  padding: 8px 10px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.oxch-input:focus {
+  outline: none;
+  border-color: var(--border-focus, var(--accent-blue, #38bdf8));
+}
+
+.oxch-btn {
+  border: 1px solid var(--border-glass, rgba(127, 127, 127, 0.2));
+  border-radius: var(--radius-sm, 8px);
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition, all 0.2s ease);
+}
+
+.oxch-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.oxch-btn-primary {
+  background: var(--gradient-primary, var(--accent-blue, #38bdf8));
+  border-color: transparent;
+  color: var(--bg-primary, #fff);
+  font-weight: 700;
+}
+
+.oxch-btn-ghost {
+  background: transparent;
+  color: var(--text-secondary, inherit);
+}
+
+.oxch-btn-ghost:hover:not(:disabled) {
+  background: var(--bg-glass-hover, rgba(127, 127, 127, 0.1));
+}
+
+/* ---- schedule-activity mini form ---- */
+.oxch-activity-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: var(--bg-glass, rgba(127, 127, 127, 0.05));
+  border: 1px dashed var(--border-glass, rgba(127, 127, 127, 0.25));
+  border-radius: var(--radius-sm, 8px);
+  padding: 10px;
+}
+
+.oxch-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--text-secondary, inherit);
+}
+
+.oxch-field-wide,
+.oxch-form-actions {
+  grid-column: 1 / -1;
+}
+
+.oxch-form-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+/* ---- thread list ---- */
+.oxch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.oxch-empty {
+  text-align: center;
+  color: var(--text-muted, inherit);
+  font-size: 0.85rem;
+  padding: 18px 8px;
+}
+
+.oxch-item {
+  background: var(--bg-card, rgba(127, 127, 127, 0.05));
+  border: 1px solid var(--border-glass, rgba(127, 127, 127, 0.12));
+  border-radius: var(--radius-sm, 8px);
+  padding: 10px 12px;
+}
+
+.oxch-item-log {
+  background: transparent;
+  border-style: dashed;
+}
+
+.oxch-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.oxch-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary, var(--accent-purple, #818cf8));
+  color: var(--bg-primary, #fff);
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.oxch-author {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-heading, inherit);
+}
+
+.oxch-time {
+  margin-inline-start: auto;
+  font-size: 0.74rem;
+  color: var(--text-muted, inherit);
+}
+
+.oxch-body-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.oxch-body {
+  flex: 1;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-primary, inherit);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* done activity → strikethrough */
+.oxch-item-done .oxch-body {
+  text-decoration: line-through;
+  color: var(--text-muted, inherit);
+}
+
+.oxch-item-done {
+  opacity: 0.75;
+}
+
+/* ---- badges ---- */
+.oxch-badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-glass, rgba(127, 127, 127, 0.2));
+  color: var(--text-secondary, inherit);
+}
+
+.oxch-badge-late {
+  border-color: var(--accent-red, #f87171);
+  color: var(--accent-red, #f87171);
+  font-weight: 700;
+}
+
+.oxch-badge-today {
+  border-color: var(--accent-yellow, #fbbf24);
+  color: var(--accent-yellow, #fbbf24);
+  font-weight: 700;
+}
+
+.oxch-badge-due {
+  border-color: var(--accent-cyan, #22d3ee);
+  color: var(--accent-cyan, #22d3ee);
+}
+
+.oxch-badge-type {
+  border-color: var(--accent-purple, #818cf8);
+  color: var(--accent-purple, #818cf8);
+}
+
+.oxch-badge-log {
+  border-color: var(--border-glass, rgba(127, 127, 127, 0.25));
+  color: var(--text-muted, inherit);
+}
+
+/* ---- mark-done checkmark ---- */
+.oxch-done-btn {
+  background: transparent;
+  border: 1px solid var(--accent-green, #34d399);
+  color: var(--accent-green, #34d399);
+  border-radius: var(--radius-sm, 8px);
+  font-family: inherit;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: var(--transition, all 0.2s ease);
+}
+
+.oxch-done-btn.checked,
+.oxch-done-btn:hover {
+  background: var(--accent-green, #34d399);
+  color: var(--bg-primary, #fff);
+}
+
+/* ---- pager ---- */
+.oxch-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.oxch-pager:empty {
+  display: none;
+}
+
+.oxch-page-info {
+  font-size: 0.78rem;
+  color: var(--text-muted, inherit);
+}
+
+/* ---- narrow containers (drawer / mobile) ---- */
+@media (max-width: 520px) {
+  .oxch-activity-form {
+    grid-template-columns: 1fr;
+  }
+
+  .oxch-compose-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

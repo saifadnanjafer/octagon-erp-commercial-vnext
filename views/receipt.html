@@ -1,0 +1,52 @@
+<section class="page" id="pageReceipt">
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title"><span class="title-icon">🖨️</span> الوصلات</h1>
+        <p class="page-subtitle">إدارة وصل قبض، وصل صرف، ووصل مبيعات مع ترحيل مالي آمن بدون تكرار</p>
+      </div>
+      <div class="page-header-actions"><button class="btn-primary finance-demo-action" onclick="addFinanceDemoData('receipts')">إضافة أمثلة تجريبية</button></div>
+    </div>
+    <div class="receipt-workspace">
+      <div class="glass-card finance-form-card">
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">نوع الوصل</label><select id="receiptKind" class="form-input" onchange="renderReceiptPage()"><option value="income">وصل قبض</option><option value="expense">وصل صرف</option><option value="sales">وصل مبيعات</option></select></div>
+          <div class="form-group"><label class="form-label">رقم الوصل</label><input id="receiptNo" class="form-input" placeholder="رقم الوصل" oninput="updateReceiptPreview()"></div>
+          <div class="form-group"><label class="form-label">التاريخ</label><input type="date" id="receiptDate" class="form-input" onchange="updateReceiptPreview()"></div>
+          <div class="form-group"><label class="form-label">المبلغ الإجمالي</label><input id="receiptAmount" type="number" class="form-input" placeholder="المبلغ الإجمالي" oninput="updateReceiptPreview()"></div>
+          <div class="form-group"><label class="form-label">المدفوع</label><input id="receiptPaidAmount" type="number" class="form-input" placeholder="المدفوع" oninput="updateReceiptPreview()"></div>
+          <div class="form-group"><label class="form-label">الطريقة</label><select id="receiptPaymentMethod" class="form-input" onchange="updateReceiptPreview()"><option value="cash">نقداً</option><option value="bank">تحويل/مصرف</option><option value="ledger">قيد فقط</option></select></div>
+          <div class="form-group"><label class="form-label">عميل اختياري</label><select id="receiptCustomer" class="form-input" onchange="updateReceiptPreview()"></select></div>
+          <div class="form-group"><label class="form-label">الصنف</label><select id="receiptCategory" class="form-input"></select></div>
+          <div class="form-group"><label class="form-label">القسم</label><select id="receiptDepartment" class="form-input" onchange="updateReceiptPreview()"></select></div>
+          <div class="form-group"><label class="form-label">الطرف / المستلم / الدافع</label><input id="receiptParty" class="form-input" placeholder="اكتب أي طرف بحرية" oninput="updateReceiptPreview()"></div>
+          <div class="form-group"><label class="form-label">التفاصيل</label><input id="receiptDescription" class="form-input" placeholder="التفاصيل العامة" oninput="updateReceiptPreview()"></div>
+        </div>
+        <div class="receipt-items-editor">
+          <h3 class="section-title">بنود وصل المبيعات</h3>
+          <div class="receipt-item-inputs">
+            <input id="receiptItemName" class="form-input" placeholder="البند / السلعة">
+            <input id="receiptItemDesc" class="form-input" placeholder="الوصف">
+            <input id="receiptItemQty" type="number" class="form-input" min="0" step="0.01" placeholder="العدد">
+            <input id="receiptItemUnit" class="form-input" placeholder="الوحدة">
+            <input id="receiptItemPrice" type="number" class="form-input" min="0" step="0.01" placeholder="سعر الوحدة">
+            <input id="receiptItemDetails" class="form-input" placeholder="اللون / التفاصيل">
+            <button class="btn-primary" onclick="addReceiptLineItem()">إضافة بند</button>
+          </div>
+          <div id="receiptItemsTable" class="receipt-items-table"></div>
+        </div>
+        <div class="receipt-actions">
+          <button class="btn-primary" onclick="updateReceiptPreview()">تحديث الوصل</button>
+          <button class="btn-primary" onclick="saveReceiptFromForm()">حفظ وتسجيل الحركة</button>
+          <button class="btn-primary" onclick="printFinanceReceipt()">طباعة</button>
+        </div>
+      </div>
+      <div class="receipt-paper glass-card" id="receiptPreview" contenteditable="true"></div>
+    </div>
+    <div class="table-container glass-card receipt-ledger" style="margin-top:20px;">
+      <h3 class="section-title">الوصلات المحفوظة</h3>
+      <table class="data-table finance-table">
+        <thead><tr><th>الرقم</th><th>التاريخ</th><th>النوع</th><th>الطرف</th><th>الوصف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الدفع</th><th>الحالة</th></tr></thead>
+        <tbody id="savedReceiptsBody"></tbody>
+      </table>
+    </div>
+  </section>

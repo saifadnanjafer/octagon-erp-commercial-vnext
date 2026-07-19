@@ -1,0 +1,185 @@
+/* Phase 7J - Sales Commercial Pack. Scoped to the existing Sales page. */
+#pageSales .sc7j-panel {
+  direction: ltr;
+  margin: 0 0 18px;
+  padding: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+}
+#pageSales .sc7j-head,
+#pageSales .sc7j-progress-head,
+#pageSales .sc7j-form-row,
+#pageSales .sc7j-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+#pageSales .sc7j-head h3 {
+  margin: 0 0 4px;
+  color: #f8fafc;
+  font-size: 18px;
+}
+#pageSales .sc7j-note,
+#pageSales .sc7j-progress small {
+  color: #94a3b8;
+  font-size: 12px;
+}
+#pageSales .sc7j-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+#pageSales .sc7j-tabs button,
+#pageSales .sc7j-actions button,
+#pageSales .sc7j-table button,
+#pageSales .sc7j-form-row button {
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  background: rgba(30, 41, 59, 0.88);
+  color: #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 11px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+#pageSales .sc7j-tabs button.active,
+#pageSales .sc7j-actions button:hover,
+#pageSales .sc7j-table button:hover,
+#pageSales .sc7j-form-row button:hover {
+  background: #0f766e;
+  border-color: #14b8a6;
+  color: #ecfeff;
+}
+#pageSales .sc7j-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+#pageSales .sc7j-kpi {
+  min-height: 82px;
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.34);
+}
+#pageSales .sc7j-kpi strong {
+  display: block;
+  color: #f8fafc;
+  font-size: 22px;
+  line-height: 1.2;
+}
+#pageSales .sc7j-kpi span {
+  color: #94a3b8;
+  font-size: 12px;
+}
+#pageSales .sc7j-progress {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid rgba(20, 184, 166, 0.24);
+  border-radius: 8px;
+  background: rgba(20, 184, 166, 0.08);
+}
+#pageSales .sc7j-bar,
+#pageSales .sc7j-mini-bar {
+  overflow: hidden;
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.92);
+}
+#pageSales .sc7j-mini-bar {
+  min-width: 110px;
+  height: 8px;
+}
+#pageSales .sc7j-bar i,
+#pageSales .sc7j-mini-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #14b8a6, #f59e0b);
+}
+#pageSales .sc7j-table-wrap {
+  overflow: auto;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+}
+#pageSales .sc7j-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+#pageSales .sc7j-table th,
+#pageSales .sc7j-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  text-align: left;
+  color: #dbeafe;
+  font-size: 12px;
+  vertical-align: middle;
+}
+#pageSales .sc7j-table th {
+  color: #93c5fd;
+  background: rgba(15, 23, 42, 0.52);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+#pageSales .sc7j-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 800;
+}
+#pageSales .sc7j-pill.ok {
+  color: #bbf7d0;
+  background: rgba(22, 163, 74, 0.18);
+  border: 1px solid rgba(34, 197, 94, 0.28);
+}
+#pageSales .sc7j-pill.warn {
+  color: #fde68a;
+  background: rgba(217, 119, 6, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+}
+#pageSales .sc7j-empty {
+  color: #94a3b8;
+  text-align: center;
+}
+#pageSales .sc7j-form-row {
+  justify-content: flex-start;
+  margin-bottom: 12px;
+}
+#pageSales .sc7j-form-row label {
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 800;
+}
+#pageSales .sc7j-form-row select {
+  min-width: 240px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #f8fafc;
+  padding: 8px;
+}
+#pageSales .sc7j-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+}
+#pageSales .sc7j-split h4 {
+  margin: 0 0 8px;
+  color: #f8fafc;
+}
+@media (max-width: 900px) {
+  #pageSales .sc7j-kpis,
+  #pageSales .sc7j-split {
+    grid-template-columns: 1fr;
+  }
+}

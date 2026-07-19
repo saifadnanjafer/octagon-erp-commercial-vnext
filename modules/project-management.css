@@ -1,0 +1,71 @@
+/* OCTAGON ERP — Project Management (إدارة المشاريع). Add-only. RTL. */
+#pageProjects { direction: rtl; }
+.pj-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; border-bottom: 2px solid var(--border-color, #e2e8f0); padding-bottom: 4px; }
+.pj-tab-btn { background: transparent; border: none; padding: 10px 18px; font-size: 15px; font-weight: 600; color: var(--text-secondary, #64748b); cursor: pointer; border-radius: 8px 8px 0 0; transition: all .15s; }
+.pj-tab-btn:hover { background: var(--hover-bg, #f1f5f9); }
+.pj-tab-btn.active { color: #7c3aed; border-bottom: 3px solid #7c3aed; }
+
+.pj-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.pj-kpi { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.pj-kpi-val { font-size: 24px; font-weight: 800; color: var(--text-primary, #0f172a); line-height: 1.15; }
+.pj-kpi-label { font-size: 13px; color: var(--text-secondary, #64748b); margin-top: 6px; font-weight: 600; }
+.pj-kpi-sub { font-size: 11px; color: var(--text-muted, #94a3b8); margin-top: 2px; }
+.pj-kpi-accent { border-color: #7c3aed; } .pj-kpi-accent .pj-kpi-val { color: #7c3aed; }
+.pj-kpi-pos { border-color: #16a34a; } .pj-kpi-pos .pj-kpi-val { color: #16a34a; }
+.pj-kpi-neg { border-color: #dc2626; background: #fef2f2; } .pj-kpi-neg .pj-kpi-val { color: #dc2626; }
+
+.pj-panel { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
+.pj-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.pj-panel-head h3 { margin: 0; font-size: 16px; font-weight: 700; }
+.pj-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.pj-input { padding: 8px 12px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); width: 100%; box-sizing: border-box; }
+.pj-input:focus { outline: none; border-color: #7c3aed; }
+.pj-mini-select { padding: 4px 8px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 6px; font-size: 12px; font-family: inherit; background: var(--input-bg, #fff); color: var(--text-primary, #0f172a); }
+
+.pj-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.pj-table th { text-align: right; padding: 10px 12px; background: var(--table-head-bg, #f8fafc); color: var(--text-secondary, #475569); font-weight: 700; font-size: 13px; border-bottom: 2px solid var(--border-color, #e2e8f0); white-space: nowrap; }
+.pj-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color, #eef2f7); vertical-align: middle; }
+.pj-table tbody tr:hover { background: var(--hover-bg, #f8fafc); }
+.pj-empty { text-align: center; color: var(--text-muted, #94a3b8); padding: 24px !important; font-style: italic; }
+.pj-muted { color: var(--text-muted, #94a3b8); font-size: 12px; }
+.pj-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pj-neg { color: #dc2626; }
+
+.pj-mini-btn { background: var(--hover-bg, #f1f5f9); border: 1px solid var(--border-color, #e2e8f0); border-radius: 7px; padding: 5px 11px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-primary, #334155); transition: all .12s; }
+.pj-mini-btn:hover { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+.pj-mini-btn.pj-danger:hover { background: #dc2626; border-color: #dc2626; }
+.pj-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.pj-st-planning { background: #e0e7ff; color: #4338ca; } .pj-st-active { background: #dcfce7; color: #15803d; } .pj-st-hold { background: #fef3c7; color: #b45309; } .pj-st-done { background: #ede9fe; color: #6d28d9; } .pj-st-cancelled { background: #e5e7eb; color: #6b7280; }
+
+/* project card */
+.pj-card { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+.pj-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.pj-card-title { font-size: 16px; }
+.pj-progress-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.pj-bar { background: var(--border-color, #e2e8f0); border-radius: 999px; height: 8px; overflow: hidden; flex: 1; }
+.pj-bar-fill { background: linear-gradient(90deg, #7c3aed, #a78bfa); height: 100%; }
+.pj-prog-label { font-size: 12px; color: var(--text-secondary, #64748b); white-space: nowrap; }
+.pj-ms-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
+.pj-ms { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: var(--hover-bg, #f1f5f9); border: 1px solid var(--border-color, #e2e8f0); cursor: pointer; }
+.pj-ms-done { background: #dcfce7; color: #15803d; text-decoration: line-through; }
+.pj-ms-late { background: #fef2f2; color: #dc2626; }
+
+/* task board */
+.pj-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media (max-width: 1100px) { .pj-board { grid-template-columns: repeat(2, 1fr); } }
+.pj-board-col { background: var(--hover-bg, #f8fafc); border-radius: 12px; padding: 8px; min-height: 80px; }
+.pj-board-head { font-weight: 700; font-size: 13px; padding: 6px 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.pj-tk-todo { background: #e0e7ff; color: #4338ca; } .pj-tk-prog { background: #cffafe; color: #0e7490; } .pj-tk-review { background: #fef3c7; color: #b45309; } .pj-tk-done { background: #dcfce7; color: #15803d; }
+.pj-count { background: rgba(0,0,0,.08); border-radius: 999px; padding: 1px 8px; font-size: 12px; }
+.pj-task-card { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0); border-right: 4px solid #94a3b8; border-radius: 9px; padding: 9px 11px; margin-bottom: 8px; }
+.pj-task-card.pj-prio-high { border-right-color: #f59e0b; } .pj-task-card.pj-prio-urgent { border-right-color: #dc2626; } .pj-task-card.pj-prio-low { border-right-color: #94a3b8; } .pj-task-card.pj-prio-normal { border-right-color: #7c3aed; }
+.pj-task-title { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+.pj-task-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 6px; font-size: 11px; }
+.pj-prio-badge { background: var(--hover-bg, #f1f5f9); color: var(--text-secondary, #475569); }
+.pj-task-actions { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+.pj-empty-col { text-align: center; color: var(--text-muted, #cbd5e1); padding: 10px; font-size: 12px; }
+
+.pj-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+.pj-form-grid label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary, #475569); margin-bottom: 5px; }
+.pj-form-full { grid-column: 1 / -1; }
+.pj-form-actions { display: flex; gap: 10px; margin-top: 16px; }

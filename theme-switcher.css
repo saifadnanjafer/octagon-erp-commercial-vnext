@@ -1,0 +1,94 @@
+/* OCTAGON ERP — Appearance dropdown menu.
+ * Theme-agnostic: styled with design tokens so it adapts to the active skin.
+ * Always loaded (not scoped to a body.theme-* class).
+ */
+
+.theme-switcher-wrap { position: relative; width: 100%; }
+
+.theme-switcher-wrap .theme-caret {
+  margin-inline-start: auto;
+  font-size: 10px;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+.theme-switcher-wrap.open .theme-caret { transform: rotate(180deg); }
+
+.theme-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  background: var(--bg-card-solid, #1a2332);
+  border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.12));
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.4));
+  z-index: 99999;
+  max-height: 340px;
+  overflow-y: auto;
+}
+.theme-switcher-wrap.open .theme-menu { display: flex; }
+
+.theme-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary, #f1f5f9);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: start;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.theme-menu-item:hover { background: var(--bg-glass-hover, rgba(255, 255, 255, 0.08)); }
+.theme-menu-item.active {
+  background: var(--bg-glass-hover, rgba(255, 255, 255, 0.08));
+  color: var(--accent-blue, #38bdf8);
+  font-weight: 500;
+}
+.theme-menu-item .theme-check { margin-inline-start: auto; font-size: 12px; }
+
+.theme-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  flex-shrink: 0;
+}
+
+/* #authUserSwitcher is a native <select>; its dark color-scheme rendering
+ * ignores author background-color until appearance is disabled. Strip the
+ * native appearance so each skin's background override actually paints. */
+/* The base .page-header::before is an opaque accent gradient (the original
+ * "colorful header"). For the custom skins we want a flat themed header, so
+ * neutralize the overlay — each skin paints its own page-header background. */
+body.theme-neumorphism .page-header::before,
+body.theme-clean .page-header::before,
+body.theme-bento .page-header::before,
+body.theme-premium .page-header::before,
+body.theme-refined .page-header::before,
+body.theme-shadcn .page-header::before,
+body.theme-dashboard .page-header::before,
+body.theme-glassmorphism .page-header::before {
+  background: none !important;
+  opacity: 0 !important;
+}
+
+#authUserSwitcher {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  padding-inline: 8px;
+  background: var(--bg-card-solid, #1a2332) !important;
+  color: var(--text-primary, #f1f5f9) !important;
+  border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.12)) !important;
+  border-radius: 6px;
+}
