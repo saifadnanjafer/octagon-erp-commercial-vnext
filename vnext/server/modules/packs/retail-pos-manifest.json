@@ -1,0 +1,48 @@
+{
+  "pack_id": "retail_pos",
+  "name": "Retail/POS Pack",
+  "version": "1.0.0",
+  "description": "Governed Retail/POS transactions with canonical stock, GL, payment, tax, and Pack SDK conformance",
+  "author": "Octagon",
+  "edition_required": "standard",
+  "permissions": [
+    { "key": "retail:manage", "description": "Manage retail stores, shifts, and configuration" },
+    { "key": "retail:operate", "description": "Operate POS terminals, post sales, returns, and refunds" },
+    { "key": "retail:audit", "description": "View retail audit trail and reports" }
+  ],
+  "collections": [
+    { "key": "shop_retail_store", "description": "Retail store registry" },
+    { "key": "shop_retail_shift", "description": "Shift lifecycle per store" },
+    { "key": "shop_retail_barcode", "description": "Barcode registry and lookup" },
+    { "key": "shop_retail_scan_event", "description": "Idempotent scan capture" },
+    { "key": "shop_retail_ticket", "description": "Governed POS ticket (sale/return/refund)" },
+    { "key": "shop_retail_ticket_line", "description": "Ticket lines with product, tax, and stock linkage" },
+    { "key": "shop_retail_ticket_tax", "description": "Ticket tax breakdown" },
+    { "key": "shop_retail_ticket_payment", "description": "Ticket payment records" }
+  ],
+  "workflows": [
+    { "key": "retail_shift", "states": ["open", "closed"] },
+    { "key": "retail_ticket", "states": ["draft", "posted", "reversed", "cancelled"] }
+  ],
+  "patches": [
+    { "target_type": "collection", "action": "add", "target_key": "shop_retail_store", "data": {} },
+    { "target_type": "collection", "action": "add", "target_key": "shop_retail_shift", "data": {} },
+    { "target_type": "collection", "action": "add", "target_key": "shop_retail_barcode", "data": {} },
+    { "target_type": "collection", "action": "add", "target_key": "shop_retail_scan_event", "data": {} },
+    { "target_type": "collection", "action": "add", "target_key": "shop_retail_ticket", "data": {} },
+    { "target_type": "collection", "action": "add", "target_key": "shop_retail_ticket_line", "data": {} },
+    { "target_type": "collection", "action": "add", "target_key": "shop_retail_ticket_tax", "data": {} },
+    { "target_type": "collection", "action": "add", "target_key": "shop_retail_ticket_payment", "data": {} },
+    { "target_type": "permission", "action": "add", "target_key": "retail:manage", "data": {} },
+    { "target_type": "permission", "action": "add", "target_key": "retail:operate", "data": {} },
+    { "target_type": "permission", "action": "add", "target_key": "retail:audit", "data": {} },
+    { "target_type": "dashboard", "action": "add", "target_key": "retail_pos_overview", "data": { "title": "Retail/POS Overview" } },
+    { "target_type": "terminology", "action": "add", "target_key": "retail_ticket_label", "data": { "en": "Retail Ticket", "ar": "تذكرة بيع بالتجزئة" } }
+  ],
+  "conformance": {
+    "zero_residue_required": true,
+    "edition_gating_required": true,
+    "conflict_detection_required": true,
+    "canonical_engines_required": ["stock", "finance", "arap", "tax", "audit", "events"]
+  }
+}

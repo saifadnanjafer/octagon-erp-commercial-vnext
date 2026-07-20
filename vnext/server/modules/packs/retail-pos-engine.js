@@ -1,7 +1,7 @@
 // clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md §R9.3 (proprietary self, not copied)
 // R9.3 Retail/POS pack domain engine.
 // This file owns the Retail/POS source documents (store, shift, barcode,
-// ticket, line, tax, payment). All stock, GL, payment, audit, worklist,
+// ticket, line, tax, payment). All stock, GL, payment, tax, audit, worklist,
 // outbox and event effects are produced through canonical repository engines.
 // The Retail/POS engine never directly INSERT/UPDATEs fiscal_doc,
 // fiscal_doc_line, gl_line, stock_move, stock_ledger_line, bin, payment,
@@ -9,10 +9,13 @@
 'use strict';
 
 const crypto = require('node:crypto');
+const fs = require('node:fs');
+const path = require('node:path');
 const infra = require('../r3-infra');
 const finance = require('../../finance/finance-engine');
 const stock = require('../../stock/stock-engine');
 const arap = require('../../finance/arap-engine');
+const taxEngine = require('../../finance/tax-engine');
 
 const { fail, ensureCompany, recordWrite, publish, idempotencyScope, rememberIdempotency, tableExists } = infra;
 
@@ -39,6 +42,11 @@ function withAtomicTransaction(db, work) {
     if (owns) { try { db.exec('ROLLBACK'); } catch (_) {} }
     throw error;
   }
+}
+
+function loadManifest() {
+  const manifestPath = path.join(__dirname, 'retail-pos-manifest.json');
+  return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 }
 
 // ── Store registry ──
@@ -149,6 +157,17 @@ function accountId(db, companyId, requested, fallback, type) {
   return row.id;
 }
 
+function paymentAccountForMethod(db, companyId, store, method) {
+  switch (method) {
+    case 'cash': return accountId(db, companyId, store.default_cash_account_id, 'coa_101000', 'liquidity');
+    case 'card': return accountId(db, companyId, store.default_card_account_id, 'coa_102000', 'liquidity');
+    case 'bank': return accountId(db, companyId, store.default_bank_account_id, 'coa_102000', 'liquidity');
+    case 'ewallet': return accountId(db, companyId, store.default_cash_account_id, 'coa_101000', 'liquidity');
+    case 'reference': return accountId(db, companyId, store.default_ar_account_id, 'coa_103000', 'receivable');
+    default: throw fail('payment_method is invalid', 400, 'PAYMENT_METHOD_INVALID');
+  }
+}
+
 // Store-specific warehouse/location master data is Retail/POS-owned setup:
 // no canonical location-management service exists, so we ensure the store's
 // internal stock location and a shared customer location are present before
@@ -201,26 +220,31 @@ function computeLineDiscount(gross, line) {
   return discount;
 }
 
-function computeLineTax(db, companyId, product, netAmount, taxId) {
-  if (!taxId) return { taxAmount: 0, baseAmount: netAmount, taxId: null, priceInclude: 0 };
-  const tax = db.prepare('SELECT * FROM tax WHERE id = ? AND company_id = ? AND active = 1').get(taxId, companyId);
-  if (!tax) throw fail('line tax is not active or outside company scope', 404, 'TAX_NOT_FOUND');
-  let base = netAmount;
-  let taxAmount = 0;
-  if (tax.price_include === 1) {
-    if (tax.amount_type === 'percent') {
-      base = money(netAmount / (1 + (tax.amount / 100)));
-      taxAmount = money(netAmount - base);
-    } else if (tax.amount_type === 'fixed') {
-      taxAmount = money(tax.amount);
-      base = money(Math.max(0, netAmount - taxAmount));
+function computeTicketTaxes(db, companyId, lines, fiscalPositionId) {
+  const results = [];
+  let totalBase = 0;
+  let totalTax = 0;
+  for (const line of lines) {
+    if (line.tax_id) {
+      const tax = db.prepare('SELECT id FROM tax WHERE id = ? AND company_id = ? AND active = 1').get(line.tax_id, companyId);
+      if (!tax) throw fail('line tax is not active or outside company scope', 404, 'TAX_NOT_FOUND');
     }
-  } else {
-    if (tax.amount_type === 'percent') taxAmount = money(netAmount * (tax.amount / 100));
-    else if (tax.amount_type === 'fixed') taxAmount = money(tax.amount);
-    base = netAmount;
+    const res = taxEngine.computeTaxes(db, companyId, {
+      fiscalPositionId: fiscalPositionId || undefined,
+      type: 'sale',
+      lines: [{
+        account_id: line.income_account_id,
+        tax_id: line.tax_id || undefined,
+        price_unit: line.net_per_unit,
+        quantity: line.quantity,
+        description: line.description
+      }]
+    });
+    totalBase += res.total_base;
+    totalTax += res.total_tax;
+    results.push({ ...res, retailLine: line });
   }
-  return { taxAmount: money(taxAmount), baseAmount: money(base), taxId: tax.id, priceInclude: tax.price_include };
+  return { totalBase, totalTax, totalAmount: totalBase + totalTax, results };
 }
 
 function buildTicketNumber(db, companyId) {
@@ -254,22 +278,43 @@ function postStockForLine(db, companyId, store, locations, product, quantity, di
   return { moveId, fiscalDocId: posted.fiscalDocId };
 }
 
-function createReversingStockMove(db, companyId, store, locations, originalMoveId, userId) {
-  const original = db.prepare('SELECT * FROM stock_move WHERE id = ? AND company_id = ?').get(originalMoveId, companyId);
-  if (!original) throw fail('original stock move not found', 404, 'STOCK_MOVE_NOT_FOUND');
-  const moveId = uid('rsm');
-  stock.createStockMove(db, companyId, {
-    id: moveId,
-    product_id: original.product_id,
-    qty: original.qty,
-    uom: original.uom,
-    from_location_id: original.to_location_id,
-    to_location_id: original.from_location_id,
-    posting_date: now().slice(0, 10),
-    voucher_ref: `REVERSAL-OF-${original.id}`
-  });
-  const posted = stock.postStockMove(db, companyId, moveId, userId, { negative_stock_policy: 'allow' });
-  return { moveId, fiscalDocId: posted.fiscalDocId };
+function buildFiscalLines(db, companyId, store, ticket, taxResults, paymentMethod) {
+  const lines = [];
+  const paymentAccount = paymentAccountForMethod(db, companyId, store, paymentMethod);
+  lines.push({ account_id: paymentAccount, debit: ticket.total, credit: 0, description: `Retail ${paymentMethod} ${ticket.ticket_number}` });
+
+  const incomeByAccount = {};
+  for (const res of taxResults.results) {
+    for (const cl of res.lines) {
+      if (cl.repartition_type === 'base') {
+        incomeByAccount[cl.account_id] = (incomeByAccount[cl.account_id] || 0) + cl.base_amount;
+      }
+    }
+  }
+  for (const [accountId, amount] of Object.entries(incomeByAccount)) {
+    if (amount > 0) lines.push({ account_id: accountId, debit: 0, credit: money(amount), description: `Retail income ${ticket.ticket_number}` });
+  }
+
+  const taxByAccount = {};
+  for (const res of taxResults.results) {
+    for (const cl of res.lines) {
+      if (cl.repartition_type === 'tax') {
+        taxByAccount[cl.account_id] = (taxByAccount[cl.account_id] || 0) + cl.tax_amount;
+      }
+    }
+  }
+  // Fallback: when the tax engine has no repartition rows configured, attribute
+  // all computed tax to the store's default tax liability account.
+  const repartitionedTax = Object.values(taxByAccount).reduce((sum, amount) => sum + amount, 0);
+  if (taxResults.totalTax > 0 && Math.abs(repartitionedTax - taxResults.totalTax) > 0.001) {
+    const taxAccount = accountId(db, companyId, store.default_tax_account_id, 'coa_202000', 'liability');
+    taxByAccount[taxAccount] = (taxByAccount[taxAccount] || 0) + money(taxResults.totalTax - repartitionedTax);
+  }
+  for (const [accountId, amount] of Object.entries(taxByAccount)) {
+    if (amount > 0) lines.push({ account_id: accountId, debit: 0, credit: money(amount), description: `Retail tax ${ticket.ticket_number}` });
+  }
+
+  return lines;
 }
 
 function validatePaymentMethod(method) {
@@ -292,22 +337,29 @@ function normalizeSalePayload(input) {
   return { idem };
 }
 
-function buildCashFiscalLines(db, store, ticket, lines) {
-  const debitAccount = accountId(db, ticket.company_id, store.default_cash_account_id, 'coa_101000', 'liquidity');
-  const taxAccount = accountId(db, ticket.company_id, store.default_tax_account_id, 'coa_202000', 'liability');
-  const fiscalLines = [{
-    account_id: debitAccount,
-    debit: ticket.total,
-    credit: 0,
-    description: `Retail cash ${ticket.ticket_number}`
-  }];
-  const incomeByAccount = {};
-  for (const line of lines) incomeByAccount[line.income_account_id] = (incomeByAccount[line.income_account_id] || 0) + line.base_amount;
-  for (const [accountId, amount] of Object.entries(incomeByAccount)) {
-    if (amount > 0) fiscalLines.push({ account_id: accountId, debit: 0, credit: money(amount), description: `Retail sales income ${ticket.ticket_number}` });
-  }
-  if (ticket.tax_total > 0) fiscalLines.push({ account_id: taxAccount, debit: 0, credit: ticket.tax_total, description: `Retail tax payable ${ticket.ticket_number}` });
-  return fiscalLines;
+function insertTicket(db, ticket) {
+  db.prepare(`INSERT INTO shop_retail_ticket (id, company_id, store_id, shift_id, ticket_number, kind, state, partner_id, currency,
+    subtotal, discount_total, tax_total, total, payment_method, payment_reference, fiscal_doc_id, stock_move_id,
+    reversal_of_id, reversal_ticket_id, idempotency_key, arap_document_id, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .run(ticket.id, ticket.company_id, ticket.store_id, ticket.shift_id, ticket.ticket_number, ticket.kind, ticket.state, ticket.partner_id, ticket.currency,
+      ticket.subtotal, ticket.discount_total, ticket.tax_total, ticket.total, ticket.payment_method, ticket.payment_reference, ticket.fiscal_doc_id, ticket.stock_move_id,
+      ticket.reversal_of_id, ticket.reversal_ticket_id, ticket.idempotency_key, ticket.arap_document_id, ticket.created_at, ticket.created_by);
+}
+
+function insertTicketLine(db, line) {
+  db.prepare(`INSERT INTO shop_retail_ticket_line (id, ticket_id, company_id, product_id, barcode_id, quantity, unit_price,
+    discount_amount, discount_percent, tax_id, tax_amount, line_total, income_account_id, cogs_account_id, stock_move_id, created_at, base_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .run(line.id, line.ticket_id, line.company_id, line.product_id, line.barcode_id, line.quantity, line.unit_price, line.discount_amount, line.discount_percent, line.tax_id, line.tax_amount, line.line_total, line.income_account_id, line.cogs_account_id, line.stock_move_id, line.created_at, line.base_amount);
+}
+
+function insertTicketTax(db, tax) {
+  db.prepare('INSERT INTO shop_retail_ticket_tax (id, ticket_id, company_id, tax_id, base_amount, tax_amount, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    .run(tax.id, tax.ticket_id, tax.company_id, tax.tax_id, tax.base_amount, tax.tax_amount, tax.created_at);
+}
+
+function insertTicketPayment(db, payment) {
+  db.prepare('INSERT INTO shop_retail_ticket_payment (id, ticket_id, company_id, payment_method, amount, reference, payment_id, fiscal_doc_id, arap_document_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .run(payment.id, payment.ticket_id, payment.company_id, payment.payment_method, payment.amount, payment.reference, payment.payment_id, payment.fiscal_doc_id, payment.arap_document_id, payment.created_at);
 }
 
 function postSale(db, companyId, input, userId) {
@@ -323,86 +375,133 @@ function postSale(db, companyId, input, userId) {
     const ticketId = uid('rtkt');
     const ticketNumber = buildTicketNumber(db, companyId);
     const lines = [];
-    const taxLines = [];
     let subtotal = 0;
     let discountTotal = 0;
-    let taxTotal = 0;
     const lineStockMoves = [];
 
+    // Phase 1: validate lines, compute discounts, post stock
     for (let i = 0; i < input.lines.length; i++) {
       const raw = input.lines[i];
       const { product, barcodeId, quantity, unitPrice } = resolveProductLine(db, companyId, raw);
       const gross = money(quantity * unitPrice);
       const discount = computeLineDiscount(gross, raw);
       const net = money(gross - discount);
-      const { taxAmount, baseAmount, taxId, priceInclude } = computeLineTax(db, companyId, product, net, raw.tax_id);
-      const customerTotal = priceInclude === 1 ? net : money(net + taxAmount);
       const incomeAccount = accountId(db, companyId, store.default_income_account_id, 'coa_401000', 'income');
       const cogsAccount = accountId(db, companyId, store.default_cogs_account_id, 'coa_501000', 'expense');
       subtotal += gross;
       discountTotal += discount;
-      taxTotal += taxAmount;
       const stockMove = postStockForLine(db, companyId, store, locations, product, quantity, 'out', userId);
       lineStockMoves.push(stockMove);
-      const lineId = uid('rtln');
       lines.push({
-        id: lineId, ticket_id: ticketId, company_id: companyId, product_id: product.id, barcode_id: barcodeId,
+        id: uid('rtln'), ticket_id: ticketId, company_id: companyId, product_id: product.id, barcode_id: barcodeId,
         quantity, unit_price: unitPrice, discount_amount: discount, discount_percent: Number(raw.discount_percent || 0),
-        tax_id: taxId, tax_amount: taxAmount, line_total: customerTotal,
-        income_account_id: incomeAccount, cogs_account_id: cogsAccount, stock_move_id: stockMove.moveId, created_at: now(),
-        base_amount: baseAmount
+        tax_id: raw.tax_id || null, net_per_unit: money(net / quantity),
+        income_account_id: incomeAccount, cogs_account_id: cogsAccount, stock_move_id: stockMove.moveId, created_at: now()
       });
-      if (taxId) taxLines.push({ id: uid('rttx'), ticket_id: ticketId, company_id: companyId, tax_id: taxId, base_amount: baseAmount, tax_amount: taxAmount, created_at: now() });
     }
+
+    // Phase 2: canonical tax calculation
+    const taxResults = computeTicketTaxes(db, companyId, lines, input.fiscal_position_id);
+    const ticketTotal = money(taxResults.totalAmount);
 
     const ticket = {
       id: ticketId, company_id: companyId, store_id: store.id, shift_id: shift.id, ticket_number: ticketNumber,
       kind: 'sale', state: 'draft', partner_id: input.partner_id || null, currency: store.currency || 'IQD',
-      subtotal: money(subtotal), discount_total: money(discountTotal), tax_total: money(taxTotal), total: money(money(subtotal - discountTotal) + money(taxTotal)),
+      subtotal: money(subtotal), discount_total: money(discountTotal), tax_total: money(taxResults.totalTax), total: ticketTotal,
       payment_method: input.payment_method, payment_reference: input.payment_reference || null,
       fiscal_doc_id: null, stock_move_id: lineStockMoves.length ? lineStockMoves[0].moveId : null,
-      reversal_of_id: null, reversal_ticket_id: null, idempotency_key: idem, created_at: now(), created_by: userId || 'system'
+      reversal_of_id: null, reversal_ticket_id: null, idempotency_key: idem, arap_document_id: null,
+      created_at: now(), created_by: userId || 'system'
     };
 
     let paymentResult = null;
 
+    // Phase 3: payment/GL through canonical engines
     if (input.payment_method === 'reference') {
       const partner = input.partner_id
         ? db.prepare('SELECT * FROM partner_master WHERE id = ? AND company_id = ? AND active = 1').get(input.partner_id, companyId)
         : ensureWalkInPartner(db, companyId);
       if (!partner) throw fail('partner not found for reference sale', 404, 'PARTNER_NOT_FOUND');
+
+      const arapLines = [];
+      for (const res of taxResults.results) {
+        for (const cl of res.lines) {
+          if (cl.repartition_type === 'base' && cl.base_amount > 0) {
+            arapLines.push({
+              product_id: res.retailLine.product_id,
+              quantity: 1,
+              price_unit: cl.base_amount,
+              account_id: cl.account_id,
+              description: `Retail income ${ticketNumber}`
+            });
+          }
+        }
+      }
+      const taxByAccount = {};
+      for (const res of taxResults.results) {
+        for (const cl of res.lines) {
+          if (cl.repartition_type === 'tax' && cl.tax_amount > 0) {
+            taxByAccount[cl.account_id] = (taxByAccount[cl.account_id] || 0) + cl.tax_amount;
+          }
+        }
+      }
+      const repartitionedTax = Object.values(taxByAccount).reduce((sum, amount) => sum + amount, 0);
+      if (taxResults.totalTax > 0 && Math.abs(repartitionedTax - taxResults.totalTax) > 0.001) {
+        const taxAccount = accountId(db, companyId, store.default_tax_account_id, 'coa_202000', 'liability');
+        taxByAccount[taxAccount] = (taxByAccount[taxAccount] || 0) + money(taxResults.totalTax - repartitionedTax);
+      }
+      for (const [accountId, amount] of Object.entries(taxByAccount)) {
+        arapLines.push({ quantity: 1, price_unit: money(amount), account_id: accountId, description: `Retail tax ${ticketNumber}` });
+      }
+
       const arapDoc = arap.createArapDocument(db, companyId, {
         partner_id: partner.id,
         document_kind: 'customer_invoice',
         currency: ticket.currency,
-        lines: lines.map(l => ({ product_id: l.product_id, quantity: l.quantity, price_unit: money(l.line_total / l.quantity), account_id: l.income_account_id }))
+        lines: arapLines
       }, userId);
       arap.postArapDocument(db, arapDoc.id, userId);
       ticket.fiscal_doc_id = arapDoc.fiscal_doc_id;
+      ticket.arap_document_id = arapDoc.id;
       paymentResult = { arap_document_id: arapDoc.id };
     } else {
       const fiscalRes = finance.createAndPostFiscalDoc(db, companyId, {
         move_type: 'cash_receipt',
         doc_date: now().slice(0, 10),
         currency: ticket.currency,
-        lines: buildCashFiscalLines(db, store, ticket, lines)
+        lines: buildFiscalLines(db, companyId, store, ticket, taxResults, input.payment_method)
       }, userId);
       ticket.fiscal_doc_id = fiscalRes.docId;
     }
 
-    db.prepare(`INSERT INTO shop_retail_ticket (id, company_id, store_id, shift_id, ticket_number, kind, state, partner_id, currency,
-      subtotal, discount_total, tax_total, total, payment_method, payment_reference, fiscal_doc_id, stock_move_id,
-      reversal_of_id, reversal_ticket_id, idempotency_key, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-      .run(ticket.id, ticket.company_id, ticket.store_id, ticket.shift_id, ticket.ticket_number, ticket.kind, ticket.state, ticket.partner_id, ticket.currency,
-        ticket.subtotal, ticket.discount_total, ticket.tax_total, ticket.total, ticket.payment_method, ticket.payment_reference, ticket.fiscal_doc_id, ticket.stock_move_id,
-        ticket.reversal_of_id, ticket.reversal_ticket_id, ticket.idempotency_key, ticket.created_at, ticket.created_by);
-    const insertLine = db.prepare(`INSERT INTO shop_retail_ticket_line (id, ticket_id, company_id, product_id, barcode_id, quantity, unit_price,
-      discount_amount, discount_percent, tax_id, tax_amount, line_total, income_account_id, cogs_account_id, stock_move_id, created_at, base_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    for (const l of lines) insertLine.run(l.id, l.ticket_id, l.company_id, l.product_id, l.barcode_id, l.quantity, l.unit_price, l.discount_amount, l.discount_percent, l.tax_id, l.tax_amount, l.line_total, l.income_account_id, l.cogs_account_id, l.stock_move_id, l.created_at, l.base_amount);
-    const insertTax = db.prepare('INSERT INTO shop_retail_ticket_tax (id, ticket_id, company_id, tax_id, base_amount, tax_amount, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)');
-    for (const t of taxLines) insertTax.run(t.id, t.ticket_id, t.company_id, t.tax_id, t.base_amount, t.tax_amount, t.created_at);
-    db.prepare('INSERT INTO shop_retail_ticket_payment (id, ticket_id, company_id, payment_method, amount, reference, payment_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(uid('rtpm'), ticket.id, companyId, ticket.payment_method, ticket.total, ticket.payment_reference, null, now());
+    // Phase 4: persist ticket and lines
+    insertTicket(db, ticket);
+    for (const line of lines) {
+      insertTicketLine(db, {
+        ...line,
+        tax_amount: money(taxResults.results.find(r => r.retailLine.id === line.id)?.total_tax || 0),
+        line_total: money(taxResults.results.find(r => r.retailLine.id === line.id)?.total_amount || 0),
+        base_amount: money(taxResults.results.find(r => r.retailLine.id === line.id)?.total_base || 0)
+      });
+    }
+
+    // Persist tax rows
+    for (const res of taxResults.results) {
+      if (res.retailLine.tax_id && res.total_tax > 0) {
+        insertTicketTax(db, {
+          id: uid('rttx'), ticket_id: ticketId, company_id: companyId,
+          tax_id: res.retailLine.tax_id, base_amount: money(res.total_base), tax_amount: money(res.total_tax), created_at: now()
+        });
+      }
+    }
+
+    // Persist payment record
+    insertTicketPayment(db, {
+      id: uid('rtpm'), ticket_id: ticketId, company_id: companyId,
+      payment_method: ticket.payment_method, amount: ticket.total,
+      reference: ticket.payment_reference, payment_id: null,
+      fiscal_doc_id: ticket.fiscal_doc_id, arap_document_id: ticket.arap_document_id, created_at: now()
+    });
 
     db.prepare('UPDATE shop_retail_ticket SET state = ? WHERE id = ?').run('posted', ticket.id);
     ticket.state = 'posted';
@@ -410,7 +509,7 @@ function postSale(db, companyId, input, userId) {
     recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_sale', userId, null, ticket);
     publishEvent(db, 'retail.ticket.posted', companyId, userId, 'shop_retail_ticket', ticket.id, { kind: 'sale', total: ticket.total, storeId: store.id });
 
-    const response = { ticket, lines, payment: paymentResult };
+    const response = { ticket, lines: db.prepare('SELECT * FROM shop_retail_ticket_line WHERE ticket_id = ?').all(ticketId), payment: paymentResult };
     if (idemScope) rememberIdempotency(db, idemScope, response, 200);
     return response;
   });
@@ -429,63 +528,101 @@ function postReturn(db, companyId, input, userId) {
   return withAtomicTransaction(db, () => {
     const store = ensureStore(db, companyId, original.store_id);
     const shift = ensureOpenShift(db, companyId, store.id, input.shift_id || original.shift_id);
-    const locations = ensureStoreLocation(db, companyId, store);
     const originalLines = db.prepare('SELECT * FROM shop_retail_ticket_line WHERE ticket_id = ?').all(original.id);
     const lines = [];
     let subtotal = 0;
     let discountTotal = 0;
     let taxTotal = 0;
-    const lineStockMoves = [];
 
+    // Reverse stock through canonical stock cancellation
     for (const originalLine of originalLines) {
       const product = db.prepare('SELECT * FROM product_master WHERE id = ? AND company_id = ? AND active = 1').get(originalLine.product_id, companyId);
       if (!product) throw fail('original line product no longer active', 409, 'PRODUCT_INACTIVE');
-      const stockMove = createReversingStockMove(db, companyId, store, locations, originalLine.stock_move_id, userId);
-      lineStockMoves.push(stockMove);
+      const stockRes = stock.cancelStockMove(db, companyId, originalLine.stock_move_id, userId);
       subtotal += originalLine.quantity * originalLine.unit_price;
       discountTotal += originalLine.discount_amount;
       taxTotal += originalLine.tax_amount;
-      lines.push({ ...originalLine, stock_move_id: stockMove.moveId });
+      lines.push({
+        id: uid('rtln'), ticket_id: null, company_id: companyId,
+        product_id: originalLine.product_id, barcode_id: originalLine.barcode_id,
+        quantity: originalLine.quantity, unit_price: originalLine.unit_price,
+        discount_amount: originalLine.discount_amount, discount_percent: originalLine.discount_percent,
+        tax_id: originalLine.tax_id, tax_amount: originalLine.tax_amount,
+        line_total: originalLine.line_total, income_account_id: originalLine.income_account_id,
+        cogs_account_id: originalLine.cogs_account_id, stock_move_id: stockRes.reversalMoveId,
+        created_at: now(), base_amount: originalLine.base_amount
+      });
     }
 
+    // Reverse GL through canonical finance reversal (original stays posted)
     const fiscalRes = finance.createReversalFiscalDoc(db, companyId, original.fiscal_doc_id, userId);
+
+    let arapReversalId = null;
+    if (original.arap_document_id) {
+      // Create canonical AR credit note to reverse the receivable
+      const creditNote = arap.createArapDocument(db, companyId, {
+        partner_id: original.partner_id || 'partner_walkin',
+        document_kind: 'customer_credit_note',
+        currency: original.currency,
+        lines: [{ quantity: 1, price_unit: original.total, account_id: accountId(db, companyId, store.default_income_account_id, 'coa_401000', 'income'), description: `Return of ${original.ticket_number}` }]
+      }, userId);
+      arap.postArapDocument(db, creditNote.id, userId);
+      arapReversalId = creditNote.id;
+    }
 
     const ticketId = uid('rtkt');
     const ticketNumber = buildTicketNumber(db, companyId);
     const ticket = {
       id: ticketId, company_id: companyId, store_id: store.id, shift_id: shift.id, ticket_number: ticketNumber,
       kind: 'return', state: 'posted', partner_id: original.partner_id, currency: original.currency,
-      subtotal: money(subtotal), discount_total: money(discountTotal), tax_total: money(taxTotal), total: money(money(subtotal - discountTotal) + money(taxTotal)),
+      subtotal: money(subtotal), discount_total: money(discountTotal), tax_total: money(taxTotal),
+      total: money(money(subtotal - discountTotal) + money(taxTotal)),
       payment_method: original.payment_method, payment_reference: input.payment_reference || `Return of ${original.ticket_number}`,
-      fiscal_doc_id: fiscalRes.docId, stock_move_id: lineStockMoves.length ? lineStockMoves[0].moveId : null,
-      reversal_of_id: original.id, reversal_ticket_id: null, idempotency_key: idem, created_at: now(), created_by: userId || 'system'
+      fiscal_doc_id: fiscalRes.docId, stock_move_id: lines.length ? lines[0].stock_move_id : null,
+      reversal_of_id: original.id, reversal_ticket_id: null, idempotency_key: idem, arap_document_id: arapReversalId,
+      created_at: now(), created_by: userId || 'system'
     };
 
-    db.prepare(`INSERT INTO shop_retail_ticket (id, company_id, store_id, shift_id, ticket_number, kind, state, partner_id, currency,
-      subtotal, discount_total, tax_total, total, payment_method, payment_reference, fiscal_doc_id, stock_move_id,
-      reversal_of_id, reversal_ticket_id, idempotency_key, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-      .run(ticket.id, ticket.company_id, ticket.store_id, ticket.shift_id, ticket.ticket_number, ticket.kind, ticket.state, ticket.partner_id, ticket.currency,
-        ticket.subtotal, ticket.discount_total, ticket.tax_total, ticket.total, ticket.payment_method, ticket.payment_reference, ticket.fiscal_doc_id, ticket.stock_move_id,
-        ticket.reversal_of_id, ticket.reversal_ticket_id, ticket.idempotency_key, ticket.created_at, ticket.created_by);
-    db.prepare('INSERT INTO shop_retail_ticket_payment (id, ticket_id, company_id, payment_method, amount, reference, payment_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(uid('rtpm'), ticket.id, companyId, ticket.payment_method, ticket.total, ticket.payment_reference, null, now());
+    insertTicket(db, ticket);
+    for (const line of lines) insertTicketLine(db, { ...line, ticket_id: ticketId });
+
+    // Persist tax rows for return
+    const originalTaxes = db.prepare('SELECT * FROM shop_retail_ticket_tax WHERE ticket_id = ?').all(original.id);
+    for (const tax of originalTaxes) {
+      insertTicketTax(db, { id: uid('rttx'), ticket_id: ticketId, company_id: companyId, tax_id: tax.tax_id, base_amount: tax.base_amount, tax_amount: tax.tax_amount, created_at: now() });
+    }
+
+    // Persist payment record for return
+    insertTicketPayment(db, {
+      id: uid('rtpm'), ticket_id: ticketId, company_id: companyId,
+      payment_method: ticket.payment_method, amount: ticket.total,
+      reference: ticket.payment_reference, payment_id: null,
+      fiscal_doc_id: fiscalRes.docId, arap_document_id: arapReversalId, created_at: now()
+    });
 
     db.prepare('UPDATE shop_retail_ticket SET state = ?, reversal_ticket_id = ? WHERE id = ?').run('reversed', ticket.id, original.id);
 
-    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_return', userId, null, ticket);
+    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_return', userId, null, ticket, 'retail_returns');
     publishEvent(db, 'retail.ticket.returned', companyId, userId, 'shop_retail_ticket', ticket.id, { originalId: original.id, total: ticket.total });
 
-    const response = { ticket, original_ticket_id: original.id, lines };
+    const response = { ticket, original_ticket_id: original.id, lines: db.prepare('SELECT * FROM shop_retail_ticket_line WHERE ticket_id = ?').all(ticketId) };
     if (idemScope) rememberIdempotency(db, idemScope, response, 200);
     return response;
   });
 }
 
+function refundableBalance(db, companyId, originalId) {
+  const original = db.prepare('SELECT total FROM shop_retail_ticket WHERE id = ? AND company_id = ?').get(originalId, companyId);
+  if (!original) throw fail('original ticket not found', 404, 'ORIGINAL_NOT_FOUND');
+  const refunded = db.prepare("SELECT COALESCE(SUM(total), 0) AS amount FROM shop_retail_ticket WHERE reversal_of_id = ? AND kind = 'refund' AND state = 'posted'").get(originalId).amount;
+  return money(Number(original.total) - Number(refunded));
+}
+
 function postRefund(db, companyId, input, userId) {
   ensureCompany(db, companyId);
   const originalTicketId = required(input.original_ticket_id, 'original_ticket_id is required', 'ORIGINAL_REQUIRED');
-  const original = db.prepare('SELECT * FROM shop_retail_ticket WHERE id = ? AND company_id = ?').get(originalTicketId, companyId);
-  if (!original) throw fail('original ticket not found', 404, 'ORIGINAL_NOT_FOUND');
+  const original = db.prepare("SELECT * FROM shop_retail_ticket WHERE id = ? AND company_id = ? AND state = 'posted'").get(originalTicketId, companyId);
+  if (!original) throw fail('original posted ticket not found', 404, 'ORIGINAL_NOT_FOUND');
   const idem = String(input.idempotency_key || '').trim();
   if (!idem) throw fail('idempotency_key is required', 400, 'IDEMPOTENCY_REQUIRED');
   const idemScope = idempotencyScope(db, userId, companyId, 'retail.refund', idem, input);
@@ -493,41 +630,63 @@ function postRefund(db, companyId, input, userId) {
 
   return withAtomicTransaction(db, () => {
     const store = ensureStore(db, companyId, original.store_id);
+    ensureOpenShift(db, companyId, store.id, input.shift_id || original.shift_id);
     const amount = money(input.amount);
     if (!Number.isFinite(amount) || amount <= 0) throw fail('refund amount must be positive', 400, 'REFUND_AMOUNT_INVALID');
-    if (amount > original.total + 0.0001) throw fail('refund cannot exceed original ticket total', 409, 'REFUND_EXCEEDS_TOTAL');
+    const balance = refundableBalance(db, companyId, original.id);
+    if (amount > balance + 0.0001) throw fail(`refund exceeds refundable balance (${balance})`, 409, 'REFUND_EXCEEDS_BALANCE');
+
     const ticketNumber = buildTicketNumber(db, companyId);
-    const cashAccount = accountId(db, companyId, store.default_cash_account_id, 'coa_101000', 'liquidity');
+    const paymentAccount = paymentAccountForMethod(db, companyId, store, original.payment_method);
     const incomeAccount = accountId(db, companyId, store.default_income_account_id, 'coa_401000', 'income');
 
-    const fiscalRes = finance.createAndPostFiscalDoc(db, companyId, {
-      move_type: 'cash_payment',
-      doc_date: now().slice(0, 10),
-      currency: original.currency,
-      lines: [
-        { account_id: incomeAccount, debit: amount, credit: 0, description: `Refund for ${original.ticket_number}` },
-        { account_id: cashAccount, debit: 0, credit: amount, description: 'Cash refund' }
-      ]
-    }, userId);
+    let fiscalDocId = null;
+    let arapDocumentId = null;
+    let paymentId = null;
+
+    if (original.payment_method === 'reference') {
+      // Reference refund: canonical AR credit note to restore receivable
+      const creditNote = arap.createArapDocument(db, companyId, {
+        partner_id: original.partner_id || 'partner_walkin',
+        document_kind: 'customer_credit_note',
+        currency: original.currency,
+        lines: [{ quantity: 1, price_unit: amount, account_id: incomeAccount, description: `Refund of ${original.ticket_number}` }]
+      }, userId);
+      arap.postArapDocument(db, creditNote.id, userId);
+      arapDocumentId = creditNote.id;
+      fiscalDocId = creditNote.fiscal_doc_id;
+    } else {
+      // Cash/card/bank/ewallet refund: canonical cash payment
+      const fiscalRes = finance.createAndPostFiscalDoc(db, companyId, {
+        move_type: 'cash_payment',
+        doc_date: now().slice(0, 10),
+        currency: original.currency,
+        lines: [
+          { account_id: incomeAccount, debit: amount, credit: 0, description: `Refund for ${original.ticket_number}` },
+          { account_id: paymentAccount, debit: 0, credit: amount, description: `Retail ${original.payment_method} refund` }
+        ]
+      }, userId);
+      fiscalDocId = fiscalRes.docId;
+    }
 
     const ticket = {
       id: uid('rtkt'), company_id: companyId, store_id: original.store_id, shift_id: original.shift_id, ticket_number: ticketNumber,
       kind: 'refund', state: 'posted', partner_id: original.partner_id, currency: original.currency,
       subtotal: 0, discount_total: 0, tax_total: 0, total: amount,
-      payment_method: 'cash', payment_reference: input.payment_reference || `Refund of ${original.ticket_number}`,
-      fiscal_doc_id: fiscalRes.docId, stock_move_id: null,
-      reversal_of_id: original.id, reversal_ticket_id: null, idempotency_key: idem, created_at: now(), created_by: userId || 'system'
+      payment_method: original.payment_method, payment_reference: input.payment_reference || `Refund of ${original.ticket_number}`,
+      fiscal_doc_id: fiscalDocId, stock_move_id: null,
+      reversal_of_id: original.id, reversal_ticket_id: null, idempotency_key: idem, arap_document_id: arapDocumentId,
+      created_at: now(), created_by: userId || 'system'
     };
-    db.prepare(`INSERT INTO shop_retail_ticket (id, company_id, store_id, shift_id, ticket_number, kind, state, partner_id, currency,
-      subtotal, discount_total, tax_total, total, payment_method, payment_reference, fiscal_doc_id, stock_move_id,
-      reversal_of_id, reversal_ticket_id, idempotency_key, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-      .run(ticket.id, ticket.company_id, ticket.store_id, ticket.shift_id, ticket.ticket_number, ticket.kind, ticket.state, ticket.partner_id, ticket.currency,
-        ticket.subtotal, ticket.discount_total, ticket.tax_total, ticket.total, ticket.payment_method, ticket.payment_reference, ticket.fiscal_doc_id, ticket.stock_move_id,
-        ticket.reversal_of_id, ticket.reversal_ticket_id, ticket.idempotency_key, ticket.created_at, ticket.created_by);
-    db.prepare('INSERT INTO shop_retail_ticket_payment (id, ticket_id, company_id, payment_method, amount, reference, payment_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(uid('rtpm'), ticket.id, companyId, ticket.payment_method, amount, ticket.payment_reference, null, now());
 
-    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_refund', userId, null, ticket);
+    insertTicket(db, ticket);
+    insertTicketPayment(db, {
+      id: uid('rtpm'), ticket_id: ticket.id, company_id: companyId,
+      payment_method: ticket.payment_method, amount, reference: ticket.payment_reference,
+      payment_id: paymentId, fiscal_doc_id: fiscalDocId, arap_document_id: arapDocumentId, created_at: now()
+    });
+
+    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_refund', userId, null, ticket, 'retail_refunds');
     publishEvent(db, 'retail.ticket.refunded', companyId, userId, 'shop_retail_ticket', ticket.id, { originalId: original.id, amount });
 
     const response = { ticket, original_ticket_id: original.id };
@@ -550,18 +709,37 @@ function cancelTicket(db, companyId, ticketId, userId) {
       recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'cancel', userId, ticket, { ...ticket, state: 'cancelled' });
       return { ticket: { ...ticket, state: 'cancelled' }, cancelled: true };
     }
+
+    // Posted ticket: full governed reversal
     const store = ensureStore(db, companyId, ticket.store_id);
-    const locations = ensureStoreLocation(db, companyId, store);
     const originalLines = db.prepare('SELECT * FROM shop_retail_ticket_line WHERE ticket_id = ?').all(ticket.id);
     const reversedStock = [];
-    for (const l of originalLines) {
-      reversedStock.push(createReversingStockMove(db, companyId, store, locations, l.stock_move_id, userId));
+
+    for (const line of originalLines) {
+      const stockRes = stock.cancelStockMove(db, companyId, line.stock_move_id, userId);
+      reversedStock.push(stockRes.reversalMoveId);
     }
+
     const fiscalRes = finance.createReversalFiscalDoc(db, companyId, ticket.fiscal_doc_id, userId);
+
+    let arapReversalId = null;
+    if (ticket.arap_document_id) {
+      const creditNote = arap.createArapDocument(db, companyId, {
+        partner_id: ticket.partner_id || 'partner_walkin',
+        document_kind: 'customer_credit_note',
+        currency: ticket.currency,
+        lines: [{ quantity: 1, price_unit: ticket.total, account_id: accountId(db, companyId, store.default_income_account_id, 'coa_401000', 'income'), description: `Cancellation of ${ticket.ticket_number}` }]
+      }, userId);
+      arap.postArapDocument(db, creditNote.id, userId);
+      arapReversalId = creditNote.id;
+    }
+
     db.prepare('UPDATE shop_retail_ticket SET state = ?, reversal_ticket_id = ? WHERE id = ?').run('cancelled', null, ticket.id);
-    const updated = { ...ticket, state: 'cancelled', reversal_fiscal_doc_id: fiscalRes.docId, reversal_stock_moves: reversedStock.map(r => r.moveId) };
-    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'cancel_posted', userId, ticket, updated);
-    return { ticket: updated, cancelled: true, reversal_fiscal_doc_id: fiscalRes.docId };
+    const updated = { ...ticket, state: 'cancelled', reversal_fiscal_doc_id: fiscalRes.docId, reversal_stock_moves: reversedStock, arap_reversal_id: arapReversalId };
+    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'cancel_posted', userId, ticket, updated, 'retail_cancellations');
+    publishEvent(db, 'retail.ticket.cancelled', companyId, userId, 'shop_retail_ticket', ticket.id, { ticketId: ticket.id, total: ticket.total });
+
+    return { ticket: updated, cancelled: true, reversal_fiscal_doc_id: fiscalRes.docId, arap_reversal_id: arapReversalId };
   });
 }
 
@@ -591,6 +769,6 @@ module.exports = {
   openShift: infra.atomicCommand(openShift), closeShift: infra.atomicCommand(closeShift),
   registerBarcode: infra.atomicCommand(registerBarcode), lookupBarcode,
   recordScan: infra.atomicCommand(recordScan),
-  postSale, postReturn, postRefund, cancelTicket, getTicket, listTickets,
-  _internal: { withAtomicTransaction, ensureStoreLocation, computeLineTax, computeLineDiscount }
+  postSale, postReturn, postRefund, cancelTicket, getTicket, listTickets, loadManifest,
+  _internal: { withAtomicTransaction, ensureStoreLocation, computeTicketTaxes, paymentAccountForMethod }
 };
