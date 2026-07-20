@@ -1916,6 +1916,7 @@ let octagonIntegrationRoutes = null;
 let octagonSupportRoutes = null;
 let octagonPackRoutes = null;
 let octagonRetailRoutes = null;
+let octagonMarketplaceRoutes = null;
 
 const server = http.createServer((req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
@@ -1959,6 +1960,7 @@ const server = http.createServer((req, res) => {
   if (octagonSupportRoutes && octagonSupportRoutes.handle(req, res, requestUrl)) return; // R8.5 Supportability
   if (octagonPackRoutes && octagonPackRoutes.handle(req, res, requestUrl)) return; // R9.1 Pack SDK
   if (octagonRetailRoutes && octagonRetailRoutes.handle(req, res, requestUrl)) return; // R9.3 Retail/POS pack
+  if (octagonMarketplaceRoutes && octagonMarketplaceRoutes.handle(req, res, requestUrl)) return; // R9.4 Marketplace & pack distribution
 
   // T3.1: /api/cron/* — server-side scheduler status/force-run/dismiss.
   if (octagonScheduler && octagonScheduler.handle(req, res, requestUrl)) return;
@@ -3279,6 +3281,14 @@ if (dbSync) {
       canPermission: (user, permission) => aclEngine.can(dbSync, { userId: user.id || user.userId, role: user.role, groups: user.groups || [] }, permission),
     });
     octagonRetailRoutes = require('./vnext/server/modules/packs/retail-pos-routes').mountRetailRoutes({
+      db: dbSync,
+      sendJson,
+      readRequestBody,
+      requireSession,
+      resolveScope: resolveVNextScope,
+      canPermission: (user, permission) => aclEngine.can(dbSync, { userId: user.id || user.userId, role: user.role, groups: user.groups || [] }, permission),
+    });
+    octagonMarketplaceRoutes = require('./vnext/server/modules/packs/marketplace-routes').mountMarketplaceRoutes({
       db: dbSync,
       sendJson,
       readRequestBody,

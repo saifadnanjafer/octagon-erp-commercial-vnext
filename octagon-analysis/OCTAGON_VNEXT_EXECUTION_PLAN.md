@@ -1,12 +1,12 @@
 # Octagon VNext — Execution Plan (Rev 3, matches canonical roadmap Rev 3)
-Authority level 8. Converts `OCTAGON_VNEXT_MASTER_ROADMAP.md` (Rev 3) into executable, file-owned, gated tasks for multiple coding agents. **Current state:** Releases 0 through 8, R9.1, R9.2, and the R9.3.3 Retail/POS slice are fully complete and verified. The actual next authorized task is the completion of the remaining R9.3 industry-specific vertical packs (pharmacy, clinic, restaurant, etc.) or Release 10 migration and validation. Rev-1 execution plan superseded in full.
+Authority level 8. Converts `OCTAGON_VNEXT_MASTER_ROADMAP.md` (Rev 3) into executable, file-owned, gated tasks for multiple coding agents. **Current state:** Releases 0 through 8, R9.1, R9.2, R9.4, and the R9.3.3 Retail/POS slice are fully complete and verified. **R9 core release gate (Pack SDK + Workshop + Retail/POS + Marketplace/distribution) is PASSED**; this does not include the remaining R9.3 industry-specific vertical packs (pharmacy, clinic, restaurant, real-estate, fleet, contracting, education), which remain unstarted, explicit future/optional work. The actual next authorized task is one additional R9.3 vertical pack or Release 10 migration and validation. Rev-1 execution plan superseded in full.
 
 ## Current Status Summary (2026-07-20)
 - Total Decomposed Tasks: **71**
-- Completed Tasks Count (unweighted item count): **63/71** (R0: 4/4, R1: 14/14, R2: 9/9, R3: 7/7, R4: 5/5, R5: 5/5, R6: 7/7, R7: 5/5, R8: 5/5, R9: 2/4 fully completed + R9.3 Retail/POS completed slice)
-- Core Technical Platform Completion: **100%** (Releases 0-8, R9.1, R9.2 complete)
-- Commercial Readiness Estimate: **85%** (pending remaining R9.3 industry vertical packs and Release 10 migration/piloting)
-- Overall Product Completion: **85%**
+- Completed Tasks Count (unweighted item count): **64/71** (R0: 4/4, R1: 14/14, R2: 9/9, R3: 7/7, R4: 5/5, R5: 5/5, R6: 7/7, R7: 5/5, R8: 5/5, R9: 3/4 fully completed [R9.1, R9.2, R9.4] + R9.3 Retail/POS completed slice)
+- Core Technical Platform Completion: **100%** (Releases 0-8, R9.1, R9.2, R9.4 complete; R9.3 delivered Retail/POS only)
+- Commercial Readiness Estimate: **87%** (pending remaining R9.3 industry vertical packs and Release 10 migration/piloting)
+- Overall Product Completion: **87%**
 
 **Binding owner decision O-10 (2026-07-18):** execution targets an online-first, real-time, cross-platform PWA with hosted/private/LAN/local-server deployment. `T2.O10.1` is the explicit connectivity/event/adapter retrofit checkpoint after `T2.5.2`; it is not a generic acceptance note and it does not authorize implementation during this correction pass. See [`OCTAGON_VNEXT_CONNECTIVITY_AND_CLIENT_ARCHITECTURE.md`](OCTAGON_VNEXT_CONNECTIVITY_AND_CLIENT_ARCHITECTURE.md) and [`OCTAGON_VNEXT_FEATURE_COVERAGE_LEDGER.md`](OCTAGON_VNEXT_FEATURE_COVERAGE_LEDGER.md).
 
@@ -121,7 +121,7 @@ Wave-entry checklist: prereq gates green → owner items cleared → lanes assig
 Mirrors roadmap §10 (O-1…O-10). Tasks blocked by an owner item say so in their row and may not be claimed. O-10 binds connectivity/client direction; it does not authorize implementation beyond an explicit execution task.
 
 ## 11. Current next executable task
-The actual next authorized task is the completion of the remaining R9.3 industry-specific vertical packs (pharmacy, clinic, restaurant, etc.) or Release 10 migration and validation, as authorized by the owner.
+R9.4 Marketplace & pack distribution is complete (2026-07-20); the R9 core release gate (Pack SDK + Workshop + Retail/POS + Marketplace/distribution) is passed. The actual next authorized task is one additional R9.3 industry-specific vertical pack (pharmacy, clinic, restaurant, real-estate, fleet, contracting, education — each distributable through the R9.4 marketplace pipeline) or Release 10 migration and validation, as authorized by the owner.
 
 *End. Authority 8. Current R2 authorization remains in force; no work may advance beyond the explicitly released task.*
 
@@ -220,3 +220,27 @@ R9.3.2 gate passed: focused Retail/POS **22/22**, Pack SDK **7/7**, Workshop
 **9/9**, migration dependency/integrity **30/30**. Remaining R9.3 packs
 (pharmacy, clinic, restaurant, etc.) are not started; do not begin them
 before explicit release.
+
+## 17. R9.4 marketplace & pack distribution — complete, R9 core gate closed
+
+R9.1, R9.2, and the R9.3.3 Retail/POS slice were accepted in
+`VNEXT_PROGRESS.md`. R9.4 adds the signed local marketplace and pack
+distribution layer on top of them, reserving migration 907 and reusing the
+canonical Pack SDK, licensing, audit, outbox, and event engines throughout
+(no duplicate engines).
+
+| Task ID / epic | Dependencies | Owned paths | Migration block | Required APIs/client surfaces | ACL, hooks, tests, security and acceptance |
+|---|---|---|---|---|---|
+| R9.4 Marketplace & pack distribution | R9.1 Pack SDK, R8.2 licensing, R9.2/R9.3 packs as real-manifest fixtures | `vnext/server/modules/packs/{pack-crypto,marketplace-engine,marketplace-routes}.js`, additive `upgradePack` in `pack-sdk-engine.js`, `migrations/907`, `vnext/client/modules/marketplace/index.js`, `scripts/test-r9-marketplace-distribution.mjs` | 907 (`dependsOn: 906`) | `.octapack` signed format verify/import; trusted signer register/list/revoke; catalog list/detail/preview/install/upgrade/disable/enable/uninstall; Pack Manager UI tab in the R3 kernel | server actor + company scope + ACL; signature/checksum/path/size/type verification fully precedes any mutation; compatibility+entitlement matrix fails before mutation with precise codes; atomic install/upgrade (outbox-failure rollback proven); upgrade failure preserves the prior installed version; uninstall zero-residue via canonical `checkConformance`; cross-company and local-dev rejection; safe migration rollback |
+
+R9.4 gate passed: focused marketplace/distribution **39/39**, Pack SDK
+**7/7**, Workshop **9/9**, Retail/POS **59/59**, migration dependency/
+integrity **30/30**, R6.1 POS v2 **13/13**, R8.2 licensing **7/7**,
+permission regression **35/35**, canonical-ACL-key blocker **all passed**,
+migration rollback fingerprints **8/8**, atomicity/audit/outbox injection
+**77/77**, provenance **142/142**, runtime DDL **0**, frozen zone **0**,
+precommit **PASS**. **R9 core release gate (Pack SDK + Workshop + Retail/POS
++ Marketplace/distribution) is PASSED.** Remaining R9.3 vertical packs
+(pharmacy, clinic, restaurant, real-estate, fleet, contracting, education)
+are not started; do not begin any of them before explicit release. Full
+commercial GA is not claimed before Release 10.

@@ -128,6 +128,80 @@ function installPack(db, companyId, manifest) {
   }
 }
 
+// ── Pack upgrade (in-place version replacement for an already-installed pack) ──
+// Added for R9.4 marketplace distribution: reuses the same registry/patch
+// tables as installPack/uninstallPack rather than introducing a parallel
+// installation engine. The registry row id is preserved across the upgrade so
+// callers keep a stable identity; the patch set is atomically replaced.
+
+function upgradePack(db, companyId, manifest) {
+  ensureCompany(db, companyId);
+  validateManifest(manifest);
+
+  const packId = manifest.pack_id.trim();
+  const existing = db.prepare('SELECT * FROM shop_pack_registry WHERE company_id = ? AND pack_id = ?').get(companyId, packId);
+  if (!existing || !existing.installed) {
+    throw fail(`pack '${packId}' is not installed`, 404, 'PACK_NOT_INSTALLED');
+  }
+
+  const hasLicensing = db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='shop_license'").get();
+  if (hasLicensing && manifest.edition_required && manifest.edition_required !== 'standard') {
+    const license = db.prepare("SELECT * FROM shop_license WHERE company_id = ? ORDER BY created_at DESC LIMIT 1").get(companyId);
+    if (license) {
+      const editionRank = { standard: 0, enterprise: 1, saas: 2 };
+      const requiredRank = editionRank[manifest.edition_required] || 0;
+      const currentRank = editionRank[license.edition] || 0;
+      if (currentRank < requiredRank) {
+        throw fail(`pack requires '${manifest.edition_required}' edition, but current license is '${license.edition}'`, 403, 'EDITION_INSUFFICIENT');
+      }
+    }
+  }
+
+  const manifestHash = hashManifest(manifest);
+  const previousVersion = existing.version;
+
+  const owns = !db.isTransaction;
+  if (owns) db.exec('BEGIN IMMEDIATE');
+
+  try {
+    db.prepare(`
+      UPDATE shop_pack_registry
+      SET name = ?, version = ?, description = ?, author = ?, edition_required = ?,
+          installed = 1, installed_at = ?, installed_by = ?, manifest_hash = ?
+      WHERE id = ?
+    `).run(
+      manifest.name.trim(), manifest.version.trim(),
+      manifest.description || null, manifest.author || null,
+      manifest.edition_required || 'standard',
+      now(), 'system', manifestHash, existing.id
+    );
+
+    // Revert every previously-applied patch, then apply the new manifest's
+    // patches fresh. Both happen inside this same transaction, so a failure
+    // anywhere leaves the prior version's patches exactly as they were.
+    const oldPatches = db.prepare('SELECT * FROM shop_pack_patch WHERE company_id = ? AND pack_id = ? AND applied = 1').all(companyId, packId);
+    for (const patch of oldPatches) {
+      db.prepare('UPDATE shop_pack_patch SET applied = 0, reverted = 1, reverted_at = ? WHERE id = ?').run(now(), patch.id);
+    }
+
+    if (manifest.patches && Array.isArray(manifest.patches)) {
+      for (const patch of manifest.patches) {
+        const patchId = id('pp');
+        db.prepare(`
+          INSERT OR REPLACE INTO shop_pack_patch (id, company_id, pack_id, target_type, target_key, patch_action, patch_data, applied, applied_at, reverted, reverted_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, 0, NULL)
+        `).run(patchId, companyId, packId, patch.target_type, patch.target_key, patch.action, JSON.stringify(patch.data || {}), now());
+      }
+    }
+
+    if (owns) db.exec('COMMIT');
+    return { pack_id: packId, upgraded: true, previous_version: previousVersion, version: manifest.version.trim(), manifest_hash: manifestHash };
+  } catch (error) {
+    if (owns) { try { db.exec('ROLLBACK'); } catch (_) {} }
+    throw error;
+  }
+}
+
 // ── Pack uninstallation ──
 
 function uninstallPack(db, companyId, packId) {
@@ -222,6 +296,7 @@ module.exports = {
   validateManifest,
   hashManifest,
   installPack,
+  upgradePack,
   uninstallPack,
   checkConformance,
   listPacks
