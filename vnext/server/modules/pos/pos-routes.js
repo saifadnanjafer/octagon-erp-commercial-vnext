@@ -1,4 +1,4 @@
-// R6.1 thin HTTP adapter. Identity and company scope come from the verified
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 // session; request bodies are data only.
 'use strict';
 

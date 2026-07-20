@@ -1,4 +1,4 @@
-// R6.5 thin HTTP adapter for appointments and resource booking.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const book = require('./booking-engine');

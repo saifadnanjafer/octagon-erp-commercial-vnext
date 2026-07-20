@@ -1,4 +1,4 @@
-// R8.3 thin HTTP adapter for SSO, identity linkage, and MFA policies.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const sso = require('./sso-engine');

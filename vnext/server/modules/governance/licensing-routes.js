@@ -1,4 +1,4 @@
-// R8.2 thin HTTP adapter for tenancy, licensing, seat limits, and trial provisioning.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const lic = require('./licensing-engine');

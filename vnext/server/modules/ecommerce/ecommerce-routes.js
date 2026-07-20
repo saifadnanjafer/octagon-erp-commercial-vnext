@@ -1,4 +1,4 @@
-// R6.6 thin HTTP adapter for eCommerce catalog, carts, and checkout.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const eco = require('./ecommerce-engine');

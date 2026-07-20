@@ -1,21 +1,73 @@
-// clean-room; R9.3 Retail/POS pack domain engine.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md §R9.3 (proprietary self, not copied)
+// R9.3 Retail/POS pack domain engine.
+// This file owns the Retail/POS source documents (store, shift, barcode,
+// ticket, line, tax, payment). All stock, GL, payment, audit, worklist,
+// outbox and event effects are produced through canonical repository engines.
+// The Retail/POS engine never directly INSERT/UPDATEs fiscal_doc,
+// fiscal_doc_line, gl_line, stock_move, stock_ledger_line, bin, payment,
+// payment_allocation, audit, outbox, or event tables.
 'use strict';
 
 const crypto = require('node:crypto');
 const infra = require('../r3-infra');
-const { fail, ensureCompany } = infra;
+const finance = require('../../finance/finance-engine');
+const stock = require('../../stock/stock-engine');
+const arap = require('../../finance/arap-engine');
+
+const { fail, ensureCompany, recordWrite, publish, idempotencyScope, rememberIdempotency, tableExists } = infra;
 
 function uid(prefix) { return `${prefix}_${crypto.randomUUID()}`; }
 function now() { return new Date().toISOString(); }
+function money(n) { return Math.round((Number(n) + Number.EPSILON) * 100) / 100; }
 function required(value, message, code) { const v = String(value || '').trim(); if (!v) throw fail(message, 400, code); return v; }
+
+function publishEvent(db, type, companyId, userId, entity, recordId, payload) {
+  if (!tableExists(db, 'vnext_event_log')) return;
+  const { createEventService } = require('../../events/events');
+  const events = createEventService({ db });
+  events.publish({ type, companyId, userId: userId || 'system', audience: { kind: 'company' }, entity, recordId, payload });
+}
+
+function withAtomicTransaction(db, work) {
+  const owns = !db.isTransaction;
+  if (owns) db.exec('BEGIN IMMEDIATE');
+  try {
+    const result = work();
+    if (owns) db.exec('COMMIT');
+    return result;
+  } catch (error) {
+    if (owns) { try { db.exec('ROLLBACK'); } catch (_) {} }
+    throw error;
+  }
+}
+
+// ── Store registry ──
 
 function createStore(db, companyId, input, userId) {
   ensureCompany(db, companyId);
   const storeCode = required(input.store_code, 'store_code is required', 'STORE_CODE_REQUIRED');
   const name = required(input.name, 'store name is required', 'STORE_NAME_REQUIRED');
   if (db.prepare('SELECT 1 FROM shop_retail_store WHERE company_id = ? AND store_code = ?').get(companyId, storeCode)) throw fail('store code already exists', 409, 'STORE_EXISTS');
-  const row = { id: uid('rstore'), company_id: companyId, store_code: storeCode, name, timezone: input.timezone || 'Asia/Baghdad', currency: input.currency || 'IQD', active: 1, created_at: now(), created_by: userId || 'system' };
-  db.prepare('INSERT INTO shop_retail_store (id, company_id, store_code, name, timezone, currency, active, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(row.id, row.company_id, row.store_code, row.name, row.timezone, row.currency, row.active, row.created_at, row.created_by);
+  const row = {
+    id: uid('rstore'), company_id: companyId, store_code: storeCode, name, timezone: input.timezone || 'Asia/Baghdad', currency: input.currency || 'IQD',
+    default_cash_account_id: input.default_cash_account_id || null,
+    default_card_account_id: input.default_card_account_id || null,
+    default_bank_account_id: input.default_bank_account_id || null,
+    default_income_account_id: input.default_income_account_id || null,
+    default_cogs_account_id: input.default_cogs_account_id || null,
+    default_stock_account_id: input.default_stock_account_id || null,
+    default_tax_account_id: input.default_tax_account_id || null,
+    default_ar_account_id: input.default_ar_account_id || null,
+    active: 1, created_at: now(), created_by: userId || 'system'
+  };
+  db.prepare(`INSERT INTO shop_retail_store (id, company_id, store_code, name, timezone, currency,
+    default_cash_account_id, default_card_account_id, default_bank_account_id, default_income_account_id,
+    default_cogs_account_id, default_stock_account_id, default_tax_account_id, default_ar_account_id,
+    active, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .run(row.id, row.company_id, row.store_code, row.name, row.timezone, row.currency,
+      row.default_cash_account_id, row.default_card_account_id, row.default_bank_account_id, row.default_income_account_id,
+      row.default_cogs_account_id, row.default_stock_account_id, row.default_tax_account_id, row.default_ar_account_id,
+      row.active, row.created_at, row.created_by);
   return row;
 }
 
@@ -45,6 +97,8 @@ function closeShift(db, companyId, shiftId, input, userId) {
 function registerBarcode(db, companyId, input, userId) {
   ensureCompany(db, companyId);
   const productId = required(input.product_id, 'product_id is required', 'PRODUCT_REQUIRED');
+  const product = db.prepare('SELECT 1 FROM product_master WHERE id = ? AND company_id = ? AND active = 1').get(productId, companyId);
+  if (!product) throw fail('product is not active or outside company scope', 403, 'PRODUCT_NOT_FOUND');
   const barcode = required(input.barcode, 'barcode is required', 'BARCODE_REQUIRED');
   const type = input.barcode_type || 'ean13';
   if (!['ean8', 'ean13', 'upc', 'qr', 'internal'].includes(type)) throw fail('invalid barcode_type', 400, 'BARCODE_TYPE_INVALID');
@@ -74,9 +128,469 @@ function recordScan(db, companyId, storeId, shiftId, input, userId) {
   return row;
 }
 
+// ── Governed POS transaction adapter ──
+
+function ensureStore(db, companyId, storeId) {
+  const store = db.prepare('SELECT * FROM shop_retail_store WHERE id = ? AND company_id = ? AND active = 1').get(storeId, companyId);
+  if (!store) throw fail('retail store is not active or outside company scope', 404, 'STORE_NOT_FOUND');
+  return store;
+}
+
+function ensureOpenShift(db, companyId, storeId, shiftId) {
+  const shift = db.prepare("SELECT * FROM shop_retail_shift WHERE id = ? AND store_id = ? AND company_id = ? AND state = 'open'").get(shiftId, storeId, companyId);
+  if (!shift) throw fail('open shift not found for store', 409, 'SHIFT_NOT_OPEN');
+  return shift;
+}
+
+function accountId(db, companyId, requested, fallback, type) {
+  const id = requested || fallback;
+  const row = db.prepare('SELECT id, type FROM account WHERE id = ? AND company_id = ? AND removed = 0').get(id, companyId);
+  if (!row || (type && row.type !== type)) throw fail(`account ${id} is outside company scope or has wrong type`, 403, 'ACCOUNT_INVALID');
+  return row.id;
+}
+
+// Store-specific warehouse/location master data is Retail/POS-owned setup:
+// no canonical location-management service exists, so we ensure the store's
+// internal stock location and a shared customer location are present before
+// the first stock move. Stock moves themselves are posted through stock-engine.
+function ensureStoreLocation(db, companyId, store) {
+  const warehouseId = `wh_${store.id}`;
+  const locationId = `loc_${store.id}`;
+  const customerWarehouseId = `wh_customer_${companyId}`;
+  const customerLocationId = `loc_customer_${companyId}`;
+  db.prepare('INSERT OR IGNORE INTO warehouses (warehouse_id, company_id, name) VALUES (?, ?, ?)').run(warehouseId, companyId, `${store.name} Warehouse`);
+  db.prepare('INSERT OR IGNORE INTO locations (location_id, warehouse_id, company_id, name, type) VALUES (?, ?, ?, ?, ?)').run(locationId, warehouseId, companyId, `${store.name} Stock`, 'internal');
+  db.prepare('INSERT OR IGNORE INTO warehouses (warehouse_id, company_id, name) VALUES (?, ?, ?)').run(customerWarehouseId, companyId, 'Customer Warehouse');
+  db.prepare('INSERT OR IGNORE INTO locations (location_id, warehouse_id, company_id, name, type) VALUES (?, ?, ?, ?, ?)').run(customerLocationId, customerWarehouseId, companyId, 'Customer Location', 'customer');
+  return { internalId: locationId, customerId: customerLocationId };
+}
+
+function resolveProductLine(db, companyId, line) {
+  if (!line || typeof line !== 'object') throw fail('ticket line must be an object', 400, 'LINE_INVALID');
+  const quantity = Number(line.quantity);
+  if (!Number.isFinite(quantity) || quantity <= 0) throw fail('line quantity must be positive', 400, 'QTY_INVALID');
+  const unitPrice = Number(line.unit_price);
+  if (!Number.isFinite(unitPrice) || unitPrice < 0) throw fail('line unit_price must be non-negative', 400, 'PRICE_INVALID');
+  let product;
+  let barcodeId = null;
+  if (line.barcode) {
+    const barcode = lookupBarcode(db, companyId, String(line.barcode));
+    if (!barcode) throw fail('line barcode not found', 404, 'BARCODE_NOT_FOUND');
+    product = db.prepare('SELECT * FROM product_master WHERE id = ? AND company_id = ? AND active = 1').get(barcode.product_id, companyId);
+    if (!product) throw fail('line product is not active', 404, 'PRODUCT_NOT_FOUND');
+    barcodeId = barcode.id;
+  } else if (line.product_id) {
+    product = db.prepare('SELECT * FROM product_master WHERE id = ? AND company_id = ? AND active = 1').get(String(line.product_id), companyId);
+    if (!product) throw fail('line product is not active or outside company scope', 404, 'PRODUCT_NOT_FOUND');
+  } else {
+    throw fail('line must have product_id or barcode', 400, 'LINE_PRODUCT_REQUIRED');
+  }
+  return { product, barcodeId, quantity, unitPrice };
+}
+
+function computeLineDiscount(gross, line) {
+  const amount = Number(line.discount_amount || 0);
+  const percent = Number(line.discount_percent || 0);
+  if (amount < 0 || percent < 0) throw fail('discount must be non-negative', 400, 'DISCOUNT_INVALID');
+  if (percent > 100) throw fail('discount_percent cannot exceed 100', 400, 'DISCOUNT_INVALID');
+  if (amount > 0 && percent > 0) throw fail('provide discount_amount or discount_percent, not both', 400, 'DISCOUNT_CONFLICT');
+  let discount = 0;
+  if (percent > 0) discount = money(gross * (percent / 100));
+  else if (amount > 0) discount = money(amount);
+  if (discount > gross) throw fail('discount cannot exceed line gross', 400, 'DISCOUNT_EXCEEDS_GROSS');
+  return discount;
+}
+
+function computeLineTax(db, companyId, product, netAmount, taxId) {
+  if (!taxId) return { taxAmount: 0, baseAmount: netAmount, taxId: null, priceInclude: 0 };
+  const tax = db.prepare('SELECT * FROM tax WHERE id = ? AND company_id = ? AND active = 1').get(taxId, companyId);
+  if (!tax) throw fail('line tax is not active or outside company scope', 404, 'TAX_NOT_FOUND');
+  let base = netAmount;
+  let taxAmount = 0;
+  if (tax.price_include === 1) {
+    if (tax.amount_type === 'percent') {
+      base = money(netAmount / (1 + (tax.amount / 100)));
+      taxAmount = money(netAmount - base);
+    } else if (tax.amount_type === 'fixed') {
+      taxAmount = money(tax.amount);
+      base = money(Math.max(0, netAmount - taxAmount));
+    }
+  } else {
+    if (tax.amount_type === 'percent') taxAmount = money(netAmount * (tax.amount / 100));
+    else if (tax.amount_type === 'fixed') taxAmount = money(tax.amount);
+    base = netAmount;
+  }
+  return { taxAmount: money(taxAmount), baseAmount: money(base), taxId: tax.id, priceInclude: tax.price_include };
+}
+
+function buildTicketNumber(db, companyId) {
+  const prefix = 'POS';
+  const nowDate = new Date();
+  const year = nowDate.getFullYear();
+  const month = String(nowDate.getMonth() + 1).padStart(2, '0');
+  const key = `retail_ticket_${companyId}_${year}_${month}`;
+  const row = db.prepare('SELECT next_number FROM x_sequences WHERE seq_key = ?').get(key);
+  let n = 1;
+  if (!row) db.prepare('INSERT INTO x_sequences (seq_key, next_number, year, month, updated_at) VALUES (?, 2, ?, ?, ?)').run(key, year, month, now());
+  else { n = Number(row.next_number); db.prepare('UPDATE x_sequences SET next_number = ?, updated_at = ? WHERE seq_key = ?').run(n + 1, now(), key); }
+  return `${prefix}-${year}${month}-${String(n).padStart(5, '0')}`;
+}
+
+function postStockForLine(db, companyId, store, locations, product, quantity, direction, userId) {
+  const moveId = uid('rsm');
+  const from = direction === 'out' ? locations.internalId : locations.customerId;
+  const to = direction === 'out' ? locations.customerId : locations.internalId;
+  stock.createStockMove(db, companyId, {
+    id: moveId,
+    product_id: product.id,
+    qty: quantity,
+    uom: product.base_uom_id || 'units',
+    from_location_id: from,
+    to_location_id: to,
+    posting_date: now().slice(0, 10),
+    voucher_ref: `retail-${direction}-${moveId}`
+  });
+  const posted = stock.postStockMove(db, companyId, moveId, userId, { negative_stock_policy: 'block' });
+  return { moveId, fiscalDocId: posted.fiscalDocId };
+}
+
+function createReversingStockMove(db, companyId, store, locations, originalMoveId, userId) {
+  const original = db.prepare('SELECT * FROM stock_move WHERE id = ? AND company_id = ?').get(originalMoveId, companyId);
+  if (!original) throw fail('original stock move not found', 404, 'STOCK_MOVE_NOT_FOUND');
+  const moveId = uid('rsm');
+  stock.createStockMove(db, companyId, {
+    id: moveId,
+    product_id: original.product_id,
+    qty: original.qty,
+    uom: original.uom,
+    from_location_id: original.to_location_id,
+    to_location_id: original.from_location_id,
+    posting_date: now().slice(0, 10),
+    voucher_ref: `REVERSAL-OF-${original.id}`
+  });
+  const posted = stock.postStockMove(db, companyId, moveId, userId, { negative_stock_policy: 'allow' });
+  return { moveId, fiscalDocId: posted.fiscalDocId };
+}
+
+function validatePaymentMethod(method) {
+  if (!['cash', 'card', 'bank', 'reference', 'ewallet'].includes(method)) throw fail('payment_method is invalid', 400, 'PAYMENT_METHOD_INVALID');
+}
+
+function ensureWalkInPartner(db, companyId) {
+  const id = 'partner_walkin';
+  const existing = db.prepare('SELECT * FROM partner_master WHERE id = ? AND company_id = ?').get(id, companyId);
+  if (existing) return existing;
+  arap.createPartner(db, companyId, { id, name: 'Walk-in Customer', partner_type: 'customer' }, 'system');
+  return db.prepare('SELECT * FROM partner_master WHERE id = ?').get(id);
+}
+
+function normalizeSalePayload(input) {
+  const idem = String(input.idempotency_key || '').trim();
+  if (!idem) throw fail('idempotency_key is required', 400, 'IDEMPOTENCY_REQUIRED');
+  if (!Array.isArray(input.lines) || input.lines.length === 0 || input.lines.length > 200) throw fail('ticket lines are required (1..200)', 400, 'LINES_REQUIRED');
+  validatePaymentMethod(input.payment_method);
+  return { idem };
+}
+
+function buildCashFiscalLines(db, store, ticket, lines) {
+  const debitAccount = accountId(db, ticket.company_id, store.default_cash_account_id, 'coa_101000', 'liquidity');
+  const taxAccount = accountId(db, ticket.company_id, store.default_tax_account_id, 'coa_202000', 'liability');
+  const fiscalLines = [{
+    account_id: debitAccount,
+    debit: ticket.total,
+    credit: 0,
+    description: `Retail cash ${ticket.ticket_number}`
+  }];
+  const incomeByAccount = {};
+  for (const line of lines) incomeByAccount[line.income_account_id] = (incomeByAccount[line.income_account_id] || 0) + line.base_amount;
+  for (const [accountId, amount] of Object.entries(incomeByAccount)) {
+    if (amount > 0) fiscalLines.push({ account_id: accountId, debit: 0, credit: money(amount), description: `Retail sales income ${ticket.ticket_number}` });
+  }
+  if (ticket.tax_total > 0) fiscalLines.push({ account_id: taxAccount, debit: 0, credit: ticket.tax_total, description: `Retail tax payable ${ticket.ticket_number}` });
+  return fiscalLines;
+}
+
+function postSale(db, companyId, input, userId) {
+  ensureCompany(db, companyId);
+  const { idem } = normalizeSalePayload(input);
+  const store = ensureStore(db, companyId, input.store_id);
+  const shift = ensureOpenShift(db, companyId, store.id, input.shift_id);
+  const idemScope = idempotencyScope(db, userId, companyId, 'retail.sale', idem, input);
+  if (idemScope?.replay) return { ...idemScope.replay, replayed: true };
+
+  return withAtomicTransaction(db, () => {
+    const locations = ensureStoreLocation(db, companyId, store);
+    const ticketId = uid('rtkt');
+    const ticketNumber = buildTicketNumber(db, companyId);
+    const lines = [];
+    const taxLines = [];
+    let subtotal = 0;
+    let discountTotal = 0;
+    let taxTotal = 0;
+    const lineStockMoves = [];
+
+    for (let i = 0; i < input.lines.length; i++) {
+      const raw = input.lines[i];
+      const { product, barcodeId, quantity, unitPrice } = resolveProductLine(db, companyId, raw);
+      const gross = money(quantity * unitPrice);
+      const discount = computeLineDiscount(gross, raw);
+      const net = money(gross - discount);
+      const { taxAmount, baseAmount, taxId, priceInclude } = computeLineTax(db, companyId, product, net, raw.tax_id);
+      const customerTotal = priceInclude === 1 ? net : money(net + taxAmount);
+      const incomeAccount = accountId(db, companyId, store.default_income_account_id, 'coa_401000', 'income');
+      const cogsAccount = accountId(db, companyId, store.default_cogs_account_id, 'coa_501000', 'expense');
+      subtotal += gross;
+      discountTotal += discount;
+      taxTotal += taxAmount;
+      const stockMove = postStockForLine(db, companyId, store, locations, product, quantity, 'out', userId);
+      lineStockMoves.push(stockMove);
+      const lineId = uid('rtln');
+      lines.push({
+        id: lineId, ticket_id: ticketId, company_id: companyId, product_id: product.id, barcode_id: barcodeId,
+        quantity, unit_price: unitPrice, discount_amount: discount, discount_percent: Number(raw.discount_percent || 0),
+        tax_id: taxId, tax_amount: taxAmount, line_total: customerTotal,
+        income_account_id: incomeAccount, cogs_account_id: cogsAccount, stock_move_id: stockMove.moveId, created_at: now(),
+        base_amount: baseAmount
+      });
+      if (taxId) taxLines.push({ id: uid('rttx'), ticket_id: ticketId, company_id: companyId, tax_id: taxId, base_amount: baseAmount, tax_amount: taxAmount, created_at: now() });
+    }
+
+    const ticket = {
+      id: ticketId, company_id: companyId, store_id: store.id, shift_id: shift.id, ticket_number: ticketNumber,
+      kind: 'sale', state: 'draft', partner_id: input.partner_id || null, currency: store.currency || 'IQD',
+      subtotal: money(subtotal), discount_total: money(discountTotal), tax_total: money(taxTotal), total: money(money(subtotal - discountTotal) + money(taxTotal)),
+      payment_method: input.payment_method, payment_reference: input.payment_reference || null,
+      fiscal_doc_id: null, stock_move_id: lineStockMoves.length ? lineStockMoves[0].moveId : null,
+      reversal_of_id: null, reversal_ticket_id: null, idempotency_key: idem, created_at: now(), created_by: userId || 'system'
+    };
+
+    let paymentResult = null;
+
+    if (input.payment_method === 'reference') {
+      const partner = input.partner_id
+        ? db.prepare('SELECT * FROM partner_master WHERE id = ? AND company_id = ? AND active = 1').get(input.partner_id, companyId)
+        : ensureWalkInPartner(db, companyId);
+      if (!partner) throw fail('partner not found for reference sale', 404, 'PARTNER_NOT_FOUND');
+      const arapDoc = arap.createArapDocument(db, companyId, {
+        partner_id: partner.id,
+        document_kind: 'customer_invoice',
+        currency: ticket.currency,
+        lines: lines.map(l => ({ product_id: l.product_id, quantity: l.quantity, price_unit: money(l.line_total / l.quantity), account_id: l.income_account_id }))
+      }, userId);
+      arap.postArapDocument(db, arapDoc.id, userId);
+      ticket.fiscal_doc_id = arapDoc.fiscal_doc_id;
+      paymentResult = { arap_document_id: arapDoc.id };
+    } else {
+      const fiscalRes = finance.createAndPostFiscalDoc(db, companyId, {
+        move_type: 'cash_receipt',
+        doc_date: now().slice(0, 10),
+        currency: ticket.currency,
+        lines: buildCashFiscalLines(db, store, ticket, lines)
+      }, userId);
+      ticket.fiscal_doc_id = fiscalRes.docId;
+    }
+
+    db.prepare(`INSERT INTO shop_retail_ticket (id, company_id, store_id, shift_id, ticket_number, kind, state, partner_id, currency,
+      subtotal, discount_total, tax_total, total, payment_method, payment_reference, fiscal_doc_id, stock_move_id,
+      reversal_of_id, reversal_ticket_id, idempotency_key, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(ticket.id, ticket.company_id, ticket.store_id, ticket.shift_id, ticket.ticket_number, ticket.kind, ticket.state, ticket.partner_id, ticket.currency,
+        ticket.subtotal, ticket.discount_total, ticket.tax_total, ticket.total, ticket.payment_method, ticket.payment_reference, ticket.fiscal_doc_id, ticket.stock_move_id,
+        ticket.reversal_of_id, ticket.reversal_ticket_id, ticket.idempotency_key, ticket.created_at, ticket.created_by);
+    const insertLine = db.prepare(`INSERT INTO shop_retail_ticket_line (id, ticket_id, company_id, product_id, barcode_id, quantity, unit_price,
+      discount_amount, discount_percent, tax_id, tax_amount, line_total, income_account_id, cogs_account_id, stock_move_id, created_at, base_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+    for (const l of lines) insertLine.run(l.id, l.ticket_id, l.company_id, l.product_id, l.barcode_id, l.quantity, l.unit_price, l.discount_amount, l.discount_percent, l.tax_id, l.tax_amount, l.line_total, l.income_account_id, l.cogs_account_id, l.stock_move_id, l.created_at, l.base_amount);
+    const insertTax = db.prepare('INSERT INTO shop_retail_ticket_tax (id, ticket_id, company_id, tax_id, base_amount, tax_amount, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    for (const t of taxLines) insertTax.run(t.id, t.ticket_id, t.company_id, t.tax_id, t.base_amount, t.tax_amount, t.created_at);
+    db.prepare('INSERT INTO shop_retail_ticket_payment (id, ticket_id, company_id, payment_method, amount, reference, payment_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(uid('rtpm'), ticket.id, companyId, ticket.payment_method, ticket.total, ticket.payment_reference, null, now());
+
+    db.prepare('UPDATE shop_retail_ticket SET state = ? WHERE id = ?').run('posted', ticket.id);
+    ticket.state = 'posted';
+
+    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_sale', userId, null, ticket);
+    publishEvent(db, 'retail.ticket.posted', companyId, userId, 'shop_retail_ticket', ticket.id, { kind: 'sale', total: ticket.total, storeId: store.id });
+
+    const response = { ticket, lines, payment: paymentResult };
+    if (idemScope) rememberIdempotency(db, idemScope, response, 200);
+    return response;
+  });
+}
+
+function postReturn(db, companyId, input, userId) {
+  ensureCompany(db, companyId);
+  const originalTicketId = required(input.original_ticket_id, 'original_ticket_id is required', 'ORIGINAL_REQUIRED');
+  const original = db.prepare("SELECT * FROM shop_retail_ticket WHERE id = ? AND company_id = ? AND kind = 'sale' AND state = 'posted'").get(originalTicketId, companyId);
+  if (!original) throw fail('original posted sale ticket not found', 404, 'ORIGINAL_NOT_FOUND');
+  const idem = String(input.idempotency_key || '').trim();
+  if (!idem) throw fail('idempotency_key is required', 400, 'IDEMPOTENCY_REQUIRED');
+  const idemScope = idempotencyScope(db, userId, companyId, 'retail.return', idem, input);
+  if (idemScope?.replay) return { ...idemScope.replay, replayed: true };
+
+  return withAtomicTransaction(db, () => {
+    const store = ensureStore(db, companyId, original.store_id);
+    const shift = ensureOpenShift(db, companyId, store.id, input.shift_id || original.shift_id);
+    const locations = ensureStoreLocation(db, companyId, store);
+    const originalLines = db.prepare('SELECT * FROM shop_retail_ticket_line WHERE ticket_id = ?').all(original.id);
+    const lines = [];
+    let subtotal = 0;
+    let discountTotal = 0;
+    let taxTotal = 0;
+    const lineStockMoves = [];
+
+    for (const originalLine of originalLines) {
+      const product = db.prepare('SELECT * FROM product_master WHERE id = ? AND company_id = ? AND active = 1').get(originalLine.product_id, companyId);
+      if (!product) throw fail('original line product no longer active', 409, 'PRODUCT_INACTIVE');
+      const stockMove = createReversingStockMove(db, companyId, store, locations, originalLine.stock_move_id, userId);
+      lineStockMoves.push(stockMove);
+      subtotal += originalLine.quantity * originalLine.unit_price;
+      discountTotal += originalLine.discount_amount;
+      taxTotal += originalLine.tax_amount;
+      lines.push({ ...originalLine, stock_move_id: stockMove.moveId });
+    }
+
+    const fiscalRes = finance.createReversalFiscalDoc(db, companyId, original.fiscal_doc_id, userId);
+
+    const ticketId = uid('rtkt');
+    const ticketNumber = buildTicketNumber(db, companyId);
+    const ticket = {
+      id: ticketId, company_id: companyId, store_id: store.id, shift_id: shift.id, ticket_number: ticketNumber,
+      kind: 'return', state: 'posted', partner_id: original.partner_id, currency: original.currency,
+      subtotal: money(subtotal), discount_total: money(discountTotal), tax_total: money(taxTotal), total: money(money(subtotal - discountTotal) + money(taxTotal)),
+      payment_method: original.payment_method, payment_reference: input.payment_reference || `Return of ${original.ticket_number}`,
+      fiscal_doc_id: fiscalRes.docId, stock_move_id: lineStockMoves.length ? lineStockMoves[0].moveId : null,
+      reversal_of_id: original.id, reversal_ticket_id: null, idempotency_key: idem, created_at: now(), created_by: userId || 'system'
+    };
+
+    db.prepare(`INSERT INTO shop_retail_ticket (id, company_id, store_id, shift_id, ticket_number, kind, state, partner_id, currency,
+      subtotal, discount_total, tax_total, total, payment_method, payment_reference, fiscal_doc_id, stock_move_id,
+      reversal_of_id, reversal_ticket_id, idempotency_key, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(ticket.id, ticket.company_id, ticket.store_id, ticket.shift_id, ticket.ticket_number, ticket.kind, ticket.state, ticket.partner_id, ticket.currency,
+        ticket.subtotal, ticket.discount_total, ticket.tax_total, ticket.total, ticket.payment_method, ticket.payment_reference, ticket.fiscal_doc_id, ticket.stock_move_id,
+        ticket.reversal_of_id, ticket.reversal_ticket_id, ticket.idempotency_key, ticket.created_at, ticket.created_by);
+    db.prepare('INSERT INTO shop_retail_ticket_payment (id, ticket_id, company_id, payment_method, amount, reference, payment_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(uid('rtpm'), ticket.id, companyId, ticket.payment_method, ticket.total, ticket.payment_reference, null, now());
+
+    db.prepare('UPDATE shop_retail_ticket SET state = ?, reversal_ticket_id = ? WHERE id = ?').run('reversed', ticket.id, original.id);
+
+    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_return', userId, null, ticket);
+    publishEvent(db, 'retail.ticket.returned', companyId, userId, 'shop_retail_ticket', ticket.id, { originalId: original.id, total: ticket.total });
+
+    const response = { ticket, original_ticket_id: original.id, lines };
+    if (idemScope) rememberIdempotency(db, idemScope, response, 200);
+    return response;
+  });
+}
+
+function postRefund(db, companyId, input, userId) {
+  ensureCompany(db, companyId);
+  const originalTicketId = required(input.original_ticket_id, 'original_ticket_id is required', 'ORIGINAL_REQUIRED');
+  const original = db.prepare('SELECT * FROM shop_retail_ticket WHERE id = ? AND company_id = ?').get(originalTicketId, companyId);
+  if (!original) throw fail('original ticket not found', 404, 'ORIGINAL_NOT_FOUND');
+  const idem = String(input.idempotency_key || '').trim();
+  if (!idem) throw fail('idempotency_key is required', 400, 'IDEMPOTENCY_REQUIRED');
+  const idemScope = idempotencyScope(db, userId, companyId, 'retail.refund', idem, input);
+  if (idemScope?.replay) return { ...idemScope.replay, replayed: true };
+
+  return withAtomicTransaction(db, () => {
+    const store = ensureStore(db, companyId, original.store_id);
+    const amount = money(input.amount);
+    if (!Number.isFinite(amount) || amount <= 0) throw fail('refund amount must be positive', 400, 'REFUND_AMOUNT_INVALID');
+    if (amount > original.total + 0.0001) throw fail('refund cannot exceed original ticket total', 409, 'REFUND_EXCEEDS_TOTAL');
+    const ticketNumber = buildTicketNumber(db, companyId);
+    const cashAccount = accountId(db, companyId, store.default_cash_account_id, 'coa_101000', 'liquidity');
+    const incomeAccount = accountId(db, companyId, store.default_income_account_id, 'coa_401000', 'income');
+
+    const fiscalRes = finance.createAndPostFiscalDoc(db, companyId, {
+      move_type: 'cash_payment',
+      doc_date: now().slice(0, 10),
+      currency: original.currency,
+      lines: [
+        { account_id: incomeAccount, debit: amount, credit: 0, description: `Refund for ${original.ticket_number}` },
+        { account_id: cashAccount, debit: 0, credit: amount, description: 'Cash refund' }
+      ]
+    }, userId);
+
+    const ticket = {
+      id: uid('rtkt'), company_id: companyId, store_id: original.store_id, shift_id: original.shift_id, ticket_number: ticketNumber,
+      kind: 'refund', state: 'posted', partner_id: original.partner_id, currency: original.currency,
+      subtotal: 0, discount_total: 0, tax_total: 0, total: amount,
+      payment_method: 'cash', payment_reference: input.payment_reference || `Refund of ${original.ticket_number}`,
+      fiscal_doc_id: fiscalRes.docId, stock_move_id: null,
+      reversal_of_id: original.id, reversal_ticket_id: null, idempotency_key: idem, created_at: now(), created_by: userId || 'system'
+    };
+    db.prepare(`INSERT INTO shop_retail_ticket (id, company_id, store_id, shift_id, ticket_number, kind, state, partner_id, currency,
+      subtotal, discount_total, tax_total, total, payment_method, payment_reference, fiscal_doc_id, stock_move_id,
+      reversal_of_id, reversal_ticket_id, idempotency_key, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(ticket.id, ticket.company_id, ticket.store_id, ticket.shift_id, ticket.ticket_number, ticket.kind, ticket.state, ticket.partner_id, ticket.currency,
+        ticket.subtotal, ticket.discount_total, ticket.tax_total, ticket.total, ticket.payment_method, ticket.payment_reference, ticket.fiscal_doc_id, ticket.stock_move_id,
+        ticket.reversal_of_id, ticket.reversal_ticket_id, ticket.idempotency_key, ticket.created_at, ticket.created_by);
+    db.prepare('INSERT INTO shop_retail_ticket_payment (id, ticket_id, company_id, payment_method, amount, reference, payment_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(uid('rtpm'), ticket.id, companyId, ticket.payment_method, amount, ticket.payment_reference, null, now());
+
+    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_refund', userId, null, ticket);
+    publishEvent(db, 'retail.ticket.refunded', companyId, userId, 'shop_retail_ticket', ticket.id, { originalId: original.id, amount });
+
+    const response = { ticket, original_ticket_id: original.id };
+    if (idemScope) rememberIdempotency(db, idemScope, response, 200);
+    return response;
+  });
+}
+
+function cancelTicket(db, companyId, ticketId, userId) {
+  ensureCompany(db, companyId);
+  const ticket = db.prepare('SELECT * FROM shop_retail_ticket WHERE id = ? AND company_id = ?').get(ticketId, companyId);
+  if (!ticket) throw fail('ticket not found', 404, 'TICKET_NOT_FOUND');
+  if (ticket.state === 'cancelled') return { ticket, cancelled: true };
+  if (ticket.state === 'reversed') throw fail('already reversed ticket cannot be cancelled', 409, 'TICKET_ALREADY_REVERSED');
+  if (ticket.state !== 'draft' && ticket.state !== 'posted') throw fail('ticket state does not allow cancellation', 409, 'TICKET_STATE_INVALID');
+
+  return withAtomicTransaction(db, () => {
+    if (ticket.state === 'draft') {
+      db.prepare('UPDATE shop_retail_ticket SET state = ? WHERE id = ?').run('cancelled', ticket.id);
+      recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'cancel', userId, ticket, { ...ticket, state: 'cancelled' });
+      return { ticket: { ...ticket, state: 'cancelled' }, cancelled: true };
+    }
+    const store = ensureStore(db, companyId, ticket.store_id);
+    const locations = ensureStoreLocation(db, companyId, store);
+    const originalLines = db.prepare('SELECT * FROM shop_retail_ticket_line WHERE ticket_id = ?').all(ticket.id);
+    const reversedStock = [];
+    for (const l of originalLines) {
+      reversedStock.push(createReversingStockMove(db, companyId, store, locations, l.stock_move_id, userId));
+    }
+    const fiscalRes = finance.createReversalFiscalDoc(db, companyId, ticket.fiscal_doc_id, userId);
+    db.prepare('UPDATE shop_retail_ticket SET state = ?, reversal_ticket_id = ? WHERE id = ?').run('cancelled', null, ticket.id);
+    const updated = { ...ticket, state: 'cancelled', reversal_fiscal_doc_id: fiscalRes.docId, reversal_stock_moves: reversedStock.map(r => r.moveId) };
+    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'cancel_posted', userId, ticket, updated);
+    return { ticket: updated, cancelled: true, reversal_fiscal_doc_id: fiscalRes.docId };
+  });
+}
+
+function getTicket(db, companyId, ticketId) {
+  const ticket = db.prepare('SELECT * FROM shop_retail_ticket WHERE id = ? AND company_id = ?').get(ticketId, companyId);
+  if (!ticket) throw fail('ticket not found', 404, 'TICKET_NOT_FOUND');
+  return {
+    ticket,
+    lines: db.prepare('SELECT * FROM shop_retail_ticket_line WHERE ticket_id = ? ORDER BY id').all(ticketId),
+    taxes: db.prepare('SELECT * FROM shop_retail_ticket_tax WHERE ticket_id = ?').all(ticketId),
+    payments: db.prepare('SELECT * FROM shop_retail_ticket_payment WHERE ticket_id = ?').all(ticketId)
+  };
+}
+
+function listTickets(db, companyId, opts = {}) {
+  ensureCompany(db, companyId);
+  const state = opts.state ? 'AND state = ?' : '';
+  const store = opts.store_id ? 'AND store_id = ?' : '';
+  const params = [companyId];
+  if (opts.state) params.push(opts.state);
+  if (opts.store_id) params.push(opts.store_id);
+  return db.prepare(`SELECT * FROM shop_retail_ticket WHERE company_id = ? ${state} ${store} ORDER BY created_at DESC`).all(...params);
+}
+
 module.exports = {
   createStore: infra.atomicCommand(createStore), listStores,
   openShift: infra.atomicCommand(openShift), closeShift: infra.atomicCommand(closeShift),
   registerBarcode: infra.atomicCommand(registerBarcode), lookupBarcode,
-  recordScan: infra.atomicCommand(recordScan)
+  recordScan: infra.atomicCommand(recordScan),
+  postSale, postReturn, postRefund, cancelTicket, getTicket, listTickets,
+  _internal: { withAtomicTransaction, ensureStoreLocation, computeLineTax, computeLineDiscount }
 };

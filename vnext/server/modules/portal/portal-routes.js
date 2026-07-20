@@ -1,4 +1,4 @@
-// R6.4 thin HTTP adapter for customer and vendor portals.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const port = require('./portal-engine');

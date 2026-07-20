@@ -1,4 +1,4 @@
-// R6.3 thin HTTP adapter for loyalty, gift cards, and eWallets.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const loy = require('./loyalty-engine');

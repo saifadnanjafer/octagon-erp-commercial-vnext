@@ -1,4 +1,4 @@
-// R9.1 thin HTTP adapter for Pack SDK management.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const packSdk = require('./pack-sdk-engine');

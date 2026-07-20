@@ -1,4 +1,4 @@
-// R7.4 thin HTTP adapter for quality control, inspections, and NCR/CAPA workflow.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const qual = require('./quality-engine');

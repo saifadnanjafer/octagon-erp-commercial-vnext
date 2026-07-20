@@ -1,4 +1,4 @@
-// R9.2 Workshop pack HTTP routes.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const workshopEngine = require('./workshop-engine');

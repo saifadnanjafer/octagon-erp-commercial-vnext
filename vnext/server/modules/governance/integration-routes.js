@@ -1,4 +1,4 @@
-// R8.4 thin HTTP adapter for Integration Hub API keys, webhook registration, and vault.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const integ = require('./integration-engine');

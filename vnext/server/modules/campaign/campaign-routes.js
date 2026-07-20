@@ -1,4 +1,4 @@
-// R6.7 thin HTTP adapter for campaigns and omni-communication webhooks.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const camp = require('./campaign-engine');

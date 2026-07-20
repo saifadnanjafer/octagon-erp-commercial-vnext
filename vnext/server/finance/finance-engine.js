@@ -398,6 +398,154 @@ function reverseFiscalDoc(db, docId, userId) {
 }
 
 /**
+ * Create a balanced fiscal document from caller-supplied lines and post it.
+ * This is the canonical entry point for domain engines (e.g., Retail/POS)
+ * that must not touch fiscal_doc / fiscal_doc_line directly.
+ *
+ * @param {object} db sqlite handle
+ * @param {string} companyId
+ * @param {object} input { move_type, doc_date, currency, partner_id, reversal_of_id, lines: [] }
+ * @param {string} userId
+ * @returns {{ docId: string, success: boolean, docNumber: string, hash: string }}
+ */
+function createAndPostFiscalDoc(db, companyId, input, userId) {
+  const ownsTransaction = !db.isTransaction;
+  if (ownsTransaction) db.exec('BEGIN IMMEDIATE');
+  try {
+    const docId = 'fiscal_' + crypto.randomUUID();
+    const docDate = input.doc_date || new Date().toISOString().slice(0, 10);
+    const currency = input.currency || 'IQD';
+    const stamp = new Date().toISOString();
+
+    db.prepare(`
+      INSERT INTO fiscal_doc (id, company_id, doc_number, move_type, partner_id, doc_date, state, currency, reversal_of_id, created_at, created_by)
+      VALUES (?, ?, NULL, ?, ?, ?, 'draft', ?, ?, ?, ?)
+    `).run(docId, companyId, input.move_type, input.partner_id || null, docDate, currency, input.reversal_of_id || null, stamp, userId || 'system');
+
+    const insertLine = db.prepare(`
+      INSERT INTO fiscal_doc_line (
+        id, fiscal_doc_id, company_id, account_id, debit, credit, currency_code,
+        currency_debit, currency_credit, tax_refs, dims, snapshot, description, created_at, created_by
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    for (const line of input.lines || []) {
+      insertLine.run(
+        'line_' + crypto.randomUUID(),
+        docId,
+        companyId,
+        line.account_id,
+        Number(line.debit) || 0,
+        Number(line.credit) || 0,
+        line.currency_code || currency,
+        Number(line.currency_debit) || 0,
+        Number(line.currency_credit) || 0,
+        line.tax_refs || null,
+        line.dims || null,
+        line.snapshot || null,
+        line.description || '',
+        stamp,
+        userId || 'system'
+      );
+    }
+
+    const postRes = postFiscalDoc(db, docId, userId || 'system');
+    if (ownsTransaction) db.exec('COMMIT');
+    return { docId, ...postRes };
+  } catch (error) {
+    if (ownsTransaction) {
+      try { db.exec('ROLLBACK'); } catch (_) {}
+    }
+    throw error;
+  }
+}
+
+/**
+ * Create a cross-linked reversal fiscal document for an already-posted doc
+ * WITHOUT mutating the original (it stays posted). This supports Retail/POS
+ * returns, refunds, and cancellations where the original fiscal output must
+ * remain immutable.
+ *
+ * @param {object} db sqlite handle
+ * @param {string} companyId
+ * @param {string} originalDocId
+ * @param {string} userId
+ * @returns {{ docId: string, success: boolean, docNumber: string, hash: string }}
+ */
+function createReversalFiscalDoc(db, companyId, originalDocId, userId) {
+  const ownsTransaction = !db.isTransaction;
+  if (ownsTransaction) db.exec('BEGIN IMMEDIATE');
+  try {
+    const original = db.prepare(`
+      SELECT id, company_id, move_type, doc_date, state, currency
+      FROM fiscal_doc WHERE id = ? AND company_id = ? AND removed = 0
+    `).get(originalDocId, companyId);
+
+    if (!original) throw new Error('المستند المالي غير موجود');
+    if (original.state !== 'posted') throw new Error('Only posted documents can be reversed');
+
+    const reversalMap = {
+      sales_invoice: 'sales_refund',
+      purchase_invoice: 'purchase_refund',
+      cash_receipt: 'cash_payment',
+      cash_payment: 'cash_receipt',
+      sales_refund: 'sales_invoice',
+      purchase_refund: 'purchase_invoice',
+    };
+    const reversalType = reversalMap[original.move_type] || 'manual_entry';
+
+    const lines = db.prepare(`
+      SELECT account_id, debit, credit, currency_code, currency_debit, currency_credit,
+        tax_refs, dims, snapshot, description
+      FROM fiscal_doc_line WHERE fiscal_doc_id = ? ORDER BY id
+    `).all(original.id);
+
+    const docId = 'fiscal_' + crypto.randomUUID();
+    const stamp = new Date().toISOString();
+    db.prepare(`
+      INSERT INTO fiscal_doc (id, company_id, doc_number, move_type, doc_date, state, currency, reversal_of_id, created_at, created_by)
+      VALUES (?, ?, NULL, ?, ?, 'draft', ?, ?, ?, ?)
+    `).run(docId, companyId, reversalType, original.doc_date, original.currency, original.id, stamp, userId || 'system');
+
+    const insertLine = db.prepare(`
+      INSERT INTO fiscal_doc_line (
+        id, fiscal_doc_id, company_id, account_id, debit, credit, currency_code,
+        currency_debit, currency_credit, tax_refs, dims, snapshot, description, created_at, created_by
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    for (const l of lines) {
+      insertLine.run(
+        'line_' + crypto.randomUUID(),
+        docId,
+        companyId,
+        l.account_id,
+        Number(l.credit) || 0,
+        Number(l.debit) || 0,
+        l.currency_code || original.currency,
+        Number(l.currency_credit) || 0,
+        Number(l.currency_debit) || 0,
+        l.tax_refs || null,
+        l.dims || null,
+        l.snapshot || null,
+        l.description ? `Reversal: ${l.description}` : 'Reversal',
+        stamp,
+        userId || 'system'
+      );
+    }
+
+    const postRes = postFiscalDoc(db, docId, userId || 'system');
+    if (ownsTransaction) db.exec('COMMIT');
+    return { docId, ...postRes };
+  } catch (error) {
+    if (ownsTransaction) {
+      try { db.exec('ROLLBACK'); } catch (_) {}
+    }
+    throw error;
+  }
+}
+
+/**
  * Query trial balance for a company.
  */
 function getTrialBalance(db, companyId, options = {}) {
@@ -910,6 +1058,8 @@ module.exports = {
   validateBalanced,
   postFiscalDoc,
   reverseFiscalDoc,
+  createAndPostFiscalDoc,
+  createReversalFiscalDoc,
   getTrialBalance,
   getGeneralLedger,
   verifyHashChain,

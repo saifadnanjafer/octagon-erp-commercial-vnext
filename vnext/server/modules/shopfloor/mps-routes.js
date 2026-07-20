@@ -1,4 +1,4 @@
-// R7.3 thin HTTP adapter for production planning & capacity (MPS-Lite).
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const mps = require('./mps-engine');

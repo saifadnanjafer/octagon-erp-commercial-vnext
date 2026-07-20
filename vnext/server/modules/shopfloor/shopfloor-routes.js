@@ -1,4 +1,4 @@
-// R7.1 thin HTTP adapter for shop-floor execution terminals.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const shop = require('./shopfloor-engine');

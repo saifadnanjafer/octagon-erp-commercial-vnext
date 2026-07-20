@@ -1,4 +1,4 @@
-// R8.5 thin HTTP adapter for system diagnostics, upgrade logs, and support bundles.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const support = require('./support-engine');

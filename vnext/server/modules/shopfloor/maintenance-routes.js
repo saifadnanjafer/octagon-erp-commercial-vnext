@@ -1,4 +1,4 @@
-// R7.5 thin HTTP adapter for maintenance, asset lifecycle, depreciation schedules, and MTBF.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const maint = require('./maintenance-engine');

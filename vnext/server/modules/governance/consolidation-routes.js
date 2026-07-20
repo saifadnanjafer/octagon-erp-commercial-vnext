@@ -1,4 +1,4 @@
-// R8.1 thin HTTP adapter for multi-company operations, inter-company transactions, and consolidation reports.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const cons = require('./consolidation-engine');

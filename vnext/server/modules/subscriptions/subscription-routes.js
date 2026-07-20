@@ -1,4 +1,4 @@
-// R6.2 thin HTTP adapter for subscriptions and dunning.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const sub = require('./subscription-engine');

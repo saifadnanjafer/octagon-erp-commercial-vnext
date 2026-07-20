@@ -1,4 +1,4 @@
-// R7.2 thin HTTP adapter for OEE, downtime tracking, and Andon calls.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 'use strict';
 
 const oee = require('./oee-andon-engine');

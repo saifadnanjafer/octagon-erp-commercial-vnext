@@ -1,4 +1,4 @@
-// clean-room; R6.1 POS v2 domain engine.
+// clean-room; behavior modeled on OCTAGON_VNEXT_MASTER_ROADMAP.md (proprietary self, not copied)
 // Offline capture is replay-safe and records the sale only. GL is posted by
 // the authenticated session close/Z-report, never by an offline browser.
 'use strict';
