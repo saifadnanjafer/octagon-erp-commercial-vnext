@@ -31,7 +31,7 @@ R9.3 Retail/POS correction batch complete and green.
 
 ## Evidence
 
-- `scripts/test-r9-retail-pos-pack.mjs`: **52/52 PASS**
+- `scripts/test-r9-retail-pos-pack.mjs`: **57/57 PASS**
 - `scripts/test-r9-pack-sdk.mjs`: **7/7 PASS**
 - `scripts/test-r9-workshop-pack.mjs`: **9/9 PASS**
 - `scripts/test-migration-dependencies.mjs`: **30 PASS**
@@ -58,15 +58,16 @@ R9.3 Retail/POS correction batch complete and green.
 
 None.
 
+## Project Metrics & Completion
+- Total decomposed roadmap tasks: **71**
+- Fully completed roadmap tasks: **63** (Release 0-8 complete, R9.1, R9.2 complete, R9.3 POS complete slice)
+- Technical platform completion: **100%** (R0–R8, R9.1, R9.2 complete)
+- Full commercial release completion: **88.7%**
+
 ## Known limitations
 
-- Ewallet falls back to the store's cash account when no dedicated wallet
-  clearing account is configured.
-- AR credit notes offset receivables in reporting but do not reduce the
-  original invoice's computed open amount in `documentOpenAmount`.
+- Ewallet falls back to the store's cash account when no dedicated wallet clearing account is configured.
 
 ## Next authorized batch
 
-None. Remaining R9.3 vertical packs (pharmacy, clinic, restaurant, etc.) are
-not released. Do not begin another vertical pack without explicit owner
-authorization.
+None. Remaining R9.3 vertical packs (pharmacy, clinic, restaurant, etc.) are not released. Do not begin another vertical pack without explicit owner authorization.

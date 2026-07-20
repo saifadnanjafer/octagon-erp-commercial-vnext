@@ -181,6 +181,13 @@ check('cash sale posts atomically with stock, GL, tax, audit and event', () => {
   // GL balanced
   const docLines = db.prepare('SELECT SUM(debit) d, SUM(credit) c FROM fiscal_doc_line WHERE fiscal_doc_id = ?').get(cashSale.fiscal_doc_id);
   assert.ok(Math.abs(docLines.d - docLines.c) < 0.001);
+  // Verify tax_refs and tax_tag_ids contain VAT_10
+  const invoiceArap = db.prepare('SELECT fiscal_doc_id FROM arap_document WHERE id = ?').get(cashSale.arap_document_id);
+  assert.ok(invoiceArap);
+  const taxLines = db.prepare('SELECT tax_refs FROM fiscal_doc_line WHERE fiscal_doc_id = ? AND tax_refs IS NOT NULL').all(invoiceArap.fiscal_doc_id);
+  assert.ok(taxLines.some(l => l.tax_refs.includes('VAT_10')));
+  const glLines = db.prepare('SELECT tax_tag_ids FROM gl_line WHERE fiscal_doc_id = ? AND tax_tag_ids IS NOT NULL').all(invoiceArap.fiscal_doc_id);
+  assert.ok(glLines.some(l => l.tax_tag_ids.includes('VAT_10')));
   // Fiscal doc posted and hash-chained
   const fiscalDoc = db.prepare('SELECT state, doc_number FROM fiscal_doc WHERE id = ?').get(cashSale.fiscal_doc_id);
   assert.equal(fiscalDoc.state, 'posted');
@@ -683,7 +690,7 @@ check('posted cash cancellation reverses stock, GL, and remains immutable', () =
     lines: [{ product_id: 'prod_b', quantity: 2, unit_price: 50 }]
   }, 'cashier-2');
   const beforeStock = db.prepare('SELECT qty FROM bin WHERE company_id = ? AND product_id = ? AND location_id = ?').get(company, 'prod_b', `loc_${store.id}`).qty;
-  const result = retail.cancelTicket(db, company, sale.ticket.id, 'cashier-3');
+  const result = retail.cancelTicket(db, company, sale.ticket.id, { idempotency_key: 'cancel-cash-key-001' }, 'cashier-3');
   assert.equal(result.cancelled, true);
   assert.equal(result.ticket.state, 'cancelled');
   // Stock restored
@@ -707,7 +714,7 @@ check('posted card cancellation reverses through canonical engines', () => {
     store_id: cardStore.id, shift_id: cardShift.id, payment_method: 'card', idempotency_key: 'cancel-card-001',
     lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 100 }]
   }, 'cashier-2');
-  const result = retail.cancelTicket(db, company, sale.ticket.id, 'cashier-3');
+  const result = retail.cancelTicket(db, company, sale.ticket.id, { idempotency_key: 'cancel-card-key-001' }, 'cashier-3');
   assert.equal(result.cancelled, true);
   const doc = db.prepare('SELECT state FROM fiscal_doc WHERE id = ?').get(sale.ticket.fiscal_doc_id);
   assert.equal(doc.state, 'cancelled');
@@ -719,7 +726,7 @@ check('posted reference cancellation creates AR credit note', () => {
     store_id: store.id, shift_id: shift.id, payment_method: 'reference', idempotency_key: 'cancel-ref-001',
     lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 100 }]
   }, 'cashier-2');
-  const result = retail.cancelTicket(db, company, sale.ticket.id, 'cashier-3');
+  const result = retail.cancelTicket(db, company, sale.ticket.id, { idempotency_key: 'cancel-ref-key-001' }, 'cashier-3');
   assert.equal(result.cancelled, true);
   assert.ok(result.arap_reversal_id);
   const creditNote = db.prepare('SELECT * FROM arap_document WHERE id = ?').get(result.arap_reversal_id);
@@ -732,9 +739,9 @@ check('repeated cancellation is idempotent', () => {
     store_id: store.id, shift_id: shift.id, payment_method: 'cash', idempotency_key: 'cancel-idem-001',
     lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 50 }]
   }, 'cashier-2');
-  const first = retail.cancelTicket(db, company, sale.ticket.id, 'cashier-3');
+  const first = retail.cancelTicket(db, company, sale.ticket.id, { idempotency_key: 'cancel-idem-key-001' }, 'cashier-3');
   assert.equal(first.cancelled, true);
-  const second = retail.cancelTicket(db, company, sale.ticket.id, 'cashier-3');
+  const second = retail.cancelTicket(db, company, sale.ticket.id, { idempotency_key: 'cancel-idem-key-001' }, 'cashier-3');
   assert.equal(second.cancelled, true);
   assert.equal(second.ticket.state, 'cancelled');
 });
@@ -746,10 +753,65 @@ check('draft ticket cancellation is idempotent', () => {
   db.prepare(`INSERT INTO shop_retail_ticket (id, company_id, store_id, shift_id, ticket_number, kind, state, currency, subtotal, discount_total, tax_total, total, payment_method, idempotency_key, created_at, created_by)
     VALUES (?, ?, ?, ?, ?, 'sale', 'draft', 'IQD', 0, 0, 0, 0, 'cash', ?, ?, 'system')`)
     .run(draftId, company, store.id, shift.id, 'POS-DRAFT-1', 'draft-001', new Date().toISOString());
-  const first = retail.cancelTicket(db, company, draftId, 'cashier-3');
+  const first = retail.cancelTicket(db, company, draftId, { idempotency_key: 'cancel-draft-key-001' }, 'cashier-3');
   assert.equal(first.ticket.state, 'cancelled');
-  const second = retail.cancelTicket(db, company, draftId, 'cashier-3');
+  const second = retail.cancelTicket(db, company, draftId, { idempotency_key: 'cancel-draft-key-001' }, 'cashier-3');
   assert.equal(second.ticket.state, 'cancelled');
+});
+
+check('posted cash cancellation AR/payment/GL/allocation consistency', () => {
+  const sale = retail.postSale(db, company, {
+    store_id: store.id, shift_id: shift.id, payment_method: 'cash', idempotency_key: 'cancel-cash-consistency-001',
+    lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 150 }]
+  }, 'cashier-2');
+  
+  const originalArapId = sale.ticket.arap_document_id;
+  const result = retail.cancelTicket(db, company, sale.ticket.id, { idempotency_key: 'cancel-cash-consistency-key-001' }, 'cashier-3');
+  
+  // 1. Original invoice open_amount = 0
+  const openAmt = arap.documentOpenAmount(db, originalArapId).open_amount;
+  assert.equal(openAmt, 0);
+  
+  // 2. Original payment is cancelled/reversed (open amount of payment resolved)
+  const origPayment = db.prepare('SELECT * FROM shop_retail_ticket_payment WHERE ticket_id = ?').get(sale.ticket.id);
+  assert.ok(origPayment.payment_id);
+  const paymentDoc = db.prepare('SELECT status FROM payment WHERE id = ?').get(origPayment.payment_id);
+  assert.equal(paymentDoc.status, 'cancelled');
+  
+  // 3. Settled credit note: open amount = 0
+  assert.ok(result.arap_reversal_id);
+  const cnOpenAmt = arap.documentOpenAmount(db, result.arap_reversal_id).open_amount;
+  assert.equal(cnOpenAmt, 0);
+  
+  // 4. Net GL balance of cancellation is exactly 0
+  const netDebitCredit = db.prepare(`
+    SELECT SUM(debit) - SUM(credit) AS net 
+    FROM gl_line 
+    WHERE fiscal_doc_id IN (?, ?, ?, ?)
+  `).get(
+    sale.ticket.fiscal_doc_id,
+    db.prepare('SELECT fiscal_doc_id FROM arap_document WHERE id = ?').get(originalArapId).fiscal_doc_id,
+    result.reversal_fiscal_doc_id,
+    db.prepare('SELECT fiscal_doc_id FROM payment WHERE id = ?').get(origPayment.payment_id).fiscal_doc_id
+  ).net;
+  assert.ok(Math.abs(netDebitCredit) < 0.001);
+});
+
+check('outbox failure injection aborts transaction and leaves zero residue', () => {
+  const beforeTickets = db.prepare('SELECT COUNT(*) n FROM shop_retail_ticket').get().n;
+  const beforeGl = db.prepare('SELECT COUNT(*) n FROM gl_line').get().n;
+  
+  db.exec("CREATE TRIGGER temp.t_outbox_fail BEFORE INSERT ON vnext_outbox BEGIN SELECT RAISE(ABORT, 'injected outbox write failure'); END;");
+  
+  assert.throws(() => retail.postSale(db, company, {
+    store_id: store.id, shift_id: shift.id, payment_method: 'cash', idempotency_key: 'fail-outbox-inject',
+    lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 100 }]
+  }, 'cashier-2'), /injected outbox write failure/);
+  
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM shop_retail_ticket').get().n, beforeTickets);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM gl_line').get().n, beforeGl);
+  
+  db.exec("DROP TRIGGER temp.t_outbox_fail;");
 });
 
 // ── Audit, worklist, outbox, event evidence ──

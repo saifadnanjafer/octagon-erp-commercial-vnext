@@ -91,7 +91,7 @@ function createArapDocument(db, companyId, input, userId) {
     }
     const controlDebit = kind.startsWith('customer') ? (creditDoc ? 0 : localTotal) : (creditDoc ? localTotal : 0);
     const controlCredit = kind.startsWith('customer') ? (creditDoc ? localTotal : 0) : (creditDoc ? 0 : localTotal);
-    insert.run(id('line'), docId, companyId, controlId, controlDebit, controlCredit, currency, kind.startsWith('customer') && !creditDoc ? total : (kind.startsWith('customer') && creditDoc ? 0 : (!kind.startsWith('customer') && creditDoc ? total : 0)), kind.startsWith('customer') && creditDoc ? total : (!kind.startsWith('customer') && !creditDoc ? total : 0), null, null, 'AR/AP control', stamp, userId || 'system');
+    insert.run(id('line'), docId, companyId, controlId, controlDebit, controlCredit, currency, kind.startsWith('customer') && !creditDoc ? total : (kind.startsWith('customer') && creditDoc ? 0 : (!kind.startsWith('customer') && creditDoc ? total : 0)), kind.startsWith('customer') && creditDoc ? total : (!kind.startsWith('customer') && !creditDoc ? total : 0), null, null, null, 'AR/AP control', stamp, userId || 'system');
     if (owns) db.exec('COMMIT');
     return { id: arapId, fiscal_doc_id: docId, document_kind: kind, total_amount: total, state: 'draft' };
   } catch (error) {

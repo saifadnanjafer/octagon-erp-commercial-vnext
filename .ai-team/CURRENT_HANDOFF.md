@@ -60,7 +60,7 @@ correction reworks it completely before reporting completion.
 | Command | Result |
 |---|---|
 | `node --check` on all changed JS/MJS | OK |
-| `node scripts/test-r9-retail-pos-pack.mjs` | **52/52 PASS** |
+| `node scripts/test-r9-retail-pos-pack.mjs` | **57/57 PASS** |
 | `node scripts/test-r9-pack-sdk.mjs` | **7/7 PASS** |
 | `node scripts/test-r9-workshop-pack.mjs` | **9/9 PASS** |
 | `node scripts/test-migration-dependencies.mjs` | **30 PASS** |
@@ -90,15 +90,15 @@ Git checkout is valid at the repository root
 Branch `automation/r9-retail-pos` is clean and up to date with origin. No
 production databases or production data were touched.
 
+## Project Metrics & Completion
+- Total decomposed roadmap tasks: **71**
+- Fully completed roadmap tasks: **63** (Release 0-8 complete, R9.1, R9.2 complete, R9.3 POS complete slice)
+- Technical platform completion: **100%** (R0–R8, R9.1, R9.2 complete)
+- Full commercial release completion: **88.7%**
+
 ## Known limitations
 
-- Ewallet account selection currently falls back to the store's cash account
-  when no dedicated wallet clearing account is configured. A future migration
-  could add `default_ewallet_account_id` to `shop_retail_store`.
-- The AR open-amount computation in `arap-engine.documentOpenAmount` only
-  considers payments, not credit notes. Reference refunds/cancellations create
-  AR credit notes that offset the receivable in reporting but do not reduce
-  the original invoice's computed open amount.
+- Ewallet account selection currently falls back to the store's cash account when no dedicated wallet clearing account is configured. A future migration could add `default_ewallet_account_id` to `shop_retail_store`.
 
 ## Exact next task
 

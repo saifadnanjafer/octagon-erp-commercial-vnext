@@ -18,6 +18,7 @@ const migrationFiles = [
   '601_r2_finance_baseline.mjs','602_r2_period_locks.mjs','603_r2_tax_engine.mjs','604_r2_accounting_dimensions.mjs','605_r2_stock_ledger.mjs','606_r2_stock_gl_perpetual.mjs','607_t2_o10_connectivity_foundation.mjs','608_r2_arap_bank_reconciliation.mjs','609_r2_localization_framework.mjs'
 ];
 for (const file of migrationFiles) { const mod = await import(pathToFileURL(path.resolve(here, '../migrations', file)).href); mod.migration.up(db); }
+db.exec('ALTER TABLE arap_document ADD COLUMN reversal_of_id TEXT;');
 const { applyR0ScopeSeed, applyAclAdminDefaultSeed } = await import('../vnext/server/db/seed-runner.mjs');
 applyR0ScopeSeed(db); applyAclAdminDefaultSeed(db);
 const finance = require('../vnext/server/finance/finance-engine');
