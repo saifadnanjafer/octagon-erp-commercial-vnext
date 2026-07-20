@@ -3,9 +3,10 @@ Authority level 7 — **the single canonical roadmap** for the Commercial VNext 
 
 ## Current Status Summary (2026-07-20)
 - Total Decomposed Tasks: **71**
-- Completed Tasks: **63** (R0: 4/4, R1: 14/14, R2: 9/9, R3: 7/7, R4: 5/5, R5: 5/5, R6: 7/7, R7: 5/5, R8: 5/5, R9: 2/4 fully completed + R9.3 Retail/POS completed slice)
-- Technical Platform Completion: **100%** (Core platform R0-R8, R9.1, R9.2 complete)
-- Full Commercial Release Completion: **88.7%**
+- Completed Tasks Count (unweighted item count): **63/71** (R0: 4/4, R1: 14/14, R2: 9/9, R3: 7/7, R4: 5/5, R5: 5/5, R6: 7/7, R7: 5/5, R8: 5/5, R9: 2/4 fully completed + R9.3 Retail/POS completed slice)
+- Core Technical Platform Completion: **100%** (Releases 0-8, R9.1, R9.2 complete)
+- Commercial Readiness Estimate: **85%** (pending remaining R9.3 industry vertical packs and Release 10 migration/piloting)
+- Overall Product Completion: **85%**
 
 **Relationship to the production track:** `octagon-erp/MASTER_ROADMAP.md` + `AGENT_EXECUTION_PLAN.md` govern the *current production* system (Arc 1 complete; Phase-7 audit/hardening queue open). That track continues independently to keep production stable for existing users. **This roadmap governs the isolated VNext generation only.** No VNext work touches production; no production stabilization task is superseded by this file.
 
@@ -15,7 +16,7 @@ Authority level 7 — **the single canonical roadmap** for the Commercial VNext 
 
 ## 0. Rules for every implementation agent
 
-**Binding scope and release clarification (2026-07-17, current authorization reconciled 2026-07-18):** `company_id` is required and non-null on every tenant-owned master, transactional, ledger, workflow, attachment, and operational record. Do not add it mechanically to global technical/reference tables. R0.4 owns the table-by-table classification and migration enforcement; R1.13 establishes the minimum commercial master-data kernel before any ledger or stock work begins. R0 is closed, R1 is closed at 19 PASS/0 PARTIAL/0 FAIL, O-2 is decided, R2 is authorized, and T2.1.1–T2.5.2 are implemented/tested. Implementation is paused before T2.6.1 for external review and O-10 alignment; this correction pass does not authorize code or revoke R2 authorization.
+**Binding scope and release clarification (2026-07-17, current authorization reconciled 2026-07-18):** `company_id` is required and non-null on every tenant-owned master, transactional, ledger, workflow, attachment, and operational record. Do not add it mechanically to global technical/reference tables. R0.4 owns the table-by-table classification and migration enforcement; R1.13 establishes the minimum commercial master-data kernel before any ledger or stock work begins. R0-R8 are complete, and R9.1, R9.2, and the R9.3.3 Retail/POS slice are fully complete and verified. The actual next authorized task is the completion of the remaining R9.3 industry-specific vertical packs (pharmacy, clinic, restaurant, etc.) or Release 10 migration and validation.
 
 ### 0.1 Binding data-scope register
 
@@ -35,7 +36,7 @@ R0.4 acceptance must reject a missing or invalid `company_id` on every company-o
 R1.13 is a hard prerequisite for every ledger or stock task. It must deliver products/services, units of measure, categories, parties, companies, branches, warehouses, locations, currencies and dated rates, taxes, accounts, and fiscal years/periods, with scoped create/read fixtures and cross-company HTTP proof.
 
 R2.1 is unified only at the accounting boundary, never a universal god object. `fiscal_doc` is a typed accounting header limited to explicit categories: `manual_entry`, `sales_invoice`, `sales_refund`, `purchase_invoice`, `purchase_refund`, `cash_receipt`, `cash_payment`, `stock_valuation`, `tax_adjustment`, and `period_close`. Operational orders, shipments, work orders, POS tickets, contracts, and service records remain source-specific records. Each source owns validation and an explicit posting adapter that can create only its permitted category. Posting validates source category, company, period, balance, and source-specific rules before immutable journal output. Cancellation creates a cross-linked reversal document and never mutates original posted output; repost/rebuild tooling applies only to derived balances.
-1. Work only inside `octagon-erp-commercial-vnext/` after authorization for the applicable task, never in `octagon-erp/` (production). No git commands anywhere. Never open/point at the production `database.db`. The current authorized sequence is R2 through `T2.5.2`, then the externally reviewed `T2.O10.1` retrofit gate, then `T2.6.1` only after that gate passes.
+1. Work only inside `octagon-erp-commercial-vnext/` after authorization for the applicable task, never in `octagon-erp/` (production). Operate via Git on the target repository. Never open/point at the production `database.db`. The actual next authorized task is the completion of the remaining R9.3 industry-specific vertical packs (pharmacy, clinic, restaurant, etc.) or Release 10 migration and validation.
 2. Pull tasks from `OCTAGON_VNEXT_EXECUTION_PLAN.md` (authority 8), which decomposes these epics. Respect release entry/exit gates. Within a release, epics marked ∥ run in parallel lanes with exclusive file ownership.
 3. **FROZEN:** employee/timesheet/attendance/payroll data + logic (Truth Audit §6 maps every function). Read-only via `LegacyPayrollAdapter`. Any change = owner decision O-3, never an agent decision.
 4. **License law (binding, forensic doc §0):** Odoo/ERPNext/IDURAR/NocoBase = clean-room concepts only (no code copy, no line-by-line ports); RuoYi/AureusERP = MIT, copy allowed with `THIRD_PARTY_NOTICES.md` entry. Provenance comment on every engine: `// clean-room; behavior modeled on <donor path> (<license>, not copied)`.
@@ -454,4 +455,4 @@ Release notes; support/upgrade policy published; backup+restore drill on the GA 
 ## 12. Final-validation mapping (the 12 checks → where satisfied)
 1 Octagon modules all dispositioned → §1.1. 2 Donor capabilities all decided → §1.2 + Cross-Check. 3 Rev-2 findings folded → §11 + ⭐ epics. 4 Entry/exit gates → every release header. 5 Engines precede modules → §2 spine. 6 Finance/stock integrity explicit → R2.1/R2.5 invariants + gates. 7 Migration/back-compat → R0.3/R0.4, per-epic Migration fields, R10.1–R10.3. 8 Licensing documented → §0.4 + forensic §0 + R0.2. 9 Task detail sufficiency → Execution Plan (authority 8) with R0–R2 fully decomposed. 10 One canonical roadmap → this file (Rev 1 archived). 11 Owner decisions separated → §10. 12 Cross-document contradiction check → independent validation agent report (see Execution Plan appendix note).
 
-*End of canonical roadmap. Authority 7. Execution detail → `OCTAGON_VNEXT_EXECUTION_PLAN.md`. Current next task after external approval is `T2.O10.1`; execution stops at its gate before `T2.6.1`.*
+*End of canonical roadmap. Authority 7. Execution detail → `OCTAGON_VNEXT_EXECUTION_PLAN.md`. The actual next authorized task is the completion of the remaining R9.3 industry-specific vertical packs (pharmacy, clinic, restaurant, etc.) or Release 10 migration and validation.*

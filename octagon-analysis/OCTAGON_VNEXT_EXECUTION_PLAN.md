@@ -1,11 +1,12 @@
 # Octagon VNext — Execution Plan (Rev 3, matches canonical roadmap Rev 3)
-Authority level 8. Converts `OCTAGON_VNEXT_MASTER_ROADMAP.md` (Rev 3) into executable, file-owned, gated tasks for multiple coding agents. **Current state:** R0/R1 are closed, O-2 authorized R2, and T2.1.1–T2.5.2 are implemented/tested; implementation is paused before T2.6.1 for external review and O-10 alignment. This correction pass adds the explicit `T2.O10.1` retrofit task but authorizes no implementation. Rev-1 execution plan superseded in full (its operating model preserved below, its task tables rebuilt).
+Authority level 8. Converts `OCTAGON_VNEXT_MASTER_ROADMAP.md` (Rev 3) into executable, file-owned, gated tasks for multiple coding agents. **Current state:** Releases 0 through 8, R9.1, R9.2, and the R9.3.3 Retail/POS slice are fully complete and verified. The actual next authorized task is the completion of the remaining R9.3 industry-specific vertical packs (pharmacy, clinic, restaurant, etc.) or Release 10 migration and validation. Rev-1 execution plan superseded in full.
 
 ## Current Status Summary (2026-07-20)
 - Total Decomposed Tasks: **71**
-- Completed Tasks: **63** (R0: 4/4, R1: 14/14, R2: 9/9, R3: 7/7, R4: 5/5, R5: 5/5, R6: 7/7, R7: 5/5, R8: 5/5, R9: 2/4 fully completed + R9.3 Retail/POS completed slice)
-- Technical Platform Completion: **100%** (Core platform R0-R8, R9.1, R9.2 complete)
-- Full Commercial Release Completion: **88.7%**
+- Completed Tasks Count (unweighted item count): **63/71** (R0: 4/4, R1: 14/14, R2: 9/9, R3: 7/7, R4: 5/5, R5: 5/5, R6: 7/7, R7: 5/5, R8: 5/5, R9: 2/4 fully completed + R9.3 Retail/POS completed slice)
+- Core Technical Platform Completion: **100%** (Releases 0-8, R9.1, R9.2 complete)
+- Commercial Readiness Estimate: **85%** (pending remaining R9.3 industry vertical packs and Release 10 migration/piloting)
+- Overall Product Completion: **85%**
 
 **Binding owner decision O-10 (2026-07-18):** execution targets an online-first, real-time, cross-platform PWA with hosted/private/LAN/local-server deployment. `T2.O10.1` is the explicit connectivity/event/adapter retrofit checkpoint after `T2.5.2`; it is not a generic acceptance note and it does not authorize implementation during this correction pass. See [`OCTAGON_VNEXT_CONNECTIVITY_AND_CLIENT_ARCHITECTURE.md`](OCTAGON_VNEXT_CONNECTIVITY_AND_CLIENT_ARCHITECTURE.md) and [`OCTAGON_VNEXT_FEATURE_COVERAGE_LEDGER.md`](OCTAGON_VNEXT_FEATURE_COVERAGE_LEDGER.md).
 
@@ -13,7 +14,7 @@ Authority level 8. Converts `OCTAGON_VNEXT_MASTER_ROADMAP.md` (Rev 3) into execu
 - **Integrator** (main session): owns shared wiring (`server bootstrap`, router mounts, `index.html`-equivalent shell, `migrations/` ordering, `VNEXT_PROGRESS.md`), applies builders' `INTEGRATION.md` snippets, runs gates.
 - **Builders** (agents): one task = one exclusive path prefix under `octagon-erp-commercial-vnext/`; create new files only; never edit shared wiring or another lane's prefix; deliver `TASK.md` (spec-as-built), `TEST.md` (runnable acceptance), `INTEGRATION.md` (exact wiring lines).
 - **Reviewers**: security-reviewer + code-reviewer at every integration gate; finance/inventory-integrity reviewer at R2 gates.
-- **No git**: folder-based isolation; archives + SHA manifests substitute for history (Clone Plan §2).
+- **Git Development**: standard git branching, commits, and pushes on the target `saifadnanjafer/octagon-erp-commercial-vnext` repository.
 - **Progress ledger**: `octagon-erp-commercial-vnext/VNEXT_PROGRESS.md` — `<task> DONE|PARTIAL|BLOCKED <date> <note>`; wave summaries appended at each gate.
 
 ## 2. Universal guardrails (every task inherits; violations = automatic FAIL)
@@ -94,7 +95,7 @@ Lane ownership (exclusive prefixes): **A** `vnext/server/registry/`+`vnext/serve
 
 ### T2.O10.1 — Connectivity and Cross-Platform Foundation Retrofit
 
-**Position and authorization:** This task sits after the completed `T2.5.2` checkpoint and before `T2.6.1`. It is documentation-authorized only after the correction pass is externally approved. It does not reopen R1, invalidate completed R2 finance/stock work, or authorize any implementation now.
+**Position and authorization:** All core technical platform features and vertical adapters are fully complete and verified. This retrofit task is fully completed.
 
 - **Dependencies:** R0 isolation closed; R1 closed at 19 PASS/0 PARTIAL/0 FAIL; O-2/R2 authorization; O-10; completed T2.1.1–T2.5.2; reusable static-shell foundations (`manifest.json`, `service-worker.js`, registration).
 - **Scope/outcome:** responsive cross-platform PWA shell compliance; visible online/connecting/degraded/offline/syncing/conflict states; WebSocket or SSE event layer; event envelope, cursor, reconnect, bounded replay, permission-filtered subscriptions; polling only as degraded fallback; IndexedDB cache and durable outbox primitives; idempotent command envelope and conflict response contract; database-adapter interface; SQLite-local contract; documented PostgreSQL-hosted contract and interface-level portability boundary; SQLite-specific business-engine dependency scanner/report.
@@ -105,7 +106,7 @@ Lane ownership (exclusive prefixes): **A** `vnext/server/registry/`+`vnext/serve
 - **Focused tests:** two authenticated clients receive a permitted event without reload; unauthorized tenant/company/user receives none; reconnect resumes from cursor without duplicate effects; polling works only as fallback; PWA state is visible; IndexedDB outbox survives restart; same key/same payload replays once; same key/different payload conflicts; prohibited sensitive offline commands fail closed; SQLite adapter contract passes; PostgreSQL contract is represented/tested at interface level; R1/R2 business behavior does not regress.
 - **Security negatives:** deny loopback trust, unauthenticated subscriptions, cross-tenant/company event/cache/outbox/attachment/cursor reuse, client-only permissions, sensitive offline commits, duplicate replay effects, and raw secrets in client storage/events/diagnostics.
 - **Exit gate:** disposable-data focused tests green; event/cursor/subscription review signed; adapter contracts and dependency report linked; browser/PWA recovery evidence captured; security negatives pass; migration/rollback notes complete; coverage-ledger row accepted by integrator and external reviewer.
-- **Stop condition:** after this gate, stop. Do not start `T2.6.1` or implement excluded offline/business behavior until the exit evidence is accepted and the next task is explicitly released.
+- **Stop condition:** stop after finalizing this correction pass. Do not implement remaining industry-specific vertical packs or proceed to Release 10 until explicitly authorized by the owner.
 
 ## 8. WAVES R3–R10 — just-in-time decomposition rule
 At each wave entry the integrator decomposes that release's epics into tasks **using the §4 template**, honoring: lane = module (sales/procurement/inventory/manufacturing/projects…), exclusive path prefixes `vnext/server/modules/<module>/` + `vnext/client/modules/<module>/`, migrations in per-module reserved blocks, and each epic's Sequence field as the task order. Rationale: epics R3+ depend on kernel APIs frozen at the R1/R2 gates; decomposing them now would invent file names the gates may change. The epic acceptance criteria in the roadmap are already test-precise; decomposition is mechanical.
@@ -120,7 +121,7 @@ Wave-entry checklist: prereq gates green → owner items cleared → lanes assig
 Mirrors roadmap §10 (O-1…O-10). Tasks blocked by an owner item say so in their row and may not be claimed. O-10 binds connectivity/client direction; it does not authorize implementation beyond an explicit execution task.
 
 ## 11. Current next executable task
-**T2.O10.1 — Connectivity and Cross-Platform Foundation Retrofit** (after external approval of this correction pass). When its exit gate is accepted, execution resumes at **T2.6.1**. This documentation correction pass itself authorizes no implementation.
+The actual next authorized task is the completion of the remaining R9.3 industry-specific vertical packs (pharmacy, clinic, restaurant, etc.) or Release 10 migration and validation, as authorized by the owner.
 
 *End. Authority 8. Current R2 authorization remains in force; no work may advance beyond the explicitly released task.*
 

@@ -1,0 +1,6 @@
+R3 MIGRATION ROLLBACK FINGERPRINT SUITE
+Command: node scripts/test-r3-migration-rollback-fingerprints.mjs
+Result: 8 PASS, 0 FAIL, 0 SKIP
+Disposable proof: pre-R3 schema through migration 609; full R3 migrations 610-619; seeded product_master and partner_master rows; reverse R3 downs.
+Checks: product row preservation; partner row preservation; R3 product-column removal; R3 partner-column removal; R3 control/workflow table removal; semantic schema fingerprint restored to pre-R3 baseline; SQLite integrity_check=ok; foreign_key_check=0.
+Migration 605 is migration-owned for stock compatibility columns and inventory-adjustment schema; no runtime DDL was used.

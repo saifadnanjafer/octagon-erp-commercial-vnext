@@ -1,0 +1,6 @@
+R3 AUTHENTICATED BROWSER SUITE
+Command: node scripts/test-r3-authenticated-browser.mjs
+Result: 5 PASS, 0 FAIL, 0 SKIP
+Authentication: disposable admin created only through explicit test bypass fixture seeding; browser then used real /api/auth/login and the resulting octagon_session cookie.
+Chrome viewport evidence: desktop RTL 1280x800; tablet RTL 768x1024; mobile RTL 390x844; desktop LTR 1280x800; mobile LTR 390x844.
+Each pass proved connected state, six tabs, project/services navigation, and no horizontal overflow. No production database or screenshots were used.

@@ -722,8 +722,10 @@ function refundableBalance(db, companyId, originalId) {
 function postRefund(db, companyId, input, userId) {
   ensureCompany(db, companyId);
   const originalTicketId = required(input.original_ticket_id, 'original_ticket_id is required', 'ORIGINAL_REQUIRED');
-  const original = db.prepare("SELECT * FROM shop_retail_ticket WHERE id = ? AND company_id = ? AND state = 'posted'").get(originalTicketId, companyId);
+  const original = db.prepare("SELECT * FROM shop_retail_ticket WHERE id = ? AND company_id = ?").get(originalTicketId, companyId);
   if (!original) throw fail('original posted ticket not found', 404, 'ORIGINAL_NOT_FOUND');
+  if (original.kind !== 'sale') throw fail('only sale tickets can be refunded', 400, 'INVALID_ORIGINAL_KIND');
+  if (original.state !== 'posted') throw fail('only posted tickets can be refunded', 400, 'INVALID_ORIGINAL_STATE');
   const idem = String(input.idempotency_key || '').trim();
   if (!idem) throw fail('idempotency_key is required', 400, 'IDEMPOTENCY_REQUIRED');
   const idemScope = idempotencyScope(db, userId, companyId, 'retail.refund', idem, input);

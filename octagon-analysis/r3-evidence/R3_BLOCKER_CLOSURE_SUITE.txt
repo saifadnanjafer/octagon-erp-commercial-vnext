@@ -1,0 +1,5 @@
+R3 BLOCKER CLOSURE SUITE
+Command: node scripts/test-r3-blocker-closure.mjs
+Result: 29 PASS, 0 FAIL, 0 SKIP
+Coverage: sales reservation/partial delivery/backorder/invoice/return-credit/credit-limit/commission; procurement partial receipt/vendor bill/return/duplicate supplier document; route resolution/reorder/putaway/pick-pack-ship/cycle approval; manufacturing WIP/job-card/completion/reversal; landed valuation GL/allocation/reversal with stock-value restoration; subcontract issue/receipt; project billing; SLA escalation and business-hours pause/resume; field-service stock parts; chatter/history/audit/worklist/integrity/FK.
+Additional closure assertions: fabricated three-way-match body rejected while a posted PO/receipt/bill match was derived; pick/pack/ship created one ledger move and remained idempotent; project billing posted only explicitly selected timesheet sources; cycle-count approval used canonical Approval Center maker-checker.

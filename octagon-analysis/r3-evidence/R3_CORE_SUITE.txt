@@ -1,0 +1,4 @@
+R3 CORE SUITE
+Command: node scripts/test-r3-core.mjs
+Result: 19 PASS, 0 FAIL, 0 SKIP
+Checks: canonical product_master reuse; goods/services; barcode duplicate; pricing precedence/explain trace; cross-company scope; quote/order/posted invoice; quote idempotency; payload mismatch rejection; record-scoped ACL; cross-company/tenant idempotency isolation; procurement; reservation; manufacturing; landed/subcontract; separate project timesheet; helpdesk; atomic rollback; integrity/FK.

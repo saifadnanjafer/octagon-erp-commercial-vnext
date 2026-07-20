@@ -1,0 +1,4 @@
+MIGRATION DEPENDENCY SUITE
+Command: node scripts/test-migration-dependencies.mjs
+Result: 30 assertions passed, 0 failed
+Applied R3 IDs: 610_r3_product_pricing_core, 611_r3_pricing_rules, 612_r3_sales_core, 613_r3_procurement_core, 614_r3_inventory_operations, 615_r3_manufacturing_core, 616_r3_landed_subcontracting, 617_r3_services_helpdesk, 618_r3_blocker_closure.

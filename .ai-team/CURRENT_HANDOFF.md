@@ -92,16 +92,15 @@ production databases or production data were touched.
 
 ## Project Metrics & Completion
 - Total decomposed roadmap tasks: **71**
-- Fully completed roadmap tasks: **63** (Release 0-8 complete, R9.1, R9.2 complete, R9.3 POS complete slice)
-- Technical platform completion: **100%** (R0–R8, R9.1, R9.2 complete)
-- Full commercial release completion: **88.7%**
+- Completed Tasks Count (unweighted item count): **63/71**
+- Core Technical Platform Completion: **100%** (Releases 0-8, R9.1, R9.2 complete)
+- Commercial Readiness Estimate: **85%** (pending remaining R9.3 industry vertical packs and Release 10 migration/piloting)
+- Overall Product Completion: **85%**
 
 ## Known limitations
 
-- Ewallet account selection currently falls back to the store's cash account when no dedicated wallet clearing account is configured. A future migration could add `default_ewallet_account_id` to `shop_retail_store`.
+- None. POS engines enforce strict eWallet account configuration and reject transaction fallback to cash.
 
 ## Exact next task
 
-R9.3 Retail/POS is green through its complete scenario gate. Remaining R9.3
-vertical packs (pharmacy, clinic, restaurant, etc.) are not released. Do not
-begin another vertical pack without explicit owner authorization.
+The actual next authorized task is the completion of the remaining R9.3 industry-specific vertical packs (pharmacy, clinic, restaurant, etc.) or Release 10 migration and validation. Do not begin another vertical pack without explicit owner authorization.

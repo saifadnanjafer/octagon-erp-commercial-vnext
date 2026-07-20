@@ -6,19 +6,14 @@ import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 
+import { runMigrations, openMigrationDatabase } from '../vnext/server/db/migration-runner.mjs';
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 const dbPath = path.resolve(here, '../vnext-data/test-r2-t26-t28.db');
 for (const suffix of ['', '-wal', '-shm']) { try { fs.unlinkSync(dbPath + suffix); } catch (_) {} }
-const db = new DatabaseSync(dbPath);
-db.exec('PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000; PRAGMA foreign_keys=ON;');
-const migrationFiles = [
-  '001_r0_scope_contract.mjs','101_r1_lane_a_tables.mjs','201_r1_lane_b_tables.mjs','301_r1_lane_c_tables.mjs','401_r1_lane_d_tables.mjs','501_r1_kernel_completion.mjs',
-  '102_r1_lane_a_completion.mjs','202_r1_lane_b_completion.mjs','302_r1_lane_c_completion.mjs','402_r1_lane_d_completion.mjs',
-  '601_r2_finance_baseline.mjs','602_r2_period_locks.mjs','603_r2_tax_engine.mjs','604_r2_accounting_dimensions.mjs','605_r2_stock_ledger.mjs','606_r2_stock_gl_perpetual.mjs','607_t2_o10_connectivity_foundation.mjs','608_r2_arap_bank_reconciliation.mjs','609_r2_localization_framework.mjs'
-];
-for (const file of migrationFiles) { const mod = await import(pathToFileURL(path.resolve(here, '../migrations', file)).href); mod.migration.up(db); }
-db.exec('ALTER TABLE arap_document ADD COLUMN reversal_of_id TEXT;');
+await runMigrations({ dbPath, direction: 'up' });
+const db = openMigrationDatabase(dbPath);
 const { applyR0ScopeSeed, applyAclAdminDefaultSeed } = await import('../vnext/server/db/seed-runner.mjs');
 applyR0ScopeSeed(db); applyAclAdminDefaultSeed(db);
 const finance = require('../vnext/server/finance/finance-engine');

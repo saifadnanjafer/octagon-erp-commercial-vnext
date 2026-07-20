@@ -1,0 +1,8 @@
+R3 AUTHENTICATED BROWSER ACCEPTANCE
+Command: node scripts/test-r3-authenticated-browser.mjs
+Result: 5 PASS, 0 FAIL, 0 SKIP
+Disposable server: http://127.0.0.1:18998, Chrome executable, isolated temporary profile, no production database.
+Authentication: real /api/auth/login password verification and octagon_session cookie; test bypass used only for disposable fixture seeding.
+Viewport results: desktop RTL 1280x800 PASS; tablet RTL 768x1024 PASS; mobile RTL 390x844 PASS; desktop LTR 1280x800 PASS; mobile LTR 390x844 PASS.
+Each viewport proved connected state, six tabs, live project/services navigation, and no horizontal overflow.
+No screenshots were generated or included.

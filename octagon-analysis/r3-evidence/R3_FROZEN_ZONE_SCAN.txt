@@ -1,0 +1,3 @@
+R3 FROZEN-ZONE SCAN
+Command: node scripts/check-r3-frozen-zone.mjs
+Result: expected 0 mutation references in R3 runtime/client module files; payroll, attendance, and legacy timesheets remain outside R3 writes.

@@ -1,0 +1,4 @@
+R3 HTTP SUITE
+Command: node scripts/test-r3-http.mjs
+Result: 25 PASS, 0 FAIL, 0 SKIP
+Checks: disposable health; explicit test-only fixture seed; real password login; real session-cookie issuance and session check; unauthenticated 401; authenticated RTL responsive entry point; R2 partner bridge; product/pricing/explain; quote/order/invoice; company-scoped record history/chatter/approval; missing-record rejection; procurement and derived three-way-match rejection; snapshot/frozen declaration; invalid company denial; protected no-cookie rejection. Protected requests used the real session cookie, not the test bypass.

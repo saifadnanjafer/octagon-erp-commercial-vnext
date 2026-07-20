@@ -580,9 +580,17 @@ check('duplicate reversal is rejected', () => {
 // ── Refund ──
 
 check('refund creates a cross-linked cash reversal without touching stock', () => {
+  const saleForRefund = retail.postSale(db, company, {
+    store_id: store.id,
+    shift_id: shift.id,
+    payment_method: 'cash',
+    idempotency_key: 'refund-test-sale-001',
+    lines: [{ product_id: 'prod_a', quantity: 1, unit_price: 100 }]
+  }, 'cashier-2');
+
   const beforeStock = db.prepare('SELECT qty FROM bin WHERE company_id = ? AND product_id = ? AND location_id = ?').get(company, 'prod_a', `loc_${store.id}`).qty;
   const result = retail.postRefund(db, company, {
-    original_ticket_id: returnTicket.id,
+    original_ticket_id: saleForRefund.ticket.id,
     amount: 100,
     idempotency_key: 'refund-001'
   }, 'cashier-3');
@@ -590,7 +598,7 @@ check('refund creates a cross-linked cash reversal without touching stock', () =
   assert.equal(result.ticket.total, 100);
   assert.equal(db.prepare('SELECT qty FROM bin WHERE company_id = ? AND product_id = ? AND location_id = ?').get(company, 'prod_a', `loc_${store.id}`).qty, beforeStock);
   assert.throws(() => retail.postRefund(db, company, {
-    original_ticket_id: returnTicket.id,
+    original_ticket_id: saleForRefund.ticket.id,
     amount: 999999,
     idempotency_key: 'refund-002'
   }, 'cashier-3'), { code: 'REFUND_EXCEEDS_BALANCE' });
@@ -798,8 +806,21 @@ check('posted cash cancellation AR/payment/GL/allocation consistency', () => {
 });
 
 check('outbox failure injection aborts transaction and leaves zero residue', () => {
-  const beforeTickets = db.prepare('SELECT COUNT(*) n FROM shop_retail_ticket').get().n;
-  const beforeGl = db.prepare('SELECT COUNT(*) n FROM gl_line').get().n;
+  const countTickets = db.prepare('SELECT COUNT(*) n FROM shop_retail_ticket').get().n;
+  const countLines = db.prepare('SELECT COUNT(*) n FROM shop_retail_ticket_line').get().n;
+  const countTaxes = db.prepare('SELECT COUNT(*) n FROM shop_retail_ticket_tax').get().n;
+  const countStockMoves = db.prepare('SELECT COUNT(*) n FROM stock_move').get().n;
+  const countBins = db.prepare('SELECT COUNT(*) n FROM bin').get().n;
+  const countFiscalDocs = db.prepare('SELECT COUNT(*) n FROM fiscal_doc').get().n;
+  const countGlLines = db.prepare('SELECT COUNT(*) n FROM gl_line').get().n;
+  const countArapDocs = db.prepare('SELECT COUNT(*) n FROM arap_document').get().n;
+  const countPayments = db.prepare('SELECT COUNT(*) n FROM payment').get().n;
+  const countAllocations = db.prepare('SELECT COUNT(*) n FROM payment_allocation').get().n;
+  const countAudits = db.prepare('SELECT COUNT(*) n FROM x_audit').get().n;
+  const countWorklist = db.prepare('SELECT COUNT(*) n FROM r3_worklist_item').get().n;
+  const countEvents = db.prepare('SELECT COUNT(*) n FROM vnext_event_log').get().n;
+  const countOutbox = db.prepare('SELECT COUNT(*) n FROM vnext_outbox').get().n;
+  const countIdem = db.prepare('SELECT COUNT(*) n FROM r3_idempotency').get().n;
   
   db.exec("CREATE TRIGGER temp.t_outbox_fail BEFORE INSERT ON vnext_outbox BEGIN SELECT RAISE(ABORT, 'injected outbox write failure'); END;");
   
@@ -808,10 +829,91 @@ check('outbox failure injection aborts transaction and leaves zero residue', () 
     lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 100 }]
   }, 'cashier-2'), /injected outbox write failure/);
   
-  assert.equal(db.prepare('SELECT COUNT(*) n FROM shop_retail_ticket').get().n, beforeTickets);
-  assert.equal(db.prepare('SELECT COUNT(*) n FROM gl_line').get().n, beforeGl);
-  
   db.exec("DROP TRIGGER temp.t_outbox_fail;");
+
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM shop_retail_ticket').get().n, countTickets);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM shop_retail_ticket_line').get().n, countLines);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM shop_retail_ticket_tax').get().n, countTaxes);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM stock_move').get().n, countStockMoves);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM bin').get().n, countBins);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM fiscal_doc').get().n, countFiscalDocs);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM gl_line').get().n, countGlLines);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM arap_document').get().n, countArapDocs);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM payment').get().n, countPayments);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM payment_allocation').get().n, countAllocations);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM x_audit').get().n, countAudits);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM r3_worklist_item').get().n, countWorklist);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM vnext_event_log').get().n, countEvents);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM vnext_outbox').get().n, countOutbox);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM r3_idempotency').get().n, countIdem);
+});
+
+check('expanded cancellation idempotency tests', () => {
+  const sale = retail.postSale(db, company, {
+    store_id: store.id, shift_id: shift.id, payment_method: 'cash', idempotency_key: 'cancel-idem-exp-001',
+    lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 50 }]
+  }, 'cashier-2');
+
+  const payload = { idempotency_key: 'cancel-idem-exp-key-001', reason: 'customer request' };
+  
+  const first = retail.cancelTicket(db, company, sale.ticket.id, payload, 'cashier-3');
+  assert.equal(first.cancelled, true);
+  assert.ok(first.reversal_fiscal_doc_id);
+  assert.ok(first.arap_reversal_id);
+
+  const beforeStockMoves = db.prepare('SELECT COUNT(*) n FROM stock_move').get().n;
+  const beforeGlLines = db.prepare('SELECT COUNT(*) n FROM gl_line').get().n;
+  const beforeArapDocs = db.prepare('SELECT COUNT(*) n FROM arap_document').get().n;
+  const beforePayments = db.prepare('SELECT COUNT(*) n FROM payment').get().n;
+  const beforeAllocations = db.prepare('SELECT COUNT(*) n FROM payment_allocation').get().n;
+  const beforeAudits = db.prepare('SELECT COUNT(*) n FROM x_audit').get().n;
+  const beforeOutbox = db.prepare('SELECT COUNT(*) n FROM vnext_outbox').get().n;
+  const beforeEvents = db.prepare('SELECT COUNT(*) n FROM vnext_event_log').get().n;
+  const beforeIdem = db.prepare('SELECT COUNT(*) n FROM r3_idempotency').get().n;
+
+  const second = retail.cancelTicket(db, company, sale.ticket.id, payload, 'cashier-3');
+  assert.equal(second.cancelled, true);
+  assert.equal(second.replayed, true);
+  assert.equal(second.reversal_fiscal_doc_id, first.reversal_fiscal_doc_id);
+  assert.equal(second.arap_reversal_id, first.arap_reversal_id);
+
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM stock_move').get().n, beforeStockMoves);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM gl_line').get().n, beforeGlLines);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM arap_document').get().n, beforeArapDocs);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM payment').get().n, beforePayments);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM payment_allocation').get().n, beforeAllocations);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM x_audit').get().n, beforeAudits);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM vnext_outbox').get().n, beforeOutbox);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM vnext_event_log').get().n, beforeEvents);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM r3_idempotency').get().n, beforeIdem);
+
+  const differentPayload = { idempotency_key: 'cancel-idem-exp-key-001', reason: 'wrong price' };
+  assert.throws(() => {
+    retail.cancelTicket(db, company, sale.ticket.id, differentPayload, 'cashier-3');
+  }, /idempotency key was reused with a different payload/);
+});
+
+check('refund rejects invalid original source tickets', () => {
+  const sale = retail.postSale(db, company, {
+    store_id: store.id, shift_id: shift.id, payment_method: 'cash', idempotency_key: 'refund-invalid-source-sale',
+    lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 100 }]
+  }, 'cashier-2');
+
+  retail.cancelTicket(db, company, sale.ticket.id, { idempotency_key: 'cancel-refund-invalid-source-key' }, 'cashier-3');
+
+  assert.throws(() => {
+    retail.postRefund(db, company, { original_ticket_id: sale.ticket.id, amount: 50, idempotency_key: 'refund-fail-cancelled' }, 'cashier-3');
+  }, /only posted tickets can be refunded/);
+
+  const sale2 = retail.postSale(db, company, {
+    store_id: store.id, shift_id: shift.id, payment_method: 'cash', idempotency_key: 'refund-invalid-source-sale-2',
+    lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 100 }]
+  }, 'cashier-2');
+  const refund = retail.postRefund(db, company, { original_ticket_id: sale2.ticket.id, amount: 50, idempotency_key: 'refund-valid-first' }, 'cashier-3');
+
+  assert.throws(() => {
+    retail.postRefund(db, company, { original_ticket_id: refund.ticket.id, amount: 20, idempotency_key: 'refund-on-refund' }, 'cashier-3');
+  }, /only sale tickets can be refunded/);
 });
 
 // ── Audit, worklist, outbox, event evidence ──

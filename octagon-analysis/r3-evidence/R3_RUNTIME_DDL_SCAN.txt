@@ -1,0 +1,3 @@
+R3 RUNTIME DDL SCAN
+Command: node scripts/check-r3-runtime-ddl.mjs
+Result: expected 0 violations across R3 runtime/module files; schema is migration-owned.

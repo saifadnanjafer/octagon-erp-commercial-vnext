@@ -1,0 +1,5 @@
+R3 LEGACY WORKSHOP BRIDGE SUITE
+Command: node scripts/test-r3-legacy-workshop-bridge.mjs
+Result: 3 PASS, 0 FAIL, 0 SKIP
+Checks: omni.jobOrders fixture list/get; mutation rejection; unchanged source fingerprint.
+Limitation: this is a read-only compatibility adapter fixture proof, not proof of a live production legacy database bridge.
