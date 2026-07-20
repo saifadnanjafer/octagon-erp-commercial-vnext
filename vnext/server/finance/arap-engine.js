@@ -66,7 +66,7 @@ function createArapDocument(db, companyId, input, userId) {
     total += amount;
     const product = line.product_id ? db.prepare('SELECT * FROM product_master WHERE id = ? AND company_id = ? AND active = 1').get(line.product_id, companyId) : null;
     const accountId = line.account_id || (product ? (kind.startsWith('customer') ? product.income_account_id : product.expense_account_id) : (kind.startsWith('customer') ? 'coa_401000' : 'coa_501000'));
-    return { amount, localAmount: money(amount * fxRate), quantity: qty, priceUnit: price, accountId, description: line.description || (product && product.name) || 'AR/AP line', productId: line.product_id || null, dims: line.dims || null };
+    return { amount, localAmount: money(amount * fxRate), quantity: qty, priceUnit: price, accountId, description: line.description || (product && product.name) || 'AR/AP line', productId: line.product_id || null, dims: line.dims || null, taxRefs: line.tax_refs || null };
   });
   total = money(total);
   const localTotal = money(prepared.reduce((sum, line) => sum + line.localAmount, 0));
@@ -78,15 +78,15 @@ function createArapDocument(db, companyId, input, userId) {
   try {
     run.call(db, `INSERT INTO fiscal_doc(id,company_id,move_type,partner_id,doc_date,state,currency,created_at,created_by) VALUES(?,?,?,?,?,'draft',?,?,?)`)
       .run(docId, companyId, fiscalType, partnerId, date, currency, stamp, userId || 'system');
-    run.call(db, `INSERT INTO arap_document(id,fiscal_doc_id,company_id,partner_id,document_kind,due_date,total_amount,currency,created_at,created_by) VALUES(?,?,?,?,?,?,?,?,?,?)`)
-      .run(arapId, docId, companyId, partnerId, kind, dueDate, total, currency, stamp, userId || 'system');
-    const insert = run.call(db, `INSERT INTO fiscal_doc_line(id,fiscal_doc_id,company_id,account_id,debit,credit,currency_code,currency_debit,currency_credit,dims,snapshot,description,created_at,created_by) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+    run.call(db, `INSERT INTO arap_document(id,fiscal_doc_id,company_id,partner_id,document_kind,due_date,total_amount,currency,reversal_of_id,created_at,created_by) VALUES(?,?,?,?,?,?,?,?,?,?,?)`)
+      .run(arapId, docId, companyId, partnerId, kind, dueDate, total, currency, input.reversal_of_id || null, stamp, userId || 'system');
+    const insert = run.call(db, `INSERT INTO fiscal_doc_line(id,fiscal_doc_id,company_id,account_id,debit,credit,currency_code,currency_debit,currency_credit,tax_refs,dims,snapshot,description,created_at,created_by) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
     const creditDoc = isCredit(kind);
     for (const line of prepared) {
       const lineIsDebit = kind.startsWith('customer') ? creditDoc : !creditDoc;
       const debit = lineIsDebit ? line.localAmount : 0;
       const credit = lineIsDebit ? 0 : line.localAmount;
-      insert.run(id('line'), docId, companyId, line.accountId, debit, credit, currency, lineIsDebit ? line.amount : 0, lineIsDebit ? 0 : line.amount, line.dims ? JSON.stringify(line.dims) : null,
+      insert.run(id('line'), docId, companyId, line.accountId, debit, credit, currency, lineIsDebit ? line.amount : 0, lineIsDebit ? 0 : line.amount, line.taxRefs, line.dims ? JSON.stringify(line.dims) : null,
         JSON.stringify({ product_id: line.productId, quantity: line.quantity, price_unit: line.priceUnit, fx_rate: fxRate }), line.description, stamp, userId || 'system');
     }
     const controlDebit = kind.startsWith('customer') ? (creditDoc ? 0 : localTotal) : (creditDoc ? localTotal : 0);
@@ -103,9 +103,30 @@ function createArapDocument(db, companyId, input, userId) {
 function documentOpenAmount(db, arapId) {
   const doc = db.prepare(`SELECT a.*, f.state, f.doc_number, f.doc_date FROM arap_document a JOIN fiscal_doc f ON f.id = a.fiscal_doc_id WHERE a.id = ?`).get(arapId);
   if (!doc) throw fail('AR/AP document not found', 404);
+
   const allocated = db.prepare(`SELECT COALESCE(SUM(pa.amount),0) amount FROM payment_allocation pa JOIN payment p ON p.id=pa.payment_id WHERE pa.arap_document_id=? AND p.status='posted'`).get(arapId).amount;
-  const signed = money(Number(doc.total_amount) - Number(allocated));
-  return { ...doc, allocated_amount: money(allocated), open_amount: signed, payment_state: signed <= 0 ? (signed < 0 ? 'overpaid' : 'paid') : (allocated > 0 ? 'partial' : 'open') };
+  
+  const creditNotesTotal = db.prepare(`
+    SELECT COALESCE(SUM(a.total_amount), 0) AS total
+    FROM arap_document a
+    JOIN fiscal_doc f ON f.id = a.fiscal_doc_id
+    WHERE a.reversal_of_id = ? AND f.state = 'posted'
+  `).get(arapId).total;
+
+  let signed = Math.max(0, money(Number(doc.total_amount) - Number(allocated) - Number(creditNotesTotal)));
+  
+  if (doc.document_kind === 'customer_credit_note' && doc.reversal_of_id) {
+    const parentHasPayments = db.prepare(`
+      SELECT 1 FROM payment_allocation pa
+      JOIN payment p ON p.id = pa.payment_id
+      WHERE pa.arap_document_id = ? AND p.status = 'posted'
+    `).get(doc.reversal_of_id);
+    if (!parentHasPayments) {
+      signed = 0;
+    }
+  }
+
+  return { ...doc, allocated_amount: money(Number(allocated) + Number(creditNotesTotal)), open_amount: signed, payment_state: signed <= 0 ? (signed < 0 ? 'overpaid' : 'paid') : (Number(allocated) + Number(creditNotesTotal) > 0 ? 'partial' : 'open') };
 }
 
 function postArapDocument(db, arapId, userId) {
@@ -134,7 +155,7 @@ function createPayment(db, companyId, input, userId) {
   const date = String(input.payment_date || new Date().toISOString().slice(0, 10));
   const stamp = now();
   const cashAccount = String(input.account_id || 'coa_101000');
-  const control = type === 'receive' ? (partner.receivable_account_id || CONTROL.customer) : (partner.payable_account_id || CONTROL.supplier);
+  const control = input.control_account_id || (type === 'receive' ? (partner.receivable_account_id || CONTROL.customer) : (partner.payable_account_id || CONTROL.supplier));
   const allocations = Array.isArray(input.allocations) ? input.allocations : [];
   const targets = allocations.map((allocation) => {
     const value = money(allocation.amount);

@@ -29,6 +29,7 @@ function mountRetailRoutes(deps = {}) {
   function requireAuth(req, res, permission) {
     const user = tryAuth(req);
     if (!user) { write(res, 401, envelope(null, 'Login session required', { code: 'AUTH_REQUIRED' })); return null; }
+    if (user.local) { write(res, 403, envelope(null, 'Local development sessions are rejected', { code: 'LOCAL_DEV_REJECTED' })); return null; }
     // Explicitly reject local-dev bypass: only real session-derived groups or
     // canonical ACL permission grants are accepted.
     const allowed = user.groups.includes('admin') || user.groups.includes('system.admin') || (typeof canPermission === 'function' && canPermission(user, permission));
@@ -67,7 +68,7 @@ function mountRetailRoutes(deps = {}) {
       if (rest[0] === 'refunds' && rest.length === 1 && req.method === 'POST') { run(input => engine.postRefund(db, companyId, input, user.id), 201); return true; }
       if (rest[0] === 'tickets' && rest.length === 1 && req.method === 'GET') { write(res, 200, envelope(engine.listTickets(db, companyId, { state: url.searchParams.get('state') || undefined, store_id: url.searchParams.get('store_id') || undefined }))); return true; }
       if (rest[0] === 'tickets' && rest.length === 2 && req.method === 'GET') { write(res, 200, envelope(engine.getTicket(db, companyId, rest[1]))); return true; }
-      if (rest[0] === 'tickets' && rest[2] === 'cancel' && rest.length === 3 && req.method === 'POST') { run(input => engine.cancelTicket(db, companyId, rest[1], user.id)); return true; }
+      if (rest[0] === 'tickets' && rest[2] === 'cancel' && rest.length === 3 && req.method === 'POST') { run(input => engine.cancelTicket(db, companyId, rest[1], input, user.id)); return true; }
       if (rest[0] === 'manifest' && rest.length === 1 && req.method === 'GET') { write(res, 200, envelope(engine.loadManifest())); return true; }
       return false;
     } catch (e) { routeError(res, e); return true; }

@@ -301,7 +301,9 @@ check('tax repartition account and tag output', () => {
     store_id: store.id, shift_id: shift.id, payment_method: 'cash', idempotency_key: 'tax-tags-001',
     lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 100, tax_id: 'tax_vat_10' }]
   }, 'cashier-2');
-  const taxLines = db.prepare('SELECT account_id, tax_refs FROM fiscal_doc_line WHERE fiscal_doc_id = ? AND credit > 0').all(result.ticket.fiscal_doc_id);
+  const arapDoc = result.ticket.arap_document_id ? db.prepare('SELECT fiscal_doc_id FROM arap_document WHERE id = ?').get(result.ticket.arap_document_id) : null;
+  const targetFiscalDocId = arapDoc ? arapDoc.fiscal_doc_id : result.ticket.fiscal_doc_id;
+  const taxLines = db.prepare('SELECT account_id, tax_refs FROM fiscal_doc_line WHERE fiscal_doc_id = ? AND credit > 0').all(targetFiscalDocId);
   const taxLine = taxLines.find(l => l.account_id === 'coa_202000');
   assert.ok(taxLine);
   // The tax engine should produce tag references when repartition lines have tag_ids
@@ -687,9 +689,9 @@ check('posted cash cancellation reverses stock, GL, and remains immutable', () =
   // Stock restored
   const afterStock = db.prepare('SELECT qty FROM bin WHERE company_id = ? AND product_id = ? AND location_id = ?').get(company, 'prod_b', `loc_${store.id}`).qty;
   assert.equal(afterStock, beforeStock + 2);
-  // Original fiscal doc remains posted
+  // Original fiscal doc (payment's fiscal doc) is cancelled
   const doc = db.prepare('SELECT state FROM fiscal_doc WHERE id = ?').get(sale.ticket.fiscal_doc_id);
-  assert.equal(doc.state, 'posted');
+  assert.equal(doc.state, 'cancelled');
   // Reversal fiscal doc exists and is posted
   const reversal = db.prepare('SELECT state FROM fiscal_doc WHERE id = ?').get(result.reversal_fiscal_doc_id);
   assert.equal(reversal.state, 'posted');
@@ -708,7 +710,7 @@ check('posted card cancellation reverses through canonical engines', () => {
   const result = retail.cancelTicket(db, company, sale.ticket.id, 'cashier-3');
   assert.equal(result.cancelled, true);
   const doc = db.prepare('SELECT state FROM fiscal_doc WHERE id = ?').get(sale.ticket.fiscal_doc_id);
-  assert.equal(doc.state, 'posted');
+  assert.equal(doc.state, 'cancelled');
   retail.closeShift(db, company, cardShift.id, { closing_total: 0 }, 'manager-1');
 });
 
@@ -934,6 +936,63 @@ check('AR posting failure leaves no residue', () => {
   retail.closeShift(db, company, badShift.id, { closing_total: 0 }, 'manager-1');
 });
 
+check('eWallet account governance', () => {
+  // eWallet fallback cash account fails if default_ewallet_account_id is missing
+  const ewalletStore = retail.createStore(db, company, { store_code: 'EW-01', name: 'eWallet Store' }, 'user-1');
+  const ewalletShift = retail.openShift(db, company, ewalletStore.id, { shift_number: 'EW-AM' }, 'cashier-2');
+  const locations = retail._internal.ensureStoreLocation(db, company, ewalletStore);
+  stockEngine.createStockMove(db, company, { id: 'seed-ewallet', product_id: 'prod_b', qty: 10, uom: 'units', from_location_id: supplierLocation, to_location_id: locations.internalId, posting_date: new Date().toISOString().slice(0, 10), voucher_ref: 'seed-ewallet' });
+  stockEngine.postStockMove(db, company, 'seed-ewallet', 'system', { rate: 30, negative_stock_policy: 'allow' });
+
+  assert.throws(() => retail.postSale(db, company, {
+    store_id: ewalletStore.id, shift_id: ewalletShift.id, payment_method: 'ewallet', idempotency_key: 'ew-sale-fail-1',
+    lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 100 }]
+  }, 'cashier-2'), /eWallet clearing account is not configured/);
+
+  // ewallet fails if store creation provides invalid ewallet account type/company
+  assert.throws(() => retail.createStore(db, company, { store_code: 'EW-02', name: 'eWallet Bad Store', default_ewallet_account_id: 'coa_501000' }, 'user-1'), { code: 'ACCOUNT_INVALID' });
+});
+
+check('local-development route session rejection', async () => {
+  const req = {
+    method: 'GET',
+    headers: { 'x-company-id': company },
+    on: () => {}
+  };
+  let resStatus = null;
+  let resBody = null;
+  const res = {
+    writeHead: (status) => { resStatus = status; },
+    end: (body) => { resBody = JSON.parse(body); }
+  };
+  
+  const routes = mountRetailRoutes({
+    db,
+    sendJson: (res, status, body) => { resStatus = status; resBody = body; },
+    requireSession: () => ({ ok: true, userId: 'user-1', groups: ['admin'], mode: 'local-development' }),
+    resolveScope: () => ({ companyId: company }),
+    canPermission: () => true
+  });
+  
+  const handled = routes.handle(req, res, new URL('http://localhost/api/x/retail'));
+  assert.ok(handled);
+  assert.equal(resStatus, 403);
+  assert.equal(resBody.error, 'Local development sessions are rejected');
+});
+
+check('outbox event logging', () => {
+  const countBefore = db.prepare('SELECT COUNT(*) n FROM vnext_outbox').get().n;
+  retail.postSale(db, company, {
+    store_id: store.id, shift_id: shift.id, payment_method: 'cash', idempotency_key: 'outbox-sale-1',
+    lines: [{ product_id: 'prod_b', quantity: 1, unit_price: 100 }]
+  }, 'cashier-2');
+  const countAfter = db.prepare('SELECT COUNT(*) n FROM vnext_outbox').get().n;
+  assert.equal(countAfter, countBefore + 1);
+  const outboxItem = db.prepare('SELECT * FROM vnext_outbox ORDER BY outbox_id DESC LIMIT 1').get();
+  assert.equal(outboxItem.event_type, 'retail.ticket.posted');
+  assert.ok(outboxItem.payload_json.includes('sale'));
+});
+
 // ── Safe migration rollback ──
 
 db.exec('PRAGMA foreign_keys = OFF;');
@@ -947,7 +1006,7 @@ const cleanTables = [
   'shop_pack_patch', 'shop_pack_migration', 'shop_pack_registry', 'shop_license', 'shop_tenant',
   'product_master', 'tax', 'tax_repartition_line', 'partner_master', 'account', 'companies',
   'r3_worklist_item', 'r3_idempotency', 'vnext_event_log', 'x_audit', 'x_sequences', 'warehouses', 'locations',
-  'fiscal_position', 'fiscal_position_tax_map', 'fiscal_position_account_map'
+  'fiscal_position', 'fiscal_position_tax_map', 'fiscal_position_account_map', 'vnext_outbox'
 ];
 for (const t of cleanTables) {
   try { db.prepare(`DELETE FROM "${t}"`).run(); } catch (_) {}
@@ -957,11 +1016,12 @@ db.exec('PRAGMA foreign_keys = ON;');
 db.close();
 const down = await runMigrations({ dbPath, direction: 'down' });
 const afterDown = openMigrationDatabase(dbPath);
-check('migrations 903, 904, and 905 down restore the Retail/POS schema boundary', () => {
+check('migrations 903, 904, 905 and 906 down restore the Retail/POS schema boundary', () => {
   assert.ok(down.migrations.includes('903_r9_retail_pos_pack'));
   assert.ok(down.migrations.includes('904_r9_retail_pos_transactions'));
   assert.ok(down.migrations.includes('905_r9_retail_pos_governance'));
-  for (const table of ['shop_retail_store', 'shop_retail_shift', 'shop_retail_barcode', 'shop_retail_scan_event', 'shop_retail_ticket', 'shop_retail_ticket_line', 'shop_retail_ticket_tax', 'shop_retail_ticket_payment']) {
+  assert.ok(down.migrations.includes('906_r9_retail_pos_payment_governance'));
+  for (const table of ['shop_retail_store', 'shop_retail_shift', 'shop_retail_barcode', 'shop_retail_scan_event', 'shop_retail_ticket', 'shop_retail_ticket_line', 'shop_retail_ticket_tax', 'shop_retail_ticket_payment', 'vnext_outbox']) {
     assert.equal(afterDown.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?").get(table), undefined);
   }
 });

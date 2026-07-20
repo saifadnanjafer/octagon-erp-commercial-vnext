@@ -31,6 +31,13 @@ function publishEvent(db, type, companyId, userId, entity, recordId, payload) {
   events.publish({ type, companyId, userId: userId || 'system', audience: { kind: 'company' }, entity, recordId, payload });
 }
 
+function publishOutbox(db, type, companyId, userId, entity, recordId, payload) {
+  if (!tableExists(db, 'vnext_outbox')) return;
+  const { createOutboxService } = require('../../events/outbox');
+  const outbox = createOutboxService({ db });
+  outbox.write({ type, companyId, userId: userId || 'system', entity, recordId, payload });
+}
+
 function withAtomicTransaction(db, work) {
   const owns = !db.isTransaction;
   if (owns) db.exec('BEGIN IMMEDIATE');
@@ -56,6 +63,11 @@ function createStore(db, companyId, input, userId) {
   const storeCode = required(input.store_code, 'store_code is required', 'STORE_CODE_REQUIRED');
   const name = required(input.name, 'store name is required', 'STORE_NAME_REQUIRED');
   if (db.prepare('SELECT 1 FROM shop_retail_store WHERE company_id = ? AND store_code = ?').get(companyId, storeCode)) throw fail('store code already exists', 409, 'STORE_EXISTS');
+  
+  if (input.default_ewallet_account_id) {
+    accountId(db, companyId, input.default_ewallet_account_id, null, 'liquidity');
+  }
+
   const row = {
     id: uid('rstore'), company_id: companyId, store_code: storeCode, name, timezone: input.timezone || 'Asia/Baghdad', currency: input.currency || 'IQD',
     default_cash_account_id: input.default_cash_account_id || null,
@@ -66,16 +78,17 @@ function createStore(db, companyId, input, userId) {
     default_stock_account_id: input.default_stock_account_id || null,
     default_tax_account_id: input.default_tax_account_id || null,
     default_ar_account_id: input.default_ar_account_id || null,
+    default_ewallet_account_id: input.default_ewallet_account_id || null,
     active: 1, created_at: now(), created_by: userId || 'system'
   };
   db.prepare(`INSERT INTO shop_retail_store (id, company_id, store_code, name, timezone, currency,
     default_cash_account_id, default_card_account_id, default_bank_account_id, default_income_account_id,
     default_cogs_account_id, default_stock_account_id, default_tax_account_id, default_ar_account_id,
-    active, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    default_ewallet_account_id, active, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
     .run(row.id, row.company_id, row.store_code, row.name, row.timezone, row.currency,
       row.default_cash_account_id, row.default_card_account_id, row.default_bank_account_id, row.default_income_account_id,
       row.default_cogs_account_id, row.default_stock_account_id, row.default_tax_account_id, row.default_ar_account_id,
-      row.active, row.created_at, row.created_by);
+      row.default_ewallet_account_id, row.active, row.created_at, row.created_by);
   return row;
 }
 
@@ -162,7 +175,9 @@ function paymentAccountForMethod(db, companyId, store, method) {
     case 'cash': return accountId(db, companyId, store.default_cash_account_id, 'coa_101000', 'liquidity');
     case 'card': return accountId(db, companyId, store.default_card_account_id, 'coa_102000', 'liquidity');
     case 'bank': return accountId(db, companyId, store.default_bank_account_id, 'coa_102000', 'liquidity');
-    case 'ewallet': return accountId(db, companyId, store.default_cash_account_id, 'coa_101000', 'liquidity');
+    case 'ewallet':
+      if (!store.default_ewallet_account_id) throw fail('eWallet clearing account is not configured', 400, 'EWALLET_ACCOUNT_NOT_CONFIGURED');
+      return accountId(db, companyId, store.default_ewallet_account_id, null, 'liquidity');
     case 'reference': return accountId(db, companyId, store.default_ar_account_id, 'coa_103000', 'receivable');
     default: throw fail('payment_method is invalid', 400, 'PAYMENT_METHOD_INVALID');
   }
@@ -414,64 +429,88 @@ function postSale(db, companyId, input, userId) {
       created_at: now(), created_by: userId || 'system'
     };
 
+    // Phase 3: Create invoice for the sale (for ALL payment methods)
+    const partner = input.partner_id
+      ? db.prepare('SELECT * FROM partner_master WHERE id = ? AND company_id = ? AND active = 1').get(input.partner_id, companyId)
+      : ensureWalkInPartner(db, companyId);
+    if (!partner) throw fail('partner not found for sale', 404, 'PARTNER_NOT_FOUND');
+
+    const arapLines = [];
+    for (const res of taxResults.results) {
+      for (const cl of res.lines) {
+        if (cl.repartition_type === 'base' && cl.base_amount > 0) {
+          arapLines.push({
+            product_id: res.retailLine.product_id,
+            quantity: 1,
+            price_unit: cl.base_amount,
+            account_id: cl.account_id,
+            description: `Retail income ${ticketNumber}`,
+            tax_refs: cl.tag_ids ? JSON.stringify(cl.tag_ids) : null
+          });
+        } else if (cl.repartition_type === 'tax' && cl.tax_amount > 0) {
+          arapLines.push({
+            quantity: 1,
+            price_unit: cl.tax_amount,
+            account_id: cl.account_id,
+            description: `Retail tax ${ticketNumber}`,
+            tax_refs: cl.tag_ids ? JSON.stringify(cl.tag_ids) : null
+          });
+        }
+      }
+    }
+
+    // Fallback tax repartition mapping
+    const repartitionedTax = taxResults.results.reduce((sum, res) => {
+      return sum + res.lines.reduce((s, cl) => cl.repartition_type === 'tax' ? s + cl.tax_amount : s, 0);
+    }, 0);
+    if (taxResults.totalTax > 0 && Math.abs(repartitionedTax - taxResults.totalTax) > 0.001) {
+      const taxAccount = accountId(db, companyId, store.default_tax_account_id, 'coa_202000', 'liability');
+      arapLines.push({
+        quantity: 1,
+        price_unit: money(taxResults.totalTax - repartitionedTax),
+        account_id: taxAccount,
+        description: `Retail tax fallback ${ticketNumber}`,
+        tax_refs: null
+      });
+    }
+
+    const arapDoc = arap.createArapDocument(db, companyId, {
+      partner_id: partner.id,
+      document_kind: 'customer_invoice',
+      currency: ticket.currency,
+      lines: arapLines
+    }, userId);
+    arap.postArapDocument(db, arapDoc.id, userId);
+
+    ticket.arap_document_id = arapDoc.id;
     let paymentResult = null;
+    let realPaymentId = null;
+    let realPaymentFiscalDocId = null;
 
-    // Phase 3: payment/GL through canonical engines
     if (input.payment_method === 'reference') {
-      const partner = input.partner_id
-        ? db.prepare('SELECT * FROM partner_master WHERE id = ? AND company_id = ? AND active = 1').get(input.partner_id, companyId)
-        : ensureWalkInPartner(db, companyId);
-      if (!partner) throw fail('partner not found for reference sale', 404, 'PARTNER_NOT_FOUND');
-
-      const arapLines = [];
-      for (const res of taxResults.results) {
-        for (const cl of res.lines) {
-          if (cl.repartition_type === 'base' && cl.base_amount > 0) {
-            arapLines.push({
-              product_id: res.retailLine.product_id,
-              quantity: 1,
-              price_unit: cl.base_amount,
-              account_id: cl.account_id,
-              description: `Retail income ${ticketNumber}`
-            });
-          }
-        }
-      }
-      const taxByAccount = {};
-      for (const res of taxResults.results) {
-        for (const cl of res.lines) {
-          if (cl.repartition_type === 'tax' && cl.tax_amount > 0) {
-            taxByAccount[cl.account_id] = (taxByAccount[cl.account_id] || 0) + cl.tax_amount;
-          }
-        }
-      }
-      const repartitionedTax = Object.values(taxByAccount).reduce((sum, amount) => sum + amount, 0);
-      if (taxResults.totalTax > 0 && Math.abs(repartitionedTax - taxResults.totalTax) > 0.001) {
-        const taxAccount = accountId(db, companyId, store.default_tax_account_id, 'coa_202000', 'liability');
-        taxByAccount[taxAccount] = (taxByAccount[taxAccount] || 0) + money(taxResults.totalTax - repartitionedTax);
-      }
-      for (const [accountId, amount] of Object.entries(taxByAccount)) {
-        arapLines.push({ quantity: 1, price_unit: money(amount), account_id: accountId, description: `Retail tax ${ticketNumber}` });
-      }
-
-      const arapDoc = arap.createArapDocument(db, companyId, {
-        partner_id: partner.id,
-        document_kind: 'customer_invoice',
-        currency: ticket.currency,
-        lines: arapLines
-      }, userId);
-      arap.postArapDocument(db, arapDoc.id, userId);
       ticket.fiscal_doc_id = arapDoc.fiscal_doc_id;
-      ticket.arap_document_id = arapDoc.id;
       paymentResult = { arap_document_id: arapDoc.id };
     } else {
-      const fiscalRes = finance.createAndPostFiscalDoc(db, companyId, {
-        move_type: 'cash_receipt',
-        doc_date: now().slice(0, 10),
+      // Create canonical payment record and allocate it to the invoice
+      const paymentAccount = paymentAccountForMethod(db, companyId, store, input.payment_method);
+      const payRes = arap.createPayment(db, companyId, {
+        partner_id: partner.id,
+        payment_type: 'receive',
+        amount: ticketTotal,
         currency: ticket.currency,
-        lines: buildFiscalLines(db, companyId, store, ticket, taxResults, input.payment_method)
+        account_id: paymentAccount,
+        idempotency_key: ticket.idempotency_key + '_pay',
+        reference: ticket.payment_reference || `POS Payment ${ticketNumber}`,
+        allocations: [{
+          arap_document_id: arapDoc.id,
+          amount: ticketTotal
+        }]
       }, userId);
-      ticket.fiscal_doc_id = fiscalRes.docId;
+      realPaymentId = payRes.id;
+      realPaymentFiscalDocId = payRes.fiscal_doc_id;
+      // ticket.fiscal_doc_id points to the payment's fiscal doc for cash method compatibility
+      ticket.fiscal_doc_id = payRes.fiscal_doc_id;
+      paymentResult = { payment_id: payRes.id };
     }
 
     // Phase 4: persist ticket and lines
@@ -499,14 +538,17 @@ function postSale(db, companyId, input, userId) {
     insertTicketPayment(db, {
       id: uid('rtpm'), ticket_id: ticketId, company_id: companyId,
       payment_method: ticket.payment_method, amount: ticket.total,
-      reference: ticket.payment_reference, payment_id: null,
-      fiscal_doc_id: ticket.fiscal_doc_id, arap_document_id: ticket.arap_document_id, created_at: now()
+      reference: ticket.payment_reference, payment_id: realPaymentId,
+      fiscal_doc_id: realPaymentFiscalDocId || arapDoc.fiscal_doc_id, arap_document_id: ticket.arap_document_id, created_at: now()
     });
 
     db.prepare('UPDATE shop_retail_ticket SET state = ? WHERE id = ?').run('posted', ticket.id);
     ticket.state = 'posted';
 
     recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_sale', userId, null, ticket);
+    
+    // Durable Outbox & Event Log
+    publishOutbox(db, 'retail.ticket.posted', companyId, userId, 'shop_retail_ticket', ticket.id, { kind: 'sale', total: ticket.total, storeId: store.id });
     publishEvent(db, 'retail.ticket.posted', companyId, userId, 'shop_retail_ticket', ticket.id, { kind: 'sale', total: ticket.total, storeId: store.id });
 
     const response = { ticket, lines: db.prepare('SELECT * FROM shop_retail_ticket_line WHERE ticket_id = ?').all(ticketId), payment: paymentResult };
@@ -554,20 +596,74 @@ function postReturn(db, companyId, input, userId) {
       });
     }
 
-    // Reverse GL through canonical finance reversal (original stays posted)
-    const fiscalRes = finance.createReversalFiscalDoc(db, companyId, original.fiscal_doc_id, userId);
+    // Create Credit Note (Common to both reference and cash/card/bank/ewallet sales)
+    const partner = original.partner_id
+      ? db.prepare('SELECT * FROM partner_master WHERE id = ? AND company_id = ? AND active = 1').get(original.partner_id, companyId)
+      : ensureWalkInPartner(db, companyId);
+    
+    const arapLines = [];
+    for (const line of originalLines) {
+      const lineTax = taxEngine.computeTaxes(db, companyId, {
+        type: 'sale',
+        lines: [{
+          account_id: line.income_account_id,
+          tax_id: line.tax_id || undefined,
+          price_unit: line.net_per_unit || money((line.line_total - line.tax_amount)/line.quantity),
+          quantity: line.quantity
+        }]
+      });
+      for (const cl of lineTax.lines) {
+        if (cl.repartition_type === 'base' && cl.base_amount > 0) {
+          arapLines.push({
+            product_id: line.product_id,
+            quantity: 1,
+            price_unit: cl.base_amount,
+            account_id: cl.account_id,
+            description: `Return of Retail income ${original.ticket_number}`,
+            tax_refs: cl.tag_ids ? JSON.stringify(cl.tag_ids) : null
+          });
+        } else if (cl.repartition_type === 'tax' && cl.tax_amount > 0) {
+          arapLines.push({
+            quantity: 1,
+            price_unit: cl.tax_amount,
+            account_id: cl.account_id,
+            description: `Return of Retail tax ${original.ticket_number}`,
+            tax_refs: cl.tag_ids ? JSON.stringify(cl.tag_ids) : null
+          });
+        }
+      }
+    }
+    
+    const creditNote = arap.createArapDocument(db, companyId, {
+      partner_id: partner.id,
+      document_kind: 'customer_credit_note',
+      currency: original.currency,
+      reversal_of_id: original.arap_document_id,
+      lines: arapLines
+    }, userId);
+    arap.postArapDocument(db, creditNote.id, userId);
 
-    let arapReversalId = null;
-    if (original.arap_document_id) {
-      // Create canonical AR credit note to reverse the receivable
-      const creditNote = arap.createArapDocument(db, companyId, {
-        partner_id: original.partner_id || 'partner_walkin',
-        document_kind: 'customer_credit_note',
+    let realPaymentId = null;
+    let realPaymentFiscalDocId = null;
+
+    if (original.payment_method !== 'reference') {
+      const paymentAccount = paymentAccountForMethod(db, companyId, store, original.payment_method);
+      const payRes = arap.createPayment(db, companyId, {
+        partner_id: partner.id,
+        payment_type: 'pay',
+        amount: original.total,
         currency: original.currency,
-        lines: [{ quantity: 1, price_unit: original.total, account_id: accountId(db, companyId, store.default_income_account_id, 'coa_401000', 'income'), description: `Return of ${original.ticket_number}` }]
+        account_id: paymentAccount,
+        control_account_id: partner.receivable_account_id || 'coa_103000',
+        idempotency_key: idem + '_pay',
+        reference: `Return of ${original.ticket_number}`,
+        allocations: [{
+          arap_document_id: creditNote.id,
+          amount: original.total
+        }]
       }, userId);
-      arap.postArapDocument(db, creditNote.id, userId);
-      arapReversalId = creditNote.id;
+      realPaymentId = payRes.id;
+      realPaymentFiscalDocId = payRes.fiscal_doc_id;
     }
 
     const ticketId = uid('rtkt');
@@ -576,10 +672,10 @@ function postReturn(db, companyId, input, userId) {
       id: ticketId, company_id: companyId, store_id: store.id, shift_id: shift.id, ticket_number: ticketNumber,
       kind: 'return', state: 'posted', partner_id: original.partner_id, currency: original.currency,
       subtotal: money(subtotal), discount_total: money(discountTotal), tax_total: money(taxTotal),
-      total: money(money(subtotal - discountTotal) + money(taxTotal)),
+      total: original.total,
       payment_method: original.payment_method, payment_reference: input.payment_reference || `Return of ${original.ticket_number}`,
-      fiscal_doc_id: fiscalRes.docId, stock_move_id: lines.length ? lines[0].stock_move_id : null,
-      reversal_of_id: original.id, reversal_ticket_id: null, idempotency_key: idem, arap_document_id: arapReversalId,
+      fiscal_doc_id: realPaymentFiscalDocId || creditNote.fiscal_doc_id, stock_move_id: lines.length ? lines[0].stock_move_id : null,
+      reversal_of_id: original.id, reversal_ticket_id: null, idempotency_key: idem, arap_document_id: creditNote.id,
       created_at: now(), created_by: userId || 'system'
     };
 
@@ -596,13 +692,16 @@ function postReturn(db, companyId, input, userId) {
     insertTicketPayment(db, {
       id: uid('rtpm'), ticket_id: ticketId, company_id: companyId,
       payment_method: ticket.payment_method, amount: ticket.total,
-      reference: ticket.payment_reference, payment_id: null,
-      fiscal_doc_id: fiscalRes.docId, arap_document_id: arapReversalId, created_at: now()
+      reference: ticket.payment_reference, payment_id: realPaymentId,
+      fiscal_doc_id: realPaymentFiscalDocId || creditNote.fiscal_doc_id, arap_document_id: creditNote.id, created_at: now()
     });
 
     db.prepare('UPDATE shop_retail_ticket SET state = ?, reversal_ticket_id = ? WHERE id = ?').run('reversed', ticket.id, original.id);
 
     recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_return', userId, null, ticket, 'retail_returns');
+    
+    // Durable Outbox & Event Log
+    publishOutbox(db, 'retail.ticket.returned', companyId, userId, 'shop_retail_ticket', ticket.id, { originalId: original.id, total: ticket.total });
     publishEvent(db, 'retail.ticket.returned', companyId, userId, 'shop_retail_ticket', ticket.id, { originalId: original.id, total: ticket.total });
 
     const response = { ticket, original_ticket_id: original.id, lines: db.prepare('SELECT * FROM shop_retail_ticket_line WHERE ticket_id = ?').all(ticketId) };
@@ -640,33 +739,40 @@ function postRefund(db, companyId, input, userId) {
     const paymentAccount = paymentAccountForMethod(db, companyId, store, original.payment_method);
     const incomeAccount = accountId(db, companyId, store.default_income_account_id, 'coa_401000', 'income');
 
-    let fiscalDocId = null;
-    let arapDocumentId = null;
-    let paymentId = null;
+    const partner = original.partner_id
+      ? db.prepare('SELECT * FROM partner_master WHERE id = ? AND company_id = ? AND active = 1').get(original.partner_id, companyId)
+      : ensureWalkInPartner(db, companyId);
 
-    if (original.payment_method === 'reference') {
-      // Reference refund: canonical AR credit note to restore receivable
-      const creditNote = arap.createArapDocument(db, companyId, {
-        partner_id: original.partner_id || 'partner_walkin',
-        document_kind: 'customer_credit_note',
+    // Create Credit Note representing the refund amount
+    const creditNote = arap.createArapDocument(db, companyId, {
+      partner_id: partner.id,
+      document_kind: 'customer_credit_note',
+      currency: original.currency,
+      reversal_of_id: original.arap_document_id,
+      lines: [{ quantity: 1, price_unit: amount, account_id: incomeAccount, description: `Refund of ${original.ticket_number}` }]
+    }, userId);
+    arap.postArapDocument(db, creditNote.id, userId);
+
+    let realPaymentId = null;
+    let realPaymentFiscalDocId = null;
+
+    if (original.payment_method !== 'reference') {
+      const payRes = arap.createPayment(db, companyId, {
+        partner_id: partner.id,
+        payment_type: 'pay',
+        amount: amount,
         currency: original.currency,
-        lines: [{ quantity: 1, price_unit: amount, account_id: incomeAccount, description: `Refund of ${original.ticket_number}` }]
+        account_id: paymentAccount,
+        control_account_id: partner.receivable_account_id || 'coa_103000',
+        idempotency_key: idem + '_pay',
+        reference: `Refund of ${original.ticket_number}`,
+        allocations: [{
+          arap_document_id: creditNote.id,
+          amount: amount
+        }]
       }, userId);
-      arap.postArapDocument(db, creditNote.id, userId);
-      arapDocumentId = creditNote.id;
-      fiscalDocId = creditNote.fiscal_doc_id;
-    } else {
-      // Cash/card/bank/ewallet refund: canonical cash payment
-      const fiscalRes = finance.createAndPostFiscalDoc(db, companyId, {
-        move_type: 'cash_payment',
-        doc_date: now().slice(0, 10),
-        currency: original.currency,
-        lines: [
-          { account_id: incomeAccount, debit: amount, credit: 0, description: `Refund for ${original.ticket_number}` },
-          { account_id: paymentAccount, debit: 0, credit: amount, description: `Retail ${original.payment_method} refund` }
-        ]
-      }, userId);
-      fiscalDocId = fiscalRes.docId;
+      realPaymentId = payRes.id;
+      realPaymentFiscalDocId = payRes.fiscal_doc_id;
     }
 
     const ticket = {
@@ -674,8 +780,8 @@ function postRefund(db, companyId, input, userId) {
       kind: 'refund', state: 'posted', partner_id: original.partner_id, currency: original.currency,
       subtotal: 0, discount_total: 0, tax_total: 0, total: amount,
       payment_method: original.payment_method, payment_reference: input.payment_reference || `Refund of ${original.ticket_number}`,
-      fiscal_doc_id: fiscalDocId, stock_move_id: null,
-      reversal_of_id: original.id, reversal_ticket_id: null, idempotency_key: idem, arap_document_id: arapDocumentId,
+      fiscal_doc_id: realPaymentFiscalDocId || creditNote.fiscal_doc_id, stock_move_id: null,
+      reversal_of_id: original.id, reversal_ticket_id: null, idempotency_key: idem, arap_document_id: creditNote.id,
       created_at: now(), created_by: userId || 'system'
     };
 
@@ -683,10 +789,13 @@ function postRefund(db, companyId, input, userId) {
     insertTicketPayment(db, {
       id: uid('rtpm'), ticket_id: ticket.id, company_id: companyId,
       payment_method: ticket.payment_method, amount, reference: ticket.payment_reference,
-      payment_id: paymentId, fiscal_doc_id: fiscalDocId, arap_document_id: arapDocumentId, created_at: now()
+      payment_id: realPaymentId, fiscal_doc_id: realPaymentFiscalDocId || creditNote.fiscal_doc_id, arap_document_id: creditNote.id, created_at: now()
     });
 
     recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'post_refund', userId, null, ticket, 'retail_refunds');
+    
+    // Durable Outbox & Event Log
+    publishOutbox(db, 'retail.ticket.refunded', companyId, userId, 'shop_retail_ticket', ticket.id, { originalId: original.id, amount });
     publishEvent(db, 'retail.ticket.refunded', companyId, userId, 'shop_retail_ticket', ticket.id, { originalId: original.id, amount });
 
     const response = { ticket, original_ticket_id: original.id };
@@ -695,10 +804,25 @@ function postRefund(db, companyId, input, userId) {
   });
 }
 
-function cancelTicket(db, companyId, ticketId, userId) {
+function cancelTicket(db, companyId, ticketId, input = {}, userId) {
   ensureCompany(db, companyId);
+  
+  let realInput = input;
+  let realUserId = userId;
+  if (typeof input === 'string') {
+    realUserId = input;
+    realInput = {};
+  }
+  
   const ticket = db.prepare('SELECT * FROM shop_retail_ticket WHERE id = ? AND company_id = ?').get(ticketId, companyId);
   if (!ticket) throw fail('ticket not found', 404, 'TICKET_NOT_FOUND');
+
+  const idem = realInput.idempotency_key || (typeof input === 'string' ? `cancel-ticket-${ticketId}` : null);
+  if (!idem) throw fail('idempotency_key is required', 400, 'IDEMPOTENCY_REQUIRED');
+  
+  const idemScope = idempotencyScope(db, realUserId, companyId, 'retail.cancel', idem, realInput);
+  if (idemScope?.replay) return { ...idemScope.replay, replayed: true };
+
   if (ticket.state === 'cancelled') return { ticket, cancelled: true };
   if (ticket.state === 'reversed') throw fail('already reversed ticket cannot be cancelled', 409, 'TICKET_ALREADY_REVERSED');
   if (ticket.state !== 'draft' && ticket.state !== 'posted') throw fail('ticket state does not allow cancellation', 409, 'TICKET_STATE_INVALID');
@@ -706,8 +830,10 @@ function cancelTicket(db, companyId, ticketId, userId) {
   return withAtomicTransaction(db, () => {
     if (ticket.state === 'draft') {
       db.prepare('UPDATE shop_retail_ticket SET state = ? WHERE id = ?').run('cancelled', ticket.id);
-      recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'cancel', userId, ticket, { ...ticket, state: 'cancelled' });
-      return { ticket: { ...ticket, state: 'cancelled' }, cancelled: true };
+      recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'cancel', realUserId, ticket, { ...ticket, state: 'cancelled' });
+      const response = { ticket: { ...ticket, state: 'cancelled' }, cancelled: true };
+      if (idemScope) rememberIdempotency(db, idemScope, response, 200);
+      return response;
     }
 
     // Posted ticket: full governed reversal
@@ -716,30 +842,87 @@ function cancelTicket(db, companyId, ticketId, userId) {
     const reversedStock = [];
 
     for (const line of originalLines) {
-      const stockRes = stock.cancelStockMove(db, companyId, line.stock_move_id, userId);
+      const stockRes = stock.cancelStockMove(db, companyId, line.stock_move_id, realUserId);
       reversedStock.push(stockRes.reversalMoveId);
     }
 
-    const fiscalRes = finance.createReversalFiscalDoc(db, companyId, ticket.fiscal_doc_id, userId);
-
     let arapReversalId = null;
-    if (ticket.arap_document_id) {
+    let reversalFiscalDocId = null;
+
+    if (ticket.payment_method === 'reference') {
+      const partner = ticket.partner_id
+        ? db.prepare('SELECT * FROM partner_master WHERE id = ? AND company_id = ? AND active = 1').get(ticket.partner_id, companyId)
+        : ensureWalkInPartner(db, companyId);
+
+      const arapLines = [];
+      for (const line of originalLines) {
+        const lineTax = taxEngine.computeTaxes(db, companyId, {
+          type: 'sale',
+          lines: [{
+            account_id: line.income_account_id,
+            tax_id: line.tax_id || undefined,
+            price_unit: line.net_per_unit || money((line.line_total - line.tax_amount)/line.quantity),
+            quantity: line.quantity
+          }]
+        });
+        for (const cl of lineTax.lines) {
+          if (cl.repartition_type === 'base' && cl.base_amount > 0) {
+            arapLines.push({
+              product_id: line.product_id,
+              quantity: 1,
+              price_unit: cl.base_amount,
+              account_id: cl.account_id,
+              description: `Cancellation of Retail income ${ticket.ticket_number}`,
+              tax_refs: cl.tag_ids ? JSON.stringify(cl.tag_ids) : null
+            });
+          } else if (cl.repartition_type === 'tax' && cl.tax_amount > 0) {
+            arapLines.push({
+              quantity: 1,
+              price_unit: cl.tax_amount,
+              account_id: cl.account_id,
+              description: `Cancellation of Retail tax ${ticket.ticket_number}`,
+              tax_refs: cl.tag_ids ? JSON.stringify(cl.tag_ids) : null
+            });
+          }
+        }
+      }
+
       const creditNote = arap.createArapDocument(db, companyId, {
-        partner_id: ticket.partner_id || 'partner_walkin',
+        partner_id: partner.id,
         document_kind: 'customer_credit_note',
         currency: ticket.currency,
-        lines: [{ quantity: 1, price_unit: ticket.total, account_id: accountId(db, companyId, store.default_income_account_id, 'coa_401000', 'income'), description: `Cancellation of ${ticket.ticket_number}` }]
-      }, userId);
-      arap.postArapDocument(db, creditNote.id, userId);
+        reversal_of_id: ticket.arap_document_id,
+        lines: arapLines
+      }, realUserId);
+      arap.postArapDocument(db, creditNote.id, realUserId);
       arapReversalId = creditNote.id;
+      reversalFiscalDocId = creditNote.fiscal_doc_id;
+    } else {
+      // Cash/card/bank/ewallet cancellation:
+      // 1. Reverse the payment canonically (calls reverseFiscalDoc and sets payment to cancelled)
+      const origPayment = db.prepare('SELECT * FROM shop_retail_ticket_payment WHERE ticket_id = ?').get(ticket.id);
+      if (origPayment && origPayment.payment_id) {
+        arap.reversePayment(db, origPayment.payment_id, realUserId);
+      }
+      // 2. Reverse the invoice's fiscal document
+      const arapDoc = db.prepare('SELECT fiscal_doc_id FROM arap_document WHERE id = ?').get(ticket.arap_document_id);
+      if (arapDoc) {
+        const fiscalRes = finance.createReversalFiscalDoc(db, companyId, arapDoc.fiscal_doc_id, realUserId);
+        reversalFiscalDocId = fiscalRes.docId;
+      }
     }
 
     db.prepare('UPDATE shop_retail_ticket SET state = ?, reversal_ticket_id = ? WHERE id = ?').run('cancelled', null, ticket.id);
-    const updated = { ...ticket, state: 'cancelled', reversal_fiscal_doc_id: fiscalRes.docId, reversal_stock_moves: reversedStock, arap_reversal_id: arapReversalId };
-    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'cancel_posted', userId, ticket, updated, 'retail_cancellations');
-    publishEvent(db, 'retail.ticket.cancelled', companyId, userId, 'shop_retail_ticket', ticket.id, { ticketId: ticket.id, total: ticket.total });
+    const updated = { ...ticket, state: 'cancelled', reversal_fiscal_doc_id: reversalFiscalDocId, reversal_stock_moves: reversedStock, arap_reversal_id: arapReversalId };
+    recordWrite(db, null, companyId, 'shop_retail_ticket', ticket.id, 'cancel_posted', realUserId, ticket, updated, 'retail_cancellations');
+    
+    // Durable Outbox & Event Log
+    publishOutbox(db, 'retail.ticket.cancelled', companyId, realUserId, 'shop_retail_ticket', ticket.id, { ticketId: ticket.id, total: ticket.total });
+    publishEvent(db, 'retail.ticket.cancelled', companyId, realUserId, 'shop_retail_ticket', ticket.id, { ticketId: ticket.id, total: ticket.total });
 
-    return { ticket: updated, cancelled: true, reversal_fiscal_doc_id: fiscalRes.docId, arap_reversal_id: arapReversalId };
+    const response = { ticket: updated, cancelled: true, reversal_fiscal_doc_id: reversalFiscalDocId, arap_reversal_id: arapReversalId };
+    if (idemScope) rememberIdempotency(db, idemScope, response, 200);
+    return response;
   });
 }
 
