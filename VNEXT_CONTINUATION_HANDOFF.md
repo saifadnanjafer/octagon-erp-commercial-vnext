@@ -132,12 +132,76 @@ post-migration VNext handle. The remaining Retail/POS acceptance work is the
 governed POS transaction adapter and pack conformance manifest. Other R9.3
 verticals remain unopened.
 
+## Continuation update — 2026-07-25 (R9 closed, Release 10 opened)
+
+R9.4 Marketplace & pack distribution completed and the **R9 core release gate
+passed** (migration 907; signed `.octapack` format, trusted signer registry,
+compatibility/entitlement matrix, Pack Manager UI). The remaining R9.3 industry
+verticals (pharmacy, clinic, restaurant, fleet, education, contracting) are
+explicit future/optional work distributable through that same pipeline and are
+**not** a prerequisite for Release 10.
+
+**R10.1 Data migration execution: COMPLETE.** Migration 1001 plus domain-owned
+`vnext/server/modules/migration/{legacy-source,migration-engine,migration-routes}.js`,
+the read-only sanitized source fixture builder
+`scripts/create-r10-migration-fixture.mjs` →
+`vnext-fixtures/legacy-business-source.db`, and the focused suite
+`scripts/test-r10-data-migration.mjs` (**38/38 PASS**). The R10 wave-entry
+decomposition (R10.1–R10.6) is appended to the execution plan as §17. Full
+evidence and known limitations are in `VNEXT_PROGRESS.md` → "R10.1 DATA
+MIGRATION EXECUTION COMPLETE".
+
+Facts the next agent needs:
+- **Migration block 1002+ is free.** 1001 declares `dependsOn:
+  ['907_r9_marketplace_pack_distribution']`; note that `1001_` sorts before
+  `401_` by filename, so the dependency declaration (not filename order) is what
+  places it correctly — never drop it.
+- **The legacy source is read-only and path-guarded.** `legacy-source.js` opens
+  readOnly + `PRAGMA query_only` and refuses anything outside the allowlisted
+  root (`OCTAGON_MIGRATION_SOURCE_ROOT`, default `vnext-fixtures`). It denies
+  every frozen payroll/attendance/timesheet collection outright.
+- **Opening stock is quantity-only by design.** The opening entry already
+  carries the inventory balance, so the step fails closed rather than
+  double-count GL. Do not "fix" this by enabling perpetual posting there.
+- **`x_records.company_id` references `r0_tenant_root`, not `companies`.** Tests
+  that seed `x_records` must insert the tenant-root row first; `runMigrations`
+  applies migrations only and does not run seeds.
+
+**R10.2 Frozen payroll compatibility validation: COMPLETE (22/22).** Golden-month
+replay proves zero delta across every historical period the legacy store holds,
+after a full R10.1 migration plus live VNext posting. New:
+`scripts/create-r10-payroll-golden-fixture.mjs` →
+`vnext-fixtures/legacy-payroll-golden.db`,
+`vnext/server/compat/{PayrollGoldenReplay.mjs,payroll-compat-routes.js}`,
+`vnext/client/modules/payroll-compat/index.js`,
+`scripts/test-r10-payroll-compatibility.mjs`, and the owner artifacts
+`octagon-analysis/R10_2_PAYROLL_SIGNOFF.{md,json}`. **R10.2 added no migration.**
+
+Facts the next agent needs:
+- **Fidelity differs per month, on purpose.** 2026-04 is proven per employee
+  (`closing_detail`); 2026-05 and 2026-06 are proven at period level
+  (`period_totals`) because the legacy app superseded their per-employee closing
+  records before capture. Never "upgrade" a month past its surviving evidence,
+  and never reconstruct a payroll figure. This is **owner decision O-3**.
+- **The payroll surface is read-only by construction.** `payroll_compat:view`
+  exists; no write permission does. Every non-GET on `/api/x/payroll-compat` is
+  refused with `WRITE_SURFACE_DENIED` before auth. Do not add a write verb.
+- **The timesheet is not re-implemented** — it is reached through the existing
+  read-only `/api/x/r3/legacy-workshop` bridge. Do not duplicate frozen data.
+- **Preview recipe for the VNext shell** (production untouched): the
+  `octagon-vnext` entry in the repo-root `.claude/launch.json` boots
+  `octagon-erp-commercial-vnext/server.js` via `node --eval` with an absolute
+  `process.chdir` plus `OCTAGON_SQLITE_DB_FILE`/`OCTAGON_DB_FILE` pointed at the
+  scratchpad, on an auto port. The shell is `/vnext/client/r3.html`. Screenshots
+  still time out on this app — verify through DOM reads.
+
 ## Next command
-Enter R9.3: read RELEASE 9 in the master roadmap, append the R9.3 vertical pack
-task table to the execution plan, reserve migration block 903+, and implement
-the first prioritized vertical pack (per owner O-5) — e.g., Retail/POS pack with
-multi-store, shift configs, barcode ops. Preserve every rule: no Git, production
-read-only, disposable DBs/ports only, frozen payroll/attendance/timesheet, no
-runtime DDL, schema-restoring rollbacks, server-derived identity + backend ACL +
-company scope, thin routes + domain ownership, offline fail-closed for
-GL/stock/approvals/identity/payroll.
+Enter R10.3 — pilot (dual-run): run the workshop tenant on VNext in parallel with
+production for one full cycle (a payroll month plus a finance close), logging
+daily reconciliation deltas, a user task-completion checklist, and defect triage
+with stop-the-line rules for integrity bugs, until the Commercialization §9.8
+pilot exit criteria are met and the owner has reviewed the reconciliation ledger.
+Preserve every rule: no Git, production read-only, disposable DBs/ports only,
+frozen payroll/attendance/timesheet, no runtime DDL, schema-restoring rollbacks,
+server-derived identity + backend ACL + company scope, thin routes + domain
+ownership, offline fail-closed for GL/stock/approvals/identity/payroll.

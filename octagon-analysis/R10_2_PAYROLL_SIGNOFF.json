@@ -1,0 +1,40 @@
+{
+  "artifact": "R10.2 frozen payroll compatibility validation",
+  "generatedAt": "2026-07-25T21:42:06.779Z",
+  "goldenFingerprint": "3af08fb98935098f2e549dfa93e9d75dc909f01a029facc97f65cdcc17f36795",
+  "periodsValidated": 3,
+  "zeroDelta": true,
+  "perEmployeeProven": {
+    "periods": [
+      "2026-04"
+    ],
+    "employeeComparisons": 7,
+    "mismatches": 0
+  },
+  "periodLevelProven": {
+    "periods": [
+      "2026-05",
+      "2026-06"
+    ],
+    "mismatches": 0,
+    "note": "the legacy app superseded the per-employee closing records for these months; the surviving posted accrual/settlement totals, payments, and advance ledger are what is proven"
+  },
+  "edgeCasesCovered": [
+    "advances",
+    "friday_overtime",
+    "month_end_bonus",
+    "negative_balance",
+    "penalties",
+    "zero_attendance"
+  ],
+  "frozenStoreUnchanged": true,
+  "vnextFrozenFootprint": "no payroll, attendance, or timesheet table exists in the VNext schema",
+  "timesheetSurface": {
+    "mounted": "/api/x/r3/legacy-workshop",
+    "mode": "read-only",
+    "embeddedAs": "vnext/client/modules/payroll-compat"
+  },
+  "ownerDecisionsRequired": [
+    "O-3: accept period-level proof for 2026-05 and 2026-06, or re-close those months in the legacy app to regenerate per-employee closing records"
+  ]
+}

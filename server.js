@@ -1917,6 +1917,8 @@ let octagonSupportRoutes = null;
 let octagonPackRoutes = null;
 let octagonRetailRoutes = null;
 let octagonMarketplaceRoutes = null;
+let octagonMigrationRoutes = null;
+let octagonPayrollCompatRoutes = null;
 
 const server = http.createServer((req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
@@ -1961,6 +1963,8 @@ const server = http.createServer((req, res) => {
   if (octagonPackRoutes && octagonPackRoutes.handle(req, res, requestUrl)) return; // R9.1 Pack SDK
   if (octagonRetailRoutes && octagonRetailRoutes.handle(req, res, requestUrl)) return; // R9.3 Retail/POS pack
   if (octagonMarketplaceRoutes && octagonMarketplaceRoutes.handle(req, res, requestUrl)) return; // R9.4 Marketplace & pack distribution
+  if (octagonMigrationRoutes && octagonMigrationRoutes.handle(req, res, requestUrl)) return; // R10.1 Data migration execution
+  if (octagonPayrollCompatRoutes && octagonPayrollCompatRoutes.handle(req, res, requestUrl)) return; // R10.2 Frozen payroll compatibility (read-only)
 
   // T3.1: /api/cron/* — server-side scheduler status/force-run/dismiss.
   if (octagonScheduler && octagonScheduler.handle(req, res, requestUrl)) return;
@@ -3294,6 +3298,20 @@ if (dbSync) {
       readRequestBody,
       requireSession,
       resolveScope: resolveVNextScope,
+      canPermission: (user, permission) => aclEngine.can(dbSync, { userId: user.id || user.userId, role: user.role, groups: user.groups || [] }, permission),
+    });
+    octagonMigrationRoutes = require('./vnext/server/modules/migration/migration-routes').mountMigrationRoutes({
+      db: dbSync,
+      sendJson,
+      readRequestBody,
+      requireSession,
+      resolveScope: resolveVNextScope,
+      runtime: octagonConnectivityRoutes && { events: octagonConnectivityRoutes.events },
+      canPermission: (user, permission) => aclEngine.can(dbSync, { userId: user.id || user.userId, role: user.role, groups: user.groups || [] }, permission),
+    });
+    octagonPayrollCompatRoutes = require('./vnext/server/compat/payroll-compat-routes').mountPayrollCompatRoutes({
+      sendJson,
+      requireSession,
       canPermission: (user, permission) => aclEngine.can(dbSync, { userId: user.id || user.userId, role: user.role, groups: user.groups || [] }, permission),
     });
     console.log('SQLite: VNext engines mounted against the post-migration db handle.');
